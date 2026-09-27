@@ -28,7 +28,7 @@
 | LOT-24 | Project Scaffolding | QUALIFIED | `0.6.0a2` |
 | LOT-25 | Development Server | QUALIFIED | `0.6.0b1` |
 | LOT-26 | Developer Diagnostics | QUALIFIED | `0.6.0b2` |
-| LOT-27 | Extension Contracts & Renderer Registry | IN QUALIFICATION | `0.7.0a1` |
+| LOT-27 | Extension Contracts & Renderer Registry | QUALIFIED | `0.7.0a1` |
 | LOT-28 | Build & Component Extension Points | NOT STARTED | `0.7.0a2` |
 | LOT-29 | Plugin Discovery & Entry Points | NOT STARTED | `0.7.0b1` |
 | LOT-30 | Plugin Lifecycle & Conformance | NOT STARTED | `0.7.0b2` |
@@ -735,6 +735,6 @@ have been exercised directly.
 - [x] no package discovery or dynamic import-string loading exists
 - [x] no Python entry-point discovery exists yet
 - [x] package version advances to `0.7.0a1`
-- [ ] GitHub CI qualification is fully green
+- [x] GitHub CI qualification is fully green
 
 Next after qualification: **LOT-28 — Build & Component Extension Points**.
