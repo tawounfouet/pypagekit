@@ -41,9 +41,7 @@ class HtmlRenderer:
         if isinstance(node, Component):
             return self.render(self._component_runtime.resolve(node))
         if isinstance(node, Slot):
-            raise UnresolvedSlotError(
-                f"Slot '{node.name}' reached the HTML renderer unresolved."
-            )
+            raise UnresolvedSlotError(f"Slot '{node.name}' reached the HTML renderer unresolved.")
         if isinstance(node, Fragment):
             return self._render_children(node.children)
         if isinstance(node, Text):
