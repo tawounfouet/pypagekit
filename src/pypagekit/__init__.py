@@ -15,6 +15,7 @@ from .domain import (
     Node,
     Page,
     Paragraph,
+    Route,
     Slot,
     SlotBindings,
     SlottedComponent,
@@ -22,7 +23,7 @@ from .domain import (
     bind_slots,
 )
 
-__version__ = "0.3.0b3"
+__version__ = "0.4.0a1"
 
 __all__ = [
     "Attributes",
@@ -39,6 +40,7 @@ __all__ = [
     "Node",
     "Page",
     "Paragraph",
+    "Route",
     "Slot",
     "SlotBindings",
     "SlottedComponent",
