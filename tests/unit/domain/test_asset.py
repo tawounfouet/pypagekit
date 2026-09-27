@@ -118,7 +118,7 @@ def test_assets_accept_generator() -> None:
 
 
 def test_assets_reject_duplicate_target() -> None:
-    with pytest.raises(DuplicateAssetTargetError, match="assets/logo.png"):
+    with pytest.raises(DuplicateAssetTargetError, match=r"assets/logo\.png"):
         Assets(
             [
                 Asset(Path("logo-a.png"), PurePosixPath("assets/logo.png")),
@@ -155,7 +155,7 @@ def test_asset_lookup_returns_canonical_asset_object() -> None:
 def test_unknown_asset_target_fails_explicitly() -> None:
     assets = Assets()
 
-    with pytest.raises(UnknownAssetTargetError, match="assets/missing.png"):
+    with pytest.raises(UnknownAssetTargetError, match=r"assets/missing\.png"):
         assets.asset(PurePosixPath("assets/missing.png"))
 
 
