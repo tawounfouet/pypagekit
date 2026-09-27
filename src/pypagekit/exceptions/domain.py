@@ -107,3 +107,16 @@ class DuplicateSlotError(InvalidSlotError):
 
 class UnresolvedSlotError(InvalidSlotError):
     """Raised when a slot placeholder escapes its composition boundary."""
+
+
+
+class InvalidRouteError(ValidationError):
+    """Base exception for invalid route structure."""
+
+
+class InvalidRoutePathError(InvalidRouteError):
+    """Raised when a logical route path is invalid."""
+
+
+class InvalidRoutePageError(InvalidRouteError):
+    """Raised when a route target is not a Page."""
