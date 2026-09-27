@@ -4,6 +4,45 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.9.0b1]
+
+### Added
+
+- Canonical compatibility and deprecation policy in `COMPATIBILITY.md`.
+- Machine-readable compatibility rules in `COMPATIBILITY.toml`.
+- Machine-readable active deprecation registry in `DEPRECATIONS.toml`.
+- Canonical migration guide from `0.9.x` to `1.0`.
+- Internal deterministic `DeprecationWarning` helper for future compatibility aliases.
+- Architecture tests enforcing package-version alignment across public API, compatibility, and deprecation artifacts.
+- Architecture tests forbidding silent stable-API removal through the compatibility policy.
+- Validation that every future deprecation record has a unique ID and complete migration metadata.
+- Explicit compatibility rules for Python facades, CLI contracts, exceptions, typing, and plugin metadata.
+
+### Compatibility
+
+- Adding public surface is compatible when existing semantics remain unchanged.
+- Removing or renaming stable facade exports is breaking without a compatibility alias.
+- Incompatible signature narrowing is breaking.
+- CLI command/option removal or exit-code meaning changes are breaking after freeze.
+- Plugin entry-point group and built-in extension ID changes require explicit migration.
+- Public type annotations participate in compatibility.
+- Security fixes may override normal deprecation timing only when preserving old behavior would keep users exposed.
+
+### Deprecation
+
+- Standard Python `DeprecationWarning` is the canonical warning category.
+- Future public deprecations must record ID, kind, public path, since version, replacement, and removal boundary.
+- Stable APIs deprecated during `1.x` remain available through the `1.x` major line and become eligible for removal in `2.0.0`.
+- PyPageKit `0.9.0b1` has no active public deprecations.
+
+### Design
+
+- LOT-35 defines how the contract evolves; LOT-36 freezes the exact 1.0 contract.
+- Deep implementation imports remain outside compatibility guarantees.
+- No compatibility aliases are introduced without an actual deprecated public API.
+- The extension API remains `0.7`; LOT-35 does not alter plugin qualification compatibility.
+- The package advances to `0.9.0b1`.
+
 ## [0.9.0a1]
 
 ### Added
