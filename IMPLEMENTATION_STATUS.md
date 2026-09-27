@@ -32,7 +32,7 @@
 | LOT-28 | Build & Component Extension Points | QUALIFIED | `0.7.0a2` |
 | LOT-29 | Plugin Discovery & Entry Points | QUALIFIED | `0.7.0b1` |
 | LOT-30 | Plugin Lifecycle & Conformance | QUALIFIED | `0.7.0b2` |
-| LOT-31 | Security Hardening | IN QUALIFICATION | `0.8.0a1` |
+| LOT-31 | Security Hardening | QUALIFIED | `0.8.0a1` |
 | LOT-32 | Reliability & Failure Hardening | NOT STARTED | `0.8.0a2` |
 | LOT-33 | Performance & Scalability Hardening | NOT STARTED | `0.8.0b1` |
 | LOT-34 | Public API Inventory & Stability Classification | NOT STARTED | `0.9.0a1` |
@@ -864,6 +864,6 @@ Next: **LOT-31 — Security Hardening** (`0.8.0a1`).
 - [x] existing symlink traversal protections remain covered
 - [x] existing HTML escaping and unsafe-scheme protections remain covered
 - [x] package version advances to `0.8.0a1`
-- [ ] GitHub CI qualification is fully green
+- [x] GitHub CI qualification is fully green
 
 Next after qualification: **LOT-32 — Reliability & Failure Hardening** (`0.8.0a2`).
