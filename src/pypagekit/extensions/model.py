@@ -120,11 +120,11 @@ def _validate_non_empty_literal(value: str, *, field_name: str) -> None:
 
 
 __all__ = [
+    "PYPAGEKIT_EXTENSION_API_VERSION",
     "BuildPlannerExtension",
     "BuildPlannerFactory",
     "ComponentExtension",
     "ExtensionDescriptor",
-    "PYPAGEKIT_EXTENSION_API_VERSION",
     "RendererExtension",
     "RendererFactory",
     "validate_extension_api_version",
