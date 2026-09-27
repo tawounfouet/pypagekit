@@ -21,19 +21,13 @@ class PlainRenderer:
 
 
 def test_build_target_validation_handles_large_sibling_set() -> None:
-    targets = tuple(
-        PurePosixPath(f"pages/{index}/index.html")
-        for index in range(8_000)
-    )
+    targets = tuple(PurePosixPath(f"pages/{index}/index.html") for index in range(8_000))
 
     validate_build_targets(targets)
 
 
 def test_site_lookup_handles_large_route_set_and_preserves_identity() -> None:
-    routes = tuple(
-        Route(f"/page-{index:04d}", Page(f"Page {index}"))
-        for index in range(2_048)
-    )
+    routes = tuple(Route(f"/page-{index:04d}", Page(f"Page {index}")) for index in range(2_048))
     site = Site(routes)
 
     assert site.route("/page-2047") is routes[-1]
@@ -57,12 +51,7 @@ def test_asset_lookup_handles_large_collection_and_preserves_identity() -> None:
 
 
 def test_component_registry_handles_large_lookup_set() -> None:
-    registry = ComponentRegistry(
-        {
-            f"component-{index:04d}": Label
-            for index in range(2_048)
-        }
-    )
+    registry = ComponentRegistry({f"component-{index:04d}": Label for index in range(2_048)})
 
     assert registry.factory("component-2047") is Label
     assert registry.contains("component-0000")
