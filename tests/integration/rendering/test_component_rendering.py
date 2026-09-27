@@ -58,8 +58,7 @@ def test_renderer_renders_component_as_resolved_content() -> None:
     html = HtmlRenderer().render(Hero("Welcome", "Hello"))
 
     assert html == (
-        '<div class="hero" id="hero"><h1 class="hero-title">Welcome</h1>'
-        "<p>Hello</p></div>"
+        '<div class="hero" id="hero"><h1 class="hero-title">Welcome</h1><p>Hello</p></div>'
     )
 
 
