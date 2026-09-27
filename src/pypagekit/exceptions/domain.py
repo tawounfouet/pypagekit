@@ -145,7 +145,6 @@ class NavigationCycleError(InvalidNavigationError):
     """Raised when navigation items form an object cycle."""
 
 
-
 class InvalidSiteError(ValidationError):
     """Base exception for invalid site and sitemap structure."""
 
