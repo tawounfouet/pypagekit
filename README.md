@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current qualified milestone: **LOT-35 — Compatibility, Deprecation & Migration** (`0.9.0b1`). Next: **LOT-36 — 1.0 Contract Freeze**.
+Current implementation milestone: **LOT-36 — 1.0 Contract Freeze** (`0.9.0rc1`). The exact 1.0 public contract is frozen in `API_CONTRACT_1_0.json`.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -185,7 +185,7 @@ python -m build
 1.0.0  Stable
 ```
 
-The **`0.8.x — Hardening`** line is feature-complete. LOT-34 opens the `0.9.x — API Freeze` line.
+The **`0.9.x — API Freeze`** line has reached its release candidate. LOT-36 freezes the exact 1.0 contract; LOT-37 is the final release qualification.
 
 
 ## Controlled attributes
@@ -1901,9 +1901,51 @@ keep compatibility alias through 1.x
 eligible for removal in 2.0
 ```
 
-PyPageKit uses the standard `DeprecationWarning` category. At `0.9.0b1`, the active public
+PyPageKit uses the standard `DeprecationWarning` category. At `0.9.0rc1`, the active public
 deprecation registry is empty: no supported facade-based application code needs a rename migration.
 
 For the final pre-1.0 migration, applications should eliminate deep implementation imports, enable
 deprecation warnings in CI, and validate plugins against the exported extension API compatibility
 constant before testing against `0.9.0rc1`.
+
+
+## 1.0 contract freeze
+
+LOT-36 freezes the release-candidate contract used to qualify PyPageKit 1.0.
+
+Human-readable contract:
+
+```text
+API_CONTRACT_1_0.md
+```
+
+Machine-readable exact baseline:
+
+```text
+API_CONTRACT_1_0.json
+```
+
+CI regenerates the runtime contract and compares it exactly with that baseline.
+
+Frozen Python facades:
+
+```text
+pypagekit
+pypagekit.domain
+pypagekit.components
+pypagekit.rendering
+pypagekit.build
+pypagekit.project
+pypagekit.development
+pypagekit.diagnostics
+pypagekit.extensions
+pypagekit.exceptions
+```
+
+The shell CLI is frozen as an operational contract. The Python/Typer adapter under
+`pypagekit.cli` remains explicitly provisional.
+
+The plugin compatibility line remains `0.7`; package `1.0.0` does not force an artificial
+plugin API renumbering.
+
+The baseline is identical under Python 3.11, 3.12, 3.13, and 3.14.
