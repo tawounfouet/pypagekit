@@ -36,10 +36,7 @@ def test_navigation_item_accepts_generator_children() -> None:
     item = NavigationItem(
         "Docs",
         route("/docs"),
-        (
-            NavigationItem(str(index), route(f"/docs/{index}"))
-            for index in range(2)
-        ),
+        (NavigationItem(str(index), route(f"/docs/{index}")) for index in range(2)),
     )
 
     assert tuple(child.label for child in item.children) == ("0", "1")
