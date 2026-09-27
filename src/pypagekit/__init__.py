@@ -1,10 +1,22 @@
 """PyPageKit public package."""
 
-from .domain import Container, Content, Heading, Image, Link, Node, Page, Paragraph, Text
+from .domain import (
+    Attributes,
+    Container,
+    Content,
+    Heading,
+    Image,
+    Link,
+    Node,
+    Page,
+    Paragraph,
+    Text,
+)
 
-__version__ = "0.2.0b2"
+__version__ = "0.2.0b3"
 
 __all__ = [
+    "Attributes",
     "Container",
     "Content",
     "Heading",
