@@ -1,5 +1,5 @@
 schema_version = 1
-package_version = "0.9.0a1"
+package_version = "0.9.0b1"
 
 [classifications]
 stable_candidate = "Explicit public Python surface intended for the 1.0 compatibility contract."
@@ -350,6 +350,7 @@ minimum_python = "3.11"
 classification = "internal"
 rule = "Any pypagekit module or symbol not listed above as a public facade/export or operational contract is internal unless a later compatibility document explicitly promotes it."
 examples = [
+  "pypagekit._deprecation",
   "pypagekit._filesystem_transaction",
   "pypagekit.build.model",
   "pypagekit.components.registry",
