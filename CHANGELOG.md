@@ -4,6 +4,33 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.6.0a1]
+
+### Added
+
+- Typer 0.27.x as the canonical CLI framework.
+- Rich 15.x as the canonical human-facing terminal presentation layer.
+- Installed `pypagekit` console entry point.
+- `python -m pypagekit` module entry point.
+- Root `--help` / `-h` support.
+- Eager root `--version` support.
+- Centralized Rich stdout/stderr consoles with markup and automatic highlighting disabled.
+- Stable CLI exit-code constants: success `0`, execution error `1`, usage error `2`.
+- Explicit command-registration boundary for subsequent CLI LOTs.
+- CLI integration tests using Typer's `CliRunner`.
+- Architecture tests preventing Typer/Rich dependencies from leaking into core packages.
+- Installed-wheel CLI smoke coverage.
+
+### Design
+
+- Typer parses CLI intent; Rich presents human-readable output; PyPageKit core remains authoritative for behavior.
+- `import pypagekit` does not import Typer or Rich.
+- No workflow command is advertised before its dedicated LOT implements it.
+- CLI usage failures retain Typer/Click's exit-code `2` semantics.
+- The root package remains usable independently from the CLI.
+- LOT-23 establishes CLI infrastructure only; project scaffolding, serving, and diagnostics remain LOT-24 through LOT-26.
+
+
 ## [0.5.0b2]
 
 ### Added
