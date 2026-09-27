@@ -4,6 +4,31 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.8.0b1]
+
+### Performance
+
+- Replace quadratic build-target collision scans with prefix-indexed validation proportional to total path depth.
+- Add immutable binary-search indexes for Site route lookup.
+- Add immutable binary-search indexes for Assets target lookup.
+- Cache ComponentRegistry names and use logarithmic lookup.
+- Cache extension registry IDs and component-name projections and use logarithmic lookup.
+- Replace assets × destinations inode comparisons with a one-time destination identity index.
+- Replace overwrite backup copies with same-directory `os.replace()` snapshots.
+- Avoid replacement child-tuple allocation when component runtime traversal makes no changes.
+- Replace quadratic duplicate-entry-point counting with one-pass duplicate detection.
+- Add deterministic large-collection scalability smoke coverage without wall-clock thresholds.
+
+### Design
+
+- Public declaration ordering and immutable tuple surfaces remain unchanged.
+- Private indexes are excluded from public repr/equality semantics.
+- Security validation remains in place; performance work does not bypass preflight checks.
+- Rollback behavior remains equivalent for Python-observed write failures.
+- No parallelism, asynchronous I/O, incremental cache, content hashing, or worker pool is introduced.
+- The package advances to `0.8.0b1`.
+- Completing LOT-33 closes the `0.8.x — Hardening` implementation line.
+
 ## [0.8.0a2]
 
 ### Added
