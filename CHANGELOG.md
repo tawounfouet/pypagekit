@@ -4,6 +4,29 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.2.0a1]
+
+### Added
+
+- Pure HTML5 text and attribute escaping primitives.
+- Deterministic serialization for ordinary HTML elements.
+- Canonical serialization for HTML5 void elements.
+- HTML5 doctype serialization.
+- Structural validation for tag and attribute names.
+- Scalar and boolean HTML attribute serialization.
+- Rendering/serialization exception hierarchy.
+- LOT-06 tests for escaping, determinism, Unicode, void elements, boolean attributes, and invalid structural names.
+
+### Design
+
+- Serialization is domain-agnostic and performs no filesystem or network I/O.
+- Element content is treated as a trusted serialized fragment; semantic user text must cross the explicit text-escaping boundary first.
+- Attribute order is canonicalized lexicographically for deterministic output.
+- `None` and `False` omit attributes, `True` emits a name-only boolean attribute, and empty strings are preserved.
+- `script` and `style` are rejected by the generic element serializer because they require dedicated raw-text contexts.
+- The serializer is implementation infrastructure and is not exported from the package root.
+- Domain-to-HTML mapping remains deferred to LOT-07.
+
 ## [0.1.0b1]
 
 ### Added

@@ -4,22 +4,22 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-05 — Actions & Media** (`0.1.0b1`).
+Current implementation milestone: **LOT-06 — HTML Serialization** (`0.2.0a1`).
 
-The first `0.1.x` domain line is now feature-complete.
+The `0.1.x` domain line is feature-complete, and `0.2.x` now begins with a pure HTML serialization boundary.
 
 Implemented so far:
 
 - typed `src/` package and CI foundations;
-- `Node` and `Content` domain foundations;
-- immutable `Page` root document object;
-- immutable `Text`, `Heading`, and `Paragraph` primitives;
-- immutable `Container` for ordered recursive composition;
-- semantic `Action` / `Media` base types;
-- immutable `Link` and `Image` primitives;
-- explicit domain validation and exceptions.
+- structured immutable page/content domain;
+- text, composition, action, and media primitives;
+- context-specific HTML text/attribute escaping;
+- deterministic HTML5 ordinary-element serialization;
+- canonical HTML5 void-element serialization;
+- structural validation for tags and attributes;
+- rendering/serialization error hierarchy.
 
-HTML rendering is intentionally not implemented yet. The domain describes page structure and references without embedding HTML behavior.
+The serializer still does **not** know how to render a `Page`, `Heading`, `Link`, or any other domain object. That mapping begins in LOT-07.
 
 ## Requirements
 
@@ -45,7 +45,7 @@ pytest
 python -m build
 ```
 
-## Current domain API
+## Domain example
 
 ```python
 from pypagekit import Container, Heading, Image, Link, Page, Paragraph
@@ -66,49 +66,53 @@ page = Page(
 )
 ```
 
-`Page` and `Container` normalize composition collections into immutable tuples. Domain strings remain semantic values; HTML escaping and URL safety belong to later rendering/security layers.
+## Serialization boundary
 
-## Domain hierarchy
+LOT-06 introduces the internal transformation:
 
 ```text
-Node
-├── Page
-└── Content
-    ├── Text
-    ├── Heading
-    ├── Paragraph
-    ├── Container
-    ├── Action
-    │   └── Link
-    └── Media
-        └── Image
+semantic string
+      ↓
+escape_text / escape_attribute
+      ↓
+HTML serializer
+      ↓
+HTML fragment string
 ```
 
-## Source layout
+For example, LOT-07 will be able to map:
 
 ```text
-src/
-└── pypagekit/
-    ├── __init__.py
-    ├── py.typed
-    ├── domain/
-    │   ├── __init__.py
-    │   ├── action.py
-    │   ├── base.py
-    │   ├── container.py
-    │   ├── media.py
-    │   ├── page.py
-    │   └── text.py
-    └── exceptions/
-        ├── __init__.py
-        └── domain.py
+Heading("A & B")
+      ↓
+escape_text("A & B")
+      ↓
+serialize_element("h1", content="A &amp; B")
+      ↓
+<h1>A &amp; B</h1>
+```
+
+The domain continues to store the original value `"A & B"`.
+
+## Architecture
+
+```text
+Domain
+  ↓
+[LOT-07 HtmlRenderer]
+  ↓
+Escaping
+  ↓
+HTML Serializer
+  ↓
+str
 ```
 
 ## Roadmap
 
 ```text
-0.1.x  Domain
-0.2.x  Rendering
+0.1.x  Domain                  ✅ feature-complete
+0.2.x  Rendering               ← current
 0.3.x  Components
 0.4.x  Routing & Site
 0.5.x  Static Build
@@ -119,4 +123,4 @@ src/
 1.0.0  Stable
 ```
 
-The immediate next milestone is **LOT-06 — HTML Serialization**, beginning the `0.2.x` rendering line.
+The immediate next milestone is **LOT-07 — HTML Renderer**, which connects the domain tree to these serializer primitives.
