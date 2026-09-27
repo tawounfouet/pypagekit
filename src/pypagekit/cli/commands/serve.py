@@ -50,8 +50,7 @@ def serve_command(
         )
         with DevelopmentServer().create(config) as session:
             console.print(
-                f"Serving {session.info.root} at {session.info.url} "
-                "(Press Ctrl+C to stop)"
+                f"Serving {session.info.root} at {session.info.url} (Press Ctrl+C to stop)"
             )
             try:
                 session.serve_forever()
