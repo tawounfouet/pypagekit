@@ -4,6 +4,7 @@ from pypagekit.components import ComponentRuntime
 from pypagekit.domain import (
     Component,
     Container,
+    Fragment,
     Heading,
     Image,
     LayoutRegion,
@@ -11,9 +12,10 @@ from pypagekit.domain import (
     Node,
     Page,
     Paragraph,
+    Slot,
     Text,
 )
-from pypagekit.exceptions import UnsupportedNodeError
+from pypagekit.exceptions import UnresolvedSlotError, UnsupportedNodeError
 
 from .attributes import html_attributes
 from .escaping import escape_text
@@ -38,6 +40,12 @@ class HtmlRenderer:
             return self._render_page(node)
         if isinstance(node, Component):
             return self.render(self._component_runtime.resolve(node))
+        if isinstance(node, Slot):
+            raise UnresolvedSlotError(
+                f"Slot '{node.name}' reached the HTML renderer unresolved."
+            )
+        if isinstance(node, Fragment):
+            return self._render_children(node.children)
         if isinstance(node, Text):
             return escape_text(node.value)
         if isinstance(node, Heading):
