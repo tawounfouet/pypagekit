@@ -17,11 +17,9 @@ def test_escape_text_does_not_escape_quotes_in_text_context() -> None:
 
 def test_escape_attribute_escapes_ampersand_markup_and_quotes() -> None:
     value = """A & B < C > D "quoted" 'single'"""
+    expected = "A &amp; B &lt; C &gt; D &quot;quoted&quot; &#x27;single&#x27;"
 
-    assert (
-        escape_attribute(value)
-        == "A &amp; B &lt; C &gt; D &quot;quoted&quot; &#x27;single&#x27;"
-    )
+    assert escape_attribute(value) == expected
 
 
 def test_escaping_preserves_unicode() -> None:
