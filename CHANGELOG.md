@@ -4,6 +4,28 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.3.0a2]
+
+### Added
+
+- Public abstract `Layout(Component)` model.
+- Public immutable `LayoutRegion(Content)` for ordered named structural regions.
+- Lowercase kebab-case validation for region names.
+- Duplicate-region detection within a layout.
+- Recursive component resolution inside layout regions.
+- Neutral HTML representation using `data-layout-region`.
+- LOT-12 domain, runtime, rendering, and security coverage.
+
+### Design
+
+- Layouts organize structure; they do not define CSS, grids, breakpoints, or visual styling.
+- `Layout.regions()` declares ordered structural regions and `Layout.compose()` turns them into ordinary content.
+- Region names are unique within one layout.
+- Region attributes remain controlled through the existing `Attributes` model.
+- The renderer chooses a neutral `div[data-layout-region]` representation.
+- Slots remain deferred to LOT-14; LOT-12 regions are statically declared by the layout implementation.
+
+
 ## [0.3.0a1]
 
 ### Added
