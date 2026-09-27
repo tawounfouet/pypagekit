@@ -7,6 +7,7 @@ from .component import Component
 from .container import Container
 from .layout import Layout, LayoutRegion
 from .media import Image, Media
+from .navigation import Navigation, NavigationItem
 from .page import Page
 from .reference import ComponentRef
 from .route import Route, normalize_route_path
@@ -27,6 +28,8 @@ __all__ = [
     "LayoutRegion",
     "Link",
     "Media",
+    "Navigation",
+    "NavigationItem",
     "Node",
     "Page",
     "Paragraph",

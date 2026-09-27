@@ -12,6 +12,8 @@ from .domain import (
     Layout,
     LayoutRegion,
     Link,
+    Navigation,
+    NavigationItem,
     Node,
     Page,
     Paragraph,
@@ -23,7 +25,7 @@ from .domain import (
     bind_slots,
 )
 
-__version__ = "0.4.0a1"
+__version__ = "0.4.0a2"
 
 __all__ = [
     "Attributes",
@@ -37,6 +39,8 @@ __all__ = [
     "Layout",
     "LayoutRegion",
     "Link",
+    "Navigation",
+    "NavigationItem",
     "Node",
     "Page",
     "Paragraph",

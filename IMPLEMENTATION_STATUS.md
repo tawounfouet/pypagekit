@@ -18,7 +18,7 @@
 | LOT-14 | Slots & Composition | QUALIFIED | `0.3.0b2` |
 | LOT-15 | Component Registry | QUALIFIED | `0.3.0b3` |
 | LOT-16 | Route Model | QUALIFIED | `0.4.0a1` |
-| LOT-17 | Navigation Model | NOT STARTED | `0.4.0a2` |
+| LOT-17 | Navigation Model | QUALIFIED | `0.4.0a2` |
 | LOT-18 | Sitemap & Site Model | NOT STARTED | `0.4.0b1` |
 
 ## LOT-07 exit criteria
@@ -303,4 +303,32 @@ Next: **LOT-17 — Navigation Model**.
 - route identity is independent from page rendering and future build output
 - validation covers canonicalization plus URL/path-confusion cases
 - security corpus covers externalization, traversal, encoded separators, and fragment/query confusion
+- GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
+
+
+## LOT-17 exit criteria
+
+- [x] public immutable `NavigationItem` exists
+- [x] each navigation item references a `Route` object
+- [x] labels are required semantic strings and preserve authored values
+- [x] child navigation items preserve declaration order
+- [x] child iterables normalize to immutable tuples
+- [x] public immutable `Navigation` exists
+- [x] empty navigation is valid
+- [x] navigation traversal is deterministic and depth-first
+- [x] route projection preserves navigation tree order
+- [x] duplicate route paths fail explicitly across the whole tree
+- [x] duplicate labels remain valid for distinct routes
+- [x] object cycles fail explicitly
+- [x] route validation/security cannot be bypassed through navigation
+- [x] navigation performs no HTML rendering or filesystem work
+- [x] site membership and sitemap consistency remain deferred to LOT-18
+
+Next: **LOT-18 — Sitemap & Site Model**.
+
+## LOT-17 qualification evidence
+
+- navigation owns hierarchy and labels while routes remain the single source of logical URL identity
+- tree validation covers duplicates, cycles, type safety, and deterministic ordering
+- security coverage proves navigation inherits route-path protections
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate

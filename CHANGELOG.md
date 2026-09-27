@@ -4,6 +4,29 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.4.0a2]
+
+### Added
+
+- Public immutable `NavigationItem` referencing a `Route` with ordered child items.
+- Public immutable `Navigation` aggregate for validated hierarchical navigation trees.
+- Depth-first navigation traversal helpers.
+- Deterministic route and route-path projection from navigation trees.
+- Duplicate-route detection across an entire navigation tree.
+- Identity-based navigation-cycle detection.
+- Navigation-specific validation errors.
+- LOT-17 unit and security coverage.
+
+### Design
+
+- Navigation references `Route` objects directly and never duplicates raw URL strings.
+- Labels remain raw semantic strings; HTML escaping is a future rendering concern.
+- Duplicate labels are valid when they reference distinct routes.
+- A canonical route path may appear only once within a single navigation tree.
+- Navigation performs no rendering, filesystem work, sitemap generation, or active-route selection.
+- Site-wide route existence and sitemap consistency remain LOT-18 concerns.
+
+
 ## [0.4.0a1]
 
 ### Added
