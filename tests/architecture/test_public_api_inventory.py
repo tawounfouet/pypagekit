@@ -33,7 +33,7 @@ EXPECTED_FACADES = {
 }
 
 ALLOWED_MODULE_CLASSIFICATIONS = {
-    "stable_candidate",
+    "stable",
     "provisional_public",
 }
 
@@ -88,23 +88,23 @@ def test_inventory_matches_runtime_all_exports_exactly() -> None:
             assert hasattr(module, export_name), f"{module_name}.{export_name}"
 
 
-def test_stable_candidate_facades_are_explicit() -> None:
+def test_frozen_stable_facades_are_explicit() -> None:
     inventory = _inventory()
     modules = inventory["modules"]
     assert isinstance(modules, list)
 
     classifications = {module["name"]: module["classification"] for module in modules}
 
-    assert classifications["pypagekit"] == "stable_candidate"
-    assert classifications["pypagekit.domain"] == "stable_candidate"
-    assert classifications["pypagekit.components"] == "stable_candidate"
-    assert classifications["pypagekit.rendering"] == "stable_candidate"
-    assert classifications["pypagekit.build"] == "stable_candidate"
-    assert classifications["pypagekit.project"] == "stable_candidate"
-    assert classifications["pypagekit.development"] == "stable_candidate"
-    assert classifications["pypagekit.diagnostics"] == "stable_candidate"
-    assert classifications["pypagekit.extensions"] == "stable_candidate"
-    assert classifications["pypagekit.exceptions"] == "stable_candidate"
+    assert classifications["pypagekit"] == "stable"
+    assert classifications["pypagekit.domain"] == "stable"
+    assert classifications["pypagekit.components"] == "stable"
+    assert classifications["pypagekit.rendering"] == "stable"
+    assert classifications["pypagekit.build"] == "stable"
+    assert classifications["pypagekit.project"] == "stable"
+    assert classifications["pypagekit.development"] == "stable"
+    assert classifications["pypagekit.diagnostics"] == "stable"
+    assert classifications["pypagekit.extensions"] == "stable"
+    assert classifications["pypagekit.exceptions"] == "stable"
     assert classifications["pypagekit.cli"] == "provisional_public"
 
 
