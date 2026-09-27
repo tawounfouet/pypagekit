@@ -4,6 +4,31 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.2.0b1]
+
+### Added
+
+- Render-time URL safety validation for links and images.
+- Explicit allowlists for link schemes (`http`, `https`, `mailto`) and image schemes (`http`, `https`).
+- `SecurityError` and `UnsafeUrlError` rendering exceptions.
+- Adversarial XSS tests covering active markup, attribute breakout attempts, nested composition, unsafe URL schemes, control characters, and pre-escaped input.
+
+### Security
+
+- Relative references, anchors, query references, and protocol-relative references remain supported.
+- Active or local-resource schemes such as `javascript:`, `data:`, `vbscript:`, `file:`, and unsupported schemes are rejected at render time.
+- URL values remain semantic domain strings and are validated before attribute-context escaping.
+- ASCII control characters are rejected in URL references.
+- Text and attribute escaping continue to happen exactly at the HTML boundary.
+- No `RawHtml`, `SafeHtml`, `escape=False`, or equivalent bypass is introduced.
+
+### Design
+
+- URL safety belongs to the rendering/security boundary rather than mutating the domain model.
+- Validation returns the original URL value after approval; output normalization is not performed.
+- The serializer remains syntax-focused and does not own URL policy.
+
+
 ## [0.2.0a2]
 
 ### Added
