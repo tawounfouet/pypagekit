@@ -7,31 +7,36 @@
 | LOT-03 | Text Content | QUALIFIED | `0.1.0a3` |
 | LOT-04 | Composition Tree | QUALIFIED | `0.1.0a4` |
 | LOT-05 | Actions & Media | QUALIFIED | `0.1.0b1` |
-| LOT-06 | HTML Serialization | NOT STARTED | `0.2.0a1` |
+| LOT-06 | HTML Serialization | QUALIFIED | `0.2.0a1` |
 | LOT-07 | HTML Renderer | NOT STARTED | `0.2.0a2` |
+| LOT-08 | Security & Escaping | NOT STARTED | `0.2.0b1` |
+| LOT-09 | Page Metadata | NOT STARTED | `0.2.0b2` |
+| LOT-10 | Attributes & Styling Hooks | NOT STARTED | `0.2.0b2` |
 
-## LOT-05 exit criteria
+## LOT-06 exit criteria
 
-- [x] `Action` derives from `Content`
-- [x] `Link` derives from `Action`
-- [x] `Media` derives from `Content`
-- [x] `Image` derives from `Media`
-- [x] link label and destination remain semantic strings
-- [x] structurally empty link destinations are rejected
-- [x] image source remains a semantic string
-- [x] structurally empty image sources are rejected
-- [x] image alternative text is required as a string
-- [x] empty image alternative text remains valid for decorative images
-- [x] action/media nodes compose inside `Page` and `Container`
-- [x] `Link` and `Image` are exported from the package root
-- [x] URL scheme security is deferred to LOT-08
-- [x] no rendering concern leaks into the domain layer
-- [x] tests cover happy paths and invalid states
+- [x] HTML text escaping exists
+- [x] HTML attribute escaping exists
+- [x] ordinary elements serialize deterministically
+- [x] HTML5 void elements serialize without closing tags
+- [x] HTML5 doctype has a canonical representation
+- [x] tag names are structurally validated
+- [x] attribute names are structurally validated
+- [x] `None` attribute values are omitted
+- [x] boolean attributes have explicit semantics
+- [x] empty string attributes are preserved
+- [x] simple scalar attribute values are supported
+- [x] unsupported attribute values fail explicitly
+- [x] Unicode is preserved
+- [x] serializer performs no domain dispatch or I/O
+- [x] serializer is not exported from the package root
+- [x] generic serialization rejects raw-text `script` and `style`
+- [x] tests cover escaping, structure, deterministic ordering, and failure modes
 
-Next: **LOT-06 — HTML Serialization**.
+Next: **LOT-07 — HTML Renderer**.
 
-## LOT-05 qualification evidence
+## LOT-06 qualification evidence
 
 - branch implementation prepared for CI qualification
-- first `0.1.x` domain line is feature-complete after this LOT
+- `0.2.x` rendering line begins without changing the domain model
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
