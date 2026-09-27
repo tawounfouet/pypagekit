@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current qualified milestone: **LOT-33 — Performance & Scalability Hardening** (`0.8.0b1`). The **0.8.x — Hardening** line is complete. Next: **LOT-34 — Public API Inventory & Stability Classification**.
+Current implementation milestone: **LOT-34 — Public API Inventory & Stability Classification** (`0.9.0a1`). The **0.8.x — Hardening** line is complete.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -179,13 +179,13 @@ python -m build
 0.4.x  Routing & Site           ✅ feature-complete
 0.5.x  Static Build              ✅ feature-complete
 0.6.x  CLI & Developer Workflow   ✅ feature-complete
-0.7.x  Extensibility               ← current
-0.8.x  Hardening
-0.9.x  API Freeze
+0.7.x  Extensibility               ✅ feature-complete
+0.8.x  Hardening                    ✅ feature-complete
+0.9.x  API Freeze                   ← current
 1.0.0  Stable
 ```
 
-The **`0.6.x — CLI & Developer Workflow`** line is feature-complete. LOT-27 opens the `0.7.x — Extensibility` line.
+The **`0.8.x — Hardening`** line is feature-complete. LOT-34 opens the `0.9.x — API Freeze` line.
 
 
 ## Controlled attributes
@@ -1829,3 +1829,40 @@ failures.
 LOT-33 does not introduce parallel rendering, asynchronous filesystem writes, worker pools,
 incremental build caching, content hashing, or cross-process build caches. Those are separate
 product capabilities rather than hardening requirements.
+
+
+## Public API stability
+
+LOT-34 establishes the explicit pre-1.0 API inventory.
+
+Human-readable policy:
+
+```text
+PUBLIC_API.md
+```
+
+Machine-readable source of truth:
+
+```text
+PUBLIC_API.toml
+```
+
+The core rule is:
+
+```text
+public facade import     → compatibility candidate
+deep implementation import → internal unless explicitly promoted
+```
+
+For example:
+
+```python
+from pypagekit.build import BuildPlan        # public stability candidate
+from pypagekit.build.model import BuildPlan  # internal import path
+```
+
+CI now verifies that every explicit facade `__all__` matches the inventory exactly. CLI command
+names, exit semantics, extension entry-point groups, built-in extension IDs, extension API version,
+`py.typed`, and the minimum Python version are inventoried as operational contracts.
+
+See [PUBLIC_API.md](PUBLIC_API.md) for the classification policy.
