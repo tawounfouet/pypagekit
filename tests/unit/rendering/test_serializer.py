@@ -63,9 +63,9 @@ def test_attribute_order_is_independent_of_mapping_insertion_order() -> None:
 
 
 def test_empty_string_attribute_is_preserved() -> None:
-    assert serialize_element("div", attributes={"title": ""}) == (
-        '<div title=""></div>'
-    )
+    result = serialize_element("div", attributes={"title": ""})
+
+    assert result == '<div title=""></div>'
 
 
 def test_none_attribute_is_omitted() -> None:
@@ -73,15 +73,15 @@ def test_none_attribute_is_omitted() -> None:
 
 
 def test_true_boolean_attribute_is_serialized_by_name_only() -> None:
-    assert serialize_element("button", attributes={"disabled": True}) == (
-        "<button disabled></button>"
-    )
+    result = serialize_element("button", attributes={"disabled": True})
+
+    assert result == "<button disabled></button>"
 
 
 def test_false_boolean_attribute_is_omitted() -> None:
-    assert serialize_element("button", attributes={"disabled": False}) == (
-        "<button></button>"
-    )
+    result = serialize_element("button", attributes={"disabled": False})
+
+    assert result == "<button></button>"
 
 
 def test_numeric_attribute_values_are_supported() -> None:
@@ -161,10 +161,9 @@ def test_data_aria_and_namespaced_attribute_names_are_supported() -> None:
             "xml:lang": "fr",
         },
     )
+    expected = '<div aria-label="Label" data-id="42" xml:lang="fr"></div>'
 
-    assert result == (
-        '<div aria-label="Label" data-id="42" xml:lang="fr"></div>'
-    )
+    assert result == expected
 
 
 def test_void_element_uses_html5_form_without_closing_tag() -> None:
