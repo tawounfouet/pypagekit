@@ -4,6 +4,7 @@ import re
 from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
+from urllib.parse import unquote
 
 from pypagekit.exceptions import (
     DuplicateAssetTargetError,
@@ -13,13 +14,14 @@ from pypagekit.exceptions import (
 )
 
 _CONTROL_RE = re.compile(r"[\x00-\x1f\x7f]")
+_PERCENT_ESCAPE_RE = re.compile(r"%(?![0-9A-Fa-f]{2})")
 
 
 def validate_asset_target(target: PurePosixPath) -> None:
-    """Validate an output-root-relative POSIX target path."""
+    """Validate an output-root-relative portable POSIX target path."""
 
-    if not isinstance(target, PurePosixPath):
-        raise TypeError("Asset target must be a PurePosixPath.")
+    if not isinstance(target, PurePosixPath) or isinstance(target, Path):
+        raise TypeError("Asset target must be a pathlib.PurePosixPath.")
     if target.is_absolute():
         raise InvalidAssetTargetError("Asset target must be relative to the output root.")
     if target == PurePosixPath("."):
@@ -35,6 +37,24 @@ def validate_asset_target(target: PurePosixPath) -> None:
     if "?" in serialized or "#" in serialized:
         raise InvalidAssetTargetError(
             "Asset target must be a path, not a URL with query or fragment."
+        )
+    if ":" in serialized:
+        raise InvalidAssetTargetError("Asset target must not contain ':' characters.")
+    if _PERCENT_ESCAPE_RE.search(serialized):
+        raise InvalidAssetTargetError("Asset target contains an invalid percent escape.")
+
+    decoded = unquote(serialized)
+    if _CONTROL_RE.search(decoded):
+        raise InvalidAssetTargetError("Asset target must not encode control characters.")
+    if "\\" in decoded:
+        raise InvalidAssetTargetError("Asset target must not encode backslash separators.")
+    if decoded.count("/") != serialized.count("/"):
+        raise InvalidAssetTargetError("Asset target must not encode slash separators.")
+
+    decoded_parts = PurePosixPath(decoded).parts
+    if any(part in {".", ".."} for part in decoded_parts):
+        raise InvalidAssetTargetError(
+            "Asset target must not encode '.' or '..' path segments."
         )
 
 
