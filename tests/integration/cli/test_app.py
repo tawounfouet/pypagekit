@@ -67,7 +67,6 @@ def test_cli_help_advertises_only_implemented_workflow_commands() -> None:
 
     assert result.exit_code == SUCCESS
     output = _plain(result.output)
-    assert " new " in output
-    assert " serve " in output
-    for command in ("build", "inspect", "doctor"):
-        assert f" {command} " not in output
+    for command in ("new", "serve", "inspect", "doctor"):
+        assert f" {command} " in output
+    assert " build " not in output

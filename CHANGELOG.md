@@ -4,6 +4,28 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.6.0b2]
+
+### Added
+
+- Public `pypagekit.diagnostics` package.
+- Immutable `DiagnosticCheck`, `DiagnosticReport`, `DiagnosticStatus`, and `ProjectInspection` models.
+- Read-only `DeveloperDiagnostics` service with deterministic Python, package, project, metadata, and generated-output checks.
+- Read-only `ProjectInspector` service that never imports or executes project code.
+- `pypagekit doctor [ROOT]` command.
+- `pypagekit inspect [ROOT]` command.
+- Diagnostic CLI and service coverage plus installed-command smoke checks.
+- Generated-project README guidance for diagnostics and inspection.
+
+### Design
+
+- `doctor` classifies checks as PASS, WARNING, or FAIL; warnings do not make a report unhealthy.
+- Missing `dist/` output is a warning because generation may not have run yet.
+- Missing project definition files and malformed project metadata are failures.
+- `inspect` describes filesystem/package facts without loading `site.py`.
+- Diagnostics perform no project mutation, subprocess execution, or network access.
+- Diagnostics services remain independent from Typer and Rich.
+
 ## [0.6.0b1]
 
 ### Added

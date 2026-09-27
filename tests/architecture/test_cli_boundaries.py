@@ -9,6 +9,7 @@ CORE_PACKAGES = (
     "rendering",
     "build",
     "development",
+    "diagnostics",
     "project",
 )
 FORBIDDEN_CLI_DEPENDENCIES = {"typer", "rich"}
