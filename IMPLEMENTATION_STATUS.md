@@ -20,6 +20,10 @@
 | LOT-16 | Route Model | QUALIFIED | `0.4.0a1` |
 | LOT-17 | Navigation Model | QUALIFIED | `0.4.0a2` |
 | LOT-18 | Sitemap & Site Model | QUALIFIED | `0.4.0b1` |
+| LOT-19 | Assets | QUALIFIED | `0.5.0a1` |
+| LOT-20 | Build Pipeline | NOT STARTED | `0.5.0a2` |
+| LOT-21 | Filesystem Output | NOT STARTED | `0.5.0b1` |
+| LOT-22 | Static Site Generation | NOT STARTED | `0.5.0b2` |
 
 ## LOT-07 exit criteria
 
@@ -361,4 +365,33 @@ Next: **LOT-19 — Assets**.
 - Site centralizes route identity and validates navigation consistency
 - Sitemap is derived deterministically from the canonical site route set
 - security coverage proves site lookup inherits route-path protections
+- GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
+
+
+## LOT-19 exit criteria
+
+- [x] public immutable `Asset` declaration exists
+- [x] asset source is represented by `pathlib.Path`
+- [x] asset target is represented by `PurePosixPath`
+- [x] target is relative to the future output root
+- [x] target traversal segments fail explicitly
+- [x] target backslash/control/query/fragment ambiguity fails explicitly
+- [x] encoded separators/traversal/control ambiguity fails explicitly
+- [x] public path is derived deterministically from target
+- [x] public immutable `Assets` collection exists
+- [x] asset declaration order is preserved
+- [x] duplicate publish targets fail explicitly
+- [x] same source may be published to distinct targets
+- [x] target lookup returns canonical Asset objects
+- [x] source existence is not checked
+- [x] no source files are read or copied
+- [x] no filesystem output is performed
+
+Next: **LOT-20 — Build Pipeline**.
+
+## LOT-19 qualification evidence
+
+- asset declarations are pure domain values with no I/O
+- target validation protects the future output boundary before filesystem planning exists
+- collection-level validation detects target collisions deterministically
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate

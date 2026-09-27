@@ -1,6 +1,7 @@
 """Public core-domain API for PyPageKit."""
 
 from .action import Action, Link
+from .asset import Asset, Assets, validate_asset_target
 from .attributes import Attributes
 from .base import Content, Node
 from .component import Component
@@ -17,6 +18,8 @@ from .text import Heading, Paragraph, Text
 
 __all__ = [
     "Action",
+    "Asset",
+    "Assets",
     "Attributes",
     "Component",
     "ComponentRef",
@@ -44,4 +47,5 @@ __all__ = [
     "Text",
     "bind_slots",
     "normalize_route_path",
+    "validate_asset_target",
 ]

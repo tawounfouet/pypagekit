@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-18 — Sitemap & Site Model** (`0.4.0b1`).
+Current implementation milestone: **LOT-19 — Assets** (`0.5.0a1`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -40,7 +40,8 @@ Implemented so far:
 - explicit immutable component registry and symbolic component references;
 - canonical logical routes that bind URL paths to pages;
 - immutable hierarchical navigation that references those routes directly;
-- a canonical Site aggregate with deterministic Sitemap projection.
+- a canonical Site aggregate with deterministic Sitemap projection;
+- declarative static assets with validated publish targets and no filesystem I/O.
 
 ## Quick example
 
@@ -165,7 +166,7 @@ python -m build
 0.2.x  Rendering               ✅ feature-complete
 0.3.x  Components              ✅ feature-complete
 0.4.x  Routing & Site           ✅ feature-complete
-0.5.x  Static Build              ← next
+0.5.x  Static Build              ← current
 0.6.x  CLI & Developer Workflow
 0.7.x  Extensibility
 0.8.x  Hardening
@@ -173,7 +174,7 @@ python -m build
 1.0.0  Stable
 ```
 
-The `0.4.x — Routing & Site` line is now feature-complete. The next milestone is **LOT-19 — Assets** (`0.5.x`).
+The current release line is **`0.5.x — Static Build`**. The next milestone is **LOT-20 — Build Pipeline**.
 
 
 ## Controlled attributes
@@ -609,3 +610,48 @@ site.route("/docs/") is docs
 ```
 
 `Sitemap` is currently a pure domain projection. XML serialization, build paths, and file output remain later build concerns.
+
+
+## Assets
+
+LOT-19 describes publishable static resources without touching the filesystem:
+
+```python
+from pathlib import Path, PurePosixPath
+
+from pypagekit import Asset, Assets
+
+
+logo = Asset(
+    source=Path("static/logo.png"),
+    target=PurePosixPath("assets/logo.png"),
+)
+
+assets = Assets([logo])
+```
+
+The model deliberately separates local source location from public target:
+
+```text
+Path("static/logo.png")
+        ↓
+      Asset
+        ↓
+PurePosixPath("assets/logo.png")
+        ↓
+public_path == "/assets/logo.png"
+```
+
+The source does not need to exist when the declaration is created. LOT-19 performs no `open()`, `stat()`, copy, mkdir, hash, or write operation.
+
+Asset targets are validated before they can enter future build planning. They must remain relative, POSIX-style, traversal-free, and unambiguous. `Assets` also rejects duplicate targets:
+
+```python
+assets.targets
+# (PurePosixPath("assets/logo.png"),)
+
+assets.public_paths
+# ("/assets/logo.png",)
+```
+
+LOT-20 will consume `Site` + `Assets` to produce a build plan. Physical file operations remain deferred to LOT-21.

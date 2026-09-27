@@ -4,6 +4,28 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.5.0a1]
+
+### Added
+
+- Public immutable `Asset(source, target)` declaration.
+- Public immutable `Assets` collection with deterministic ordering and target lookup.
+- Root-relative `Asset.public_path` derived from a validated POSIX publish target.
+- Duplicate publish-target detection.
+- Strict portable asset-target validation for traversal, separators, controls, query/fragment markers, colon characters, and percent-encoded ambiguity.
+- Asset-specific validation and lookup errors.
+- LOT-19 unit and security coverage.
+
+### Design
+
+- Asset sources are `pathlib.Path` values but are never opened, stat'ed, copied, or validated for existence in LOT-19.
+- Asset targets are `PurePosixPath` values relative to the future output root.
+- Multiple asset declarations may reuse one source when their targets differ.
+- `Assets` remains independent from `Site`; LOT-20 will combine logical site and asset declarations into build planning.
+- Public asset references are logical root-relative paths, not filesystem output operations.
+- No directory creation, copying, hashing, fingerprinting, bundling, or file writing is introduced.
+
+
 ## [0.4.0b1]
 
 ### Added
