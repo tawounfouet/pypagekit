@@ -1,4 +1,6 @@
-from pypagekit import (
+from pathlib import Path, PurePosixPath\n\nfrom pypagekit import (
+    Asset,
+    Assets,
     Attributes,
     Component,
     ComponentRef,
@@ -30,7 +32,9 @@ from pypagekit.domain import Action, Media
 from pypagekit.exceptions import (
     ComponentError,
     ComponentRegistryError,
+    DuplicateAssetTargetError,
     DuplicateComponentRegistrationError,
+    InvalidAssetError,
     InvalidAttributeError,
     InvalidComponentNameError,
     InvalidLayoutError,
@@ -53,6 +57,9 @@ from pypagekit.rendering import HtmlRenderer, Renderer
 
 def test_package_imports() -> None:
     assert __version__
+    asset = Asset(Path("logo.png"), PurePosixPath("assets/logo.png"))
+    assert isinstance(asset, Asset)
+    assert isinstance(Assets([asset]), Assets)
     assert issubclass(Content, Node)
     assert issubclass(Page, Node)
     root_route = Route("/", Page("Root"))
@@ -84,6 +91,7 @@ def test_package_imports() -> None:
     assert issubclass(Section, Component)
     assert issubclass(Card, Component)
     assert issubclass(Hero, Component)
+    assert issubclass(DuplicateAssetTargetError, InvalidAssetError)
     assert issubclass(ComponentError, Exception)
     assert issubclass(ComponentRegistryError, ComponentError)
     assert issubclass(DuplicateComponentRegistrationError, ComponentRegistryError)
@@ -108,4 +116,4 @@ def test_package_imports() -> None:
 
 
 def test_current_version() -> None:
-    assert __version__ == "0.4.0b1"
+    assert __version__ == "0.5.0a1"
