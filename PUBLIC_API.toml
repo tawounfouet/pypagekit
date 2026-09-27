@@ -1,15 +1,15 @@
 schema_version = 1
-package_version = "0.9.0b1"
+package_version = "0.9.0rc1"
 
 [classifications]
-stable_candidate = "Explicit public Python surface intended for the 1.0 compatibility contract."
+stable = "Frozen public Python surface covered by the PyPageKit 1.0 compatibility contract."
 provisional_public = "Explicitly public today, but still eligible for refinement during the 0.9 freeze cycle."
 operational_contract = "User-visible non-import contract such as CLI commands, exit semantics, or plugin metadata names."
 internal = "Importable implementation detail with no compatibility promise."
 
 [[modules]]
 name = "pypagekit"
-classification = "stable_candidate"
+classification = "stable"
 exports = [
   "Asset",
   "Assets",
@@ -43,7 +43,7 @@ exports = [
 
 [[modules]]
 name = "pypagekit.domain"
-classification = "stable_candidate"
+classification = "stable"
 exports = [
   "Action",
   "Asset",
@@ -80,7 +80,7 @@ exports = [
 
 [[modules]]
 name = "pypagekit.components"
-classification = "stable_candidate"
+classification = "stable"
 exports = [
   "Card",
   "ComponentFactory",
@@ -92,7 +92,7 @@ exports = [
 
 [[modules]]
 name = "pypagekit.rendering"
-classification = "stable_candidate"
+classification = "stable"
 exports = [
   "HtmlRenderer",
   "Renderer",
@@ -100,7 +100,7 @@ exports = [
 
 [[modules]]
 name = "pypagekit.build"
-classification = "stable_candidate"
+classification = "stable"
 exports = [
   "AssetBuildEntry",
   "BuildPlan",
@@ -116,7 +116,7 @@ exports = [
 
 [[modules]]
 name = "pypagekit.project"
-classification = "stable_candidate"
+classification = "stable"
 exports = [
   "ExistingProjectFileError",
   "InvalidProjectNameError",
@@ -137,7 +137,7 @@ exports = [
 
 [[modules]]
 name = "pypagekit.development"
-classification = "stable_candidate"
+classification = "stable"
 exports = [
   "DevelopmentServer",
   "DevelopmentServerBindError",
@@ -152,7 +152,7 @@ exports = [
 
 [[modules]]
 name = "pypagekit.diagnostics"
-classification = "stable_candidate"
+classification = "stable"
 exports = [
   "DeveloperDiagnostics",
   "DiagnosticCheck",
@@ -166,7 +166,7 @@ exports = [
 
 [[modules]]
 name = "pypagekit.extensions"
-classification = "stable_candidate"
+classification = "stable"
 exports = [
   "BUILD_PLANNER_ENTRY_POINT_GROUP",
   "BUILD_PLANNER_EXTENSION_ID",
@@ -201,7 +201,7 @@ exports = [
 
 [[modules]]
 name = "pypagekit.exceptions"
-classification = "stable_candidate"
+classification = "stable"
 exports = [
   "AssetSourceOutputConflictError",
   "BuildError",
