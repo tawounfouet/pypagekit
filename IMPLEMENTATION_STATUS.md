@@ -33,7 +33,7 @@
 | LOT-29 | Plugin Discovery & Entry Points | QUALIFIED | `0.7.0b1` |
 | LOT-30 | Plugin Lifecycle & Conformance | QUALIFIED | `0.7.0b2` |
 | LOT-31 | Security Hardening | QUALIFIED | `0.8.0a1` |
-| LOT-32 | Reliability & Failure Hardening | IN QUALIFICATION | `0.8.0a2` |
+| LOT-32 | Reliability & Failure Hardening | QUALIFIED | `0.8.0a2` |
 | LOT-33 | Performance & Scalability Hardening | NOT STARTED | `0.8.0b1` |
 | LOT-34 | Public API Inventory & Stability Classification | NOT STARTED | `0.9.0a1` |
 | LOT-35 | Compatibility, Deprecation & Migration | NOT STARTED | `0.9.0b1` |
@@ -895,6 +895,6 @@ Next after qualification: **LOT-32 — Reliability & Failure Hardening** (`0.8.0
 - [x] original extension factory exceptions remain available as cause
 - [x] plugin lifecycle conformance remains fault-isolating with factory failures
 - [x] package version advances to `0.8.0a2`
-- [ ] GitHub CI qualification is fully green
+- [x] GitHub CI qualification is fully green
 
 Next after qualification: **LOT-33 — Performance & Scalability Hardening** (`0.8.0b1`).
