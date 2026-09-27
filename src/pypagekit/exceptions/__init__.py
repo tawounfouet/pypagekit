@@ -2,6 +2,7 @@
 
 from .domain import (
     DomainError,
+    InvalidContainerChildError,
     InvalidHeadingLevelError,
     InvalidPageContentError,
     InvalidPageLanguageError,
@@ -12,6 +13,7 @@ from .domain import (
 
 __all__ = [
     "DomainError",
+    "InvalidContainerChildError",
     "InvalidHeadingLevelError",
     "InvalidPageContentError",
     "InvalidPageLanguageError",
