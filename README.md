@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-12 — Layout Model** (`0.3.0a2`).
+Current implementation milestone: **LOT-13 — Reusable Components** (`0.3.0b1`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -34,7 +34,8 @@ Implemented so far:
 - adversarial XSS coverage for text, attributes, nested composition, and unsafe schemes;
 - deterministic page metadata rendering for title, language, charset, and description;
 - reusable component abstraction with explicit runtime resolution;
-- named structural layouts and regions without CSS assumptions.
+- named structural layouts and regions without CSS assumptions;
+- built-in reusable components composed entirely from the existing domain primitives.
 
 ## Quick example
 
@@ -167,7 +168,7 @@ python -m build
 1.0.0  Stable
 ```
 
-The current release line is **`0.3.x — Components`**. The next milestone is **LOT-13 — Reusable Components**.
+The current release line is **`0.3.x — Components`**. The next milestone is **LOT-14 — Slots & Composition**.
 
 
 ## Controlled attributes
@@ -282,3 +283,46 @@ HtmlRenderer
 ```
 
 Dynamic slots remain a later concern in LOT-14.
+
+
+## Built-in reusable components
+
+LOT-13 introduces a deliberately small catalogue under `pypagekit.components`:
+
+```python
+from pypagekit import Paragraph
+from pypagekit.components import Card, Hero, Section
+
+
+hero = Hero(
+    "Welcome",
+    body="Build pages from structured Python objects.",
+)
+
+section = Section(
+    "Overview",
+    [
+        Paragraph("First block."),
+        Card(
+            [Paragraph("Reusable content.")],
+            title="Card title",
+        ),
+    ],
+)
+```
+
+The built-ins remain ordinary components:
+
+```text
+Section / Card / Hero
+        ↓ compose()
+core Content primitives
+        ↓
+ComponentRuntime
+        ↓
+HtmlRenderer
+```
+
+They add no implicit CSS classes, hidden data markers, event handlers, or alternate renderer behavior. Styling remains opt-in through the existing `Attributes` model.
+
+Dynamic named slots are intentionally deferred to LOT-14.
