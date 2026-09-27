@@ -4,6 +4,36 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.6.0b1]
+
+### Added
+
+- Public `pypagekit.development` package.
+- Immutable `DevelopmentServerConfig` and `DevelopmentServerInfo`.
+- Explicit `DevelopmentServer` service and managed `DevelopmentServerSession`.
+- Local threaded static HTTP serving using the Python standard library.
+- Ephemeral port support in the Python API for deterministic tests and embedding.
+- Pretty static URL support through generated directory indexes.
+- `Cache-Control: no-store` on development responses.
+- Directory listing disabled when no index file exists.
+- Request-path confinement to the configured static root.
+- Rejection of symlinked static roots, root ancestors, and requested symlink paths.
+- Encoded traversal/backslash protections.
+- Framework-specific bind/root/host/port errors.
+- `pypagekit serve [ROOT]` command with `--host` and `--port`.
+- Generated project README guidance for local preview.
+- HTTP integration, security, CLI, and installed-command smoke coverage.
+
+### Design
+
+- LOT-25 serves already-generated static output; it does not implicitly build projects.
+- The default root is `dist/`, host is `127.0.0.1`, and port is `8000`.
+- The development server never changes the process current working directory.
+- Typer remains an adapter over the development service.
+- The server is intentionally local/static: no watch mode, hot reload, project loading, browser auto-open, TLS, or production-server claims are introduced.
+- Development services remain independent from Typer and Rich.
+
+
 ## [0.6.0a2]
 
 ### Added

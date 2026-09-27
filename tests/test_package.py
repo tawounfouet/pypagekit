@@ -41,6 +41,11 @@ from pypagekit.build import (
     route_output_target,
 )
 from pypagekit.components import Card, ComponentRegistry, ComponentRuntime, Hero, Section
+from pypagekit.development import (
+    DevelopmentServer,
+    DevelopmentServerConfig,
+    DevelopmentServerInfo,
+)
 from pypagekit.domain import Action, Media
 from pypagekit.exceptions import (
     AssetSourceOutputConflictError,
@@ -98,6 +103,16 @@ def test_package_imports() -> None:
         ProjectPlan,
     )
     assert isinstance(ProjectScaffolder(), ProjectScaffolder)
+    development_root = Path(".")
+    assert isinstance(
+        DevelopmentServerConfig(development_root),
+        DevelopmentServerConfig,
+    )
+    assert isinstance(
+        DevelopmentServerInfo(development_root, "127.0.0.1", 8000),
+        DevelopmentServerInfo,
+    )
+    assert isinstance(DevelopmentServer(), DevelopmentServer)
     write_result = FilesystemWriteResult(Path("dist"), (), ())
     assert isinstance(write_result, FilesystemWriteResult)
     assert isinstance(
@@ -176,4 +191,4 @@ def test_package_imports() -> None:
 
 
 def test_current_version() -> None:
-    assert __version__ == "0.6.0a2"
+    assert __version__ == "0.6.0b1"

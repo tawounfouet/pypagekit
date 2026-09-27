@@ -73,4 +73,5 @@ jobs:
           pypagekit --version
           pypagekit --help
           pypagekit new --help
+          pypagekit serve --help
           python -m pypagekit --version

@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-24 — Project Scaffolding** (`0.6.0a2`).
+Current implementation milestone: **LOT-25 — Development Server** (`0.6.0b1`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -46,7 +46,8 @@ Implemented so far:
 - safe filesystem materialization of qualified build plans;
 - end-to-end static-site generation through a thin orchestration facade;
 - Typer + Rich CLI foundations with installed shell and module entry points;
-- safe project scaffolding through `pypagekit new`.
+- safe project scaffolding through `pypagekit new`;
+- local static development serving through `pypagekit serve`.
 
 ## Quick example
 
@@ -179,7 +180,7 @@ python -m build
 1.0.0  Stable
 ```
 
-The current release line is **`0.6.x — CLI & Developer Workflow`**. The next milestone is **LOT-25 — Development Server**.
+The current release line is **`0.6.x — CLI & Developer Workflow`**. The next milestone is **LOT-26 — Developer Diagnostics**.
 
 
 ## Controlled attributes
@@ -993,3 +994,74 @@ result = ProjectScaffolder().scaffold(Path("my-site"))
 ```
 
 LOT-24 deliberately does not add project loading or a CLI build command. The generated `site.py` uses the already-qualified Python generation API directly.
+
+
+## Development server
+
+LOT-25 adds a local static preview server:
+
+```bash
+python site.py
+pypagekit serve
+```
+
+By default it serves:
+
+```text
+root  = dist/
+host  = 127.0.0.1
+port  = 8000
+```
+
+Custom values are explicit:
+
+```bash
+pypagekit serve public --host 0.0.0.0 --port 9000
+```
+
+The architecture remains separated:
+
+```text
+pypagekit serve
+      ↓
+Typer adapter
+      ↓
+DevelopmentServerConfig
+      ↓
+DevelopmentServer
+      ↓
+stdlib ThreadingHTTPServer
+      ↓
+generated static output
+```
+
+The service is also available directly from Python:
+
+```python
+from pathlib import Path
+from pypagekit.development import DevelopmentServer, DevelopmentServerConfig
+
+config = DevelopmentServerConfig(
+    Path("dist"),
+    host="127.0.0.1",
+    port=8000,
+)
+
+DevelopmentServer().serve(config)
+```
+
+LOT-25 intentionally does not build the site automatically. It serves an already-generated directory. This keeps project execution/build semantics separate from HTTP serving.
+
+Development safety rules include:
+
+```text
+directory listing          disabled
+browser cache              no-store
+root symlink               rejected
+root-ancestor symlink      rejected
+requested symlink path     rejected
+encoded traversal          confined / rejected
+process cwd mutation       none
+```
+
+This server is a development convenience, not a production HTTP server. Watch mode and hot reload remain outside LOT-25.

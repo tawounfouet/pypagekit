@@ -26,7 +26,7 @@
 | LOT-22 | Static Site Generation | QUALIFIED | `0.5.0b2` |
 | LOT-23 | CLI Foundations | QUALIFIED | `0.6.0a1` |
 | LOT-24 | Project Scaffolding | QUALIFIED | `0.6.0a2` |
-| LOT-25 | Development Server | NOT STARTED | `0.6.0b1` |
+| LOT-25 | Development Server | QUALIFIED | `0.6.0b1` |
 | LOT-26 | Developer Diagnostics | NOT STARTED | `0.6.0b2` |
 
 ## LOT-07 exit criteria
@@ -568,4 +568,47 @@ Next: **LOT-25 — Development Server**.
 - project scaffolding works through both the Python service and Typer adapter
 - the generated scaffold is valid and immediately executable
 - preflight and symlink tests protect project creation boundaries
+- GitHub CI is the authoritative Ruff, formatting, mypy, pytest, package, and CLI-smoke gate
+
+
+## LOT-25 exit criteria
+
+- [x] public pypagekit.development package exists
+- [x] immutable DevelopmentServerConfig exists
+- [x] immutable DevelopmentServerInfo exists
+- [x] public DevelopmentServer service exists
+- [x] explicit DevelopmentServerSession lifecycle exists
+- [x] static root must already exist and be a directory
+- [x] static root symlinks fail explicitly
+- [x] static-root ancestor symlinks fail explicitly
+- [x] host and port validation are explicit
+- [x] Python API supports ephemeral port 0
+- [x] CLI port range remains 1..65535
+- [x] server never changes process cwd
+- [x] root index.html is served
+- [x] pretty nested directory index routes are served
+- [x] binary assets are served
+- [x] directory listing is disabled
+- [x] development responses disable caching
+- [x] missing resources return 404
+- [x] encoded traversal cannot escape the root
+- [x] encoded backslash ambiguity cannot escape the root
+- [x] symlinked files/directories inside the root are not served
+- [x] bind conflicts raise a framework-specific error
+- [x] pypagekit serve is registered
+- [x] serve defaults to dist / 127.0.0.1 / 8000
+- [x] --host and --port are supported
+- [x] runtime server failures become stderr + exit code 1
+- [x] CLI validation failures remain usage exit code 2
+- [x] generated project README documents pypagekit serve
+- [x] no implicit build, watch, hot reload, or production-server behavior is introduced
+- [x] development services remain independent from Typer and Rich
+
+Next: **LOT-26 — Developer Diagnostics**.
+
+## LOT-25 qualification evidence
+
+- the static development server is independently usable from Python and the CLI
+- actual HTTP tests cover pages, assets, cache headers, traversal and symlink boundaries
+- CLI tests prove deterministic host/port/root delegation and exit-code behavior
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, package, and CLI-smoke gate
