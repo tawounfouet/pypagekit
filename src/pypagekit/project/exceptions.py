@@ -35,12 +35,17 @@ class ProjectScaffoldWriteError(ProjectScaffoldingError):
     """Raised when project materialization fails after successful preflight."""
 
 
+class ProjectScaffoldRollbackError(ProjectScaffoldWriteError):
+    """Raised when project files cannot be restored after a write failure."""
+
+
 __all__ = [
     "ExistingProjectFileError",
     "InvalidProjectNameError",
     "InvalidProjectTargetError",
     "ProjectError",
     "ProjectPathConflictError",
+    "ProjectScaffoldRollbackError",
     "ProjectScaffoldWriteError",
     "ProjectScaffoldingError",
     "ProjectSymlinkError",
