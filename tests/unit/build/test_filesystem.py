@@ -3,6 +3,8 @@ from pathlib import Path, PurePosixPath
 
 import pytest
 
+import pypagekit.build.filesystem as filesystem_module
+
 from pypagekit import Asset, Page, Route
 from pypagekit.build import (
     AssetBuildEntry,
@@ -14,6 +16,7 @@ from pypagekit.build import (
 from pypagekit.exceptions import (
     AssetSourceOutputConflictError,
     ExistingOutputError,
+    FilesystemWriteError,
     InvalidAssetSourceForOutputError,
     InvalidOutputRootError,
     OutputPathConflictError,
@@ -168,6 +171,23 @@ def test_missing_asset_source_fails_before_output_root_creation(tmp_path: Path) 
     assert not output_root.exists()
 
 
+def test_broken_asset_source_symlink_fails_before_output_creation(
+    tmp_path: Path,
+) -> None:
+    missing = tmp_path / "missing.txt"
+    source = tmp_path / "broken.txt"
+    source.symlink_to(missing)
+    output_root = tmp_path / "dist"
+
+    with pytest.raises(InvalidAssetSourceForOutputError, match="broken symlink"):
+        FilesystemWriter().write(
+            BuildPlan(assets=[asset_entry(source, "assets/broken.txt")]),
+            output_root,
+        )
+
+    assert not output_root.exists()
+
+
 def test_asset_source_must_be_regular_file(tmp_path: Path) -> None:
     source = tmp_path / "source-dir"
     source.mkdir()
@@ -239,6 +259,25 @@ def test_writer_rejects_invalid_arguments(tmp_path: Path) -> None:
         writer.write(BuildPlan(), "dist")  # type: ignore[arg-type]
     with pytest.raises(TypeError, match="bool"):
         writer.write(BuildPlan(), tmp_path / "dist", overwrite=1)  # type: ignore[arg-type]
+
+
+def test_unexpected_io_failure_is_wrapped(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = tmp_path / "source.bin"
+    source.write_bytes(b"source")
+
+    def fail_copy(*args: object, **kwargs: object) -> None:
+        raise OSError("simulated copy failure")
+
+    monkeypatch.setattr(filesystem_module.shutil, "copyfileobj", fail_copy)
+
+    with pytest.raises(FilesystemWriteError, match="Filesystem output failed"):
+        FilesystemWriter().write(
+            BuildPlan(assets=[asset_entry(source, "assets/source.bin")]),
+            tmp_path / "dist",
+        )
 
 
 def test_write_result_is_immutable(tmp_path: Path) -> None:
