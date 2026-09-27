@@ -28,9 +28,7 @@ class RendererRegistry:
             seen: set[str] = set()
             for extension in extensions:
                 if not isinstance(extension, RendererExtension):
-                    raise TypeError(
-                        "Renderer registry entries must be RendererExtension objects."
-                    )
+                    raise TypeError("Renderer registry entries must be RendererExtension objects.")
                 extension_id = extension.descriptor.extension_id
                 if extension_id in seen:
                     raise DuplicateExtensionRegistrationError(
