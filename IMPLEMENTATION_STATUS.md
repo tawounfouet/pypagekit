@@ -33,7 +33,7 @@
 | LOT-29 | Plugin Discovery & Entry Points | QUALIFIED | `0.7.0b1` |
 | LOT-30 | Plugin Lifecycle & Conformance | QUALIFIED | `0.7.0b2` |
 | LOT-31 | Security Hardening | QUALIFIED | `0.8.0a1` |
-| LOT-32 | Reliability & Failure Hardening | NOT STARTED | `0.8.0a2` |
+| LOT-32 | Reliability & Failure Hardening | IN QUALIFICATION | `0.8.0a2` |
 | LOT-33 | Performance & Scalability Hardening | NOT STARTED | `0.8.0b1` |
 | LOT-34 | Public API Inventory & Stability Classification | NOT STARTED | `0.9.0a1` |
 | LOT-35 | Compatibility, Deprecation & Migration | NOT STARTED | `0.9.0b1` |
@@ -867,3 +867,34 @@ Next: **LOT-31 — Security Hardening** (`0.8.0a1`).
 - [x] GitHub CI qualification is fully green
 
 Next after qualification: **LOT-32 — Reliability & Failure Hardening** (`0.8.0a2`).
+
+
+## LOT-32 exit criteria
+
+- [x] build materialization tracks files mutated during one write operation
+- [x] newly created build files are removed after a later write failure
+- [x] partially copied assets are removed after failure
+- [x] overwritten build files are restored after a later failure
+- [x] transaction-created directories are removed when rollback leaves them empty
+- [x] unplanned existing output files remain untouched by rollback
+- [x] ordinary build materialization failures become `FilesystemWriteError`
+- [x] original materialization exception remains available as cause
+- [x] rollback failure becomes explicit `FilesystemRollbackError`
+- [x] project scaffolding uses the same rollback semantics
+- [x] newly scaffolded project trees are removed after failure
+- [x] force-overwritten project files are restored after failure
+- [x] project rollback failure has an explicit public error type
+- [x] known PyPageKit renderer failures preserve their public exception type
+- [x] unexpected renderer failures become `BuildRenderError`
+- [x] unexpected renderer failure reports route context
+- [x] original renderer exception remains available as cause
+- [x] third-party planner output is validated before filesystem materialization
+- [x] invalid planner output becomes `InvalidBuildPlanError`
+- [x] renderer extension factory exceptions become `ExtensionFactoryError`
+- [x] build-planner extension factory exceptions become `ExtensionFactoryError`
+- [x] original extension factory exceptions remain available as cause
+- [x] plugin lifecycle conformance remains fault-isolating with factory failures
+- [x] package version advances to `0.8.0a2`
+- [ ] GitHub CI qualification is fully green
+
+Next after qualification: **LOT-33 — Performance & Scalability Hardening** (`0.8.0b1`).
