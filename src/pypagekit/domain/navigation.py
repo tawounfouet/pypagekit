@@ -72,9 +72,7 @@ class Navigation:
                 "Navigation items must be an iterable of NavigationItem objects."
             ) from exc
 
-        invalid_items = [
-            item for item in normalized_items if not isinstance(item, NavigationItem)
-        ]
+        invalid_items = [item for item in normalized_items if not isinstance(item, NavigationItem)]
         if invalid_items:
             invalid_type = type(invalid_items[0]).__name__
             raise InvalidNavigationChildError(
