@@ -2,8 +2,6 @@
 
 from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import cast
-
 from pypagekit.exceptions import (
     DuplicateExtensionRegistrationError,
     InvalidRendererExtensionError,
@@ -84,7 +82,7 @@ class RendererRegistry:
                 f"Renderer extension '{extension_id}' must produce an object "
                 "with a callable render() method."
             )
-        return cast(Renderer, renderer)
+        return renderer
 
 
 __all__ = ["RendererRegistry"]
