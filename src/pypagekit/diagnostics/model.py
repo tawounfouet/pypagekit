@@ -39,9 +39,7 @@ class DiagnosticReport:
     def warnings(self) -> tuple[DiagnosticCheck, ...]:
         """Return warning checks."""
 
-        return tuple(
-            check for check in self.checks if check.status is DiagnosticStatus.WARNING
-        )
+        return tuple(check for check in self.checks if check.status is DiagnosticStatus.WARNING)
 
     @property
     def failures(self) -> tuple[DiagnosticCheck, ...]:
