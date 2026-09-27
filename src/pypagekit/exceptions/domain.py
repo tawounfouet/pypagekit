@@ -55,3 +55,24 @@ class InvalidDataAttributeNameError(InvalidAttributeError):
 
 class InvalidAriaAttributeNameError(InvalidAttributeError):
     """Raised when an ARIA attribute suffix is structurally invalid."""
+
+
+
+class InvalidLayoutError(ValidationError):
+    """Base exception for invalid layout structure."""
+
+
+class InvalidLayoutRegionNameError(InvalidLayoutError):
+    """Raised when a layout region name is structurally invalid."""
+
+
+class InvalidLayoutRegionChildError(InvalidLayoutError):
+    """Raised when a layout region contains an object that is not Content."""
+
+
+class InvalidLayoutRegionResultError(InvalidLayoutError):
+    """Raised when Layout.regions() yields an object that is not LayoutRegion."""
+
+
+class DuplicateLayoutRegionError(InvalidLayoutError):
+    """Raised when a layout declares the same region name more than once."""
