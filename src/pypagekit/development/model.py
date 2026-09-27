@@ -44,17 +44,13 @@ def _validate_root(root: Path) -> None:
     if not isinstance(root, Path):
         raise TypeError("Development server root must be a pathlib.Path.")
     if not root.exists():
-        raise InvalidDevelopmentRootError(
-            f"Development server root '{root}' does not exist."
-        )
+        raise InvalidDevelopmentRootError(f"Development server root '{root}' does not exist.")
     if root.is_symlink():
         raise InvalidDevelopmentRootError(
             f"Development server root '{root}' must not be a symlink."
         )
     if not root.is_dir():
-        raise InvalidDevelopmentRootError(
-            f"Development server root '{root}' must be a directory."
-        )
+        raise InvalidDevelopmentRootError(f"Development server root '{root}' must be a directory.")
 
     cursor = root.parent
     while True:
@@ -89,9 +85,7 @@ def _validate_port(port: int) -> None:
     if not isinstance(port, int) or isinstance(port, bool):
         raise TypeError("Development server port must be an integer.")
     if port < 0 or port > 65535:
-        raise InvalidDevelopmentPortError(
-            "Development server port must be between 0 and 65535."
-        )
+        raise InvalidDevelopmentPortError("Development server port must be between 0 and 65535.")
 
 
 __all__ = [
