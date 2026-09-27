@@ -24,10 +24,12 @@ from pypagekit.exceptions import (
     ComponentError,
     InvalidAttributeError,
     InvalidLayoutError,
+    InvalidSlotError,
     RenderingError,
     SecurityError,
     SerializationError,
     UnsafeUrlError,
+    UnresolvedSlotError,
     UnsupportedNodeError,
 )
 from pypagekit.rendering import HtmlRenderer, Renderer
@@ -59,6 +61,8 @@ def test_package_imports() -> None:
     assert issubclass(Hero, Component)
     assert issubclass(ComponentError, Exception)
     assert issubclass(InvalidLayoutError, Exception)
+    assert issubclass(InvalidSlotError, Exception)
+    assert issubclass(UnresolvedSlotError, InvalidSlotError)
     assert issubclass(SerializationError, RenderingError)
     assert issubclass(SecurityError, RenderingError)
     assert issubclass(UnsafeUrlError, SecurityError)
