@@ -25,9 +25,7 @@ class Container(Content):
         ]
         if invalid_children:
             invalid_type = type(invalid_children[0]).__name__
-            raise InvalidContainerChildError(
-                "Container children must contain only Content objects; "
-                f"got {invalid_type}."
-            )
+            message = f"Container children must contain only Content objects; got {invalid_type}."
+            raise InvalidContainerChildError(message)
 
         object.__setattr__(self, "children", normalized_children)
