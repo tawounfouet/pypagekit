@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-11 — Component Model** (`0.3.0a1`).
+Current implementation milestone: **LOT-12 — Layout Model** (`0.3.0a2`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -33,7 +33,8 @@ Implemented so far:
 - render-time URL safety validation for links and images;
 - adversarial XSS coverage for text, attributes, nested composition, and unsafe schemes;
 - deterministic page metadata rendering for title, language, charset, and description;
-- reusable component abstraction with explicit runtime resolution.
+- reusable component abstraction with explicit runtime resolution;
+- named structural layouts and regions without CSS assumptions.
 
 ## Quick example
 
@@ -155,8 +156,8 @@ python -m build
 
 ```text
 0.1.x  Domain                  ✅ feature-complete
-0.2.x  Rendering               ← current
-0.3.x  Components
+0.2.x  Rendering               ✅ feature-complete
+0.3.x  Components              ← current
 0.4.x  Routing & Site
 0.5.x  Static Build
 0.6.x  CLI & Developer Workflow
@@ -166,7 +167,7 @@ python -m build
 1.0.0  Stable
 ```
 
-The current release line is **`0.3.x — Components`**. The next milestone is **LOT-12 — Layout Model**.
+The current release line is **`0.3.x — Components`**. The next milestone is **LOT-13 — Reusable Components**.
 
 
 ## Controlled attributes
@@ -236,3 +237,48 @@ HTML
 ```
 
 `ComponentRuntime` validates composition results, resolves nested components, detects active-object cycles, and enforces a configurable nesting-depth guard.
+
+
+## Layouts
+
+Layouts are specialized components that declare ordered structural regions:
+
+```python
+from dataclasses import dataclass
+
+from pypagekit import Layout, LayoutRegion, Paragraph
+
+
+@dataclass(frozen=True, slots=True)
+class AppLayout(Layout):
+    def regions(self) -> tuple[LayoutRegion, ...]:
+        return (
+            LayoutRegion("header", [Paragraph("Header")]),
+            LayoutRegion("main", [Paragraph("Body")]),
+            LayoutRegion("footer", [Paragraph("Footer")]),
+        )
+```
+
+The layout does not choose CSS or grid behavior. It composes into ordinary content, and the HTML renderer currently represents each region neutrally:
+
+```html
+<div data-layout-region="header">...</div>
+<div data-layout-region="main">...</div>
+<div data-layout-region="footer">...</div>
+```
+
+This keeps the responsibility split explicit:
+
+```text
+Layout
+  ↓ regions()
+Structural Regions
+  ↓
+ComponentRuntime
+  ↓
+Resolved Content
+  ↓
+HtmlRenderer
+```
+
+Dynamic slots remain a later concern in LOT-14.

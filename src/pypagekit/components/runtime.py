@@ -1,6 +1,6 @@
 """Runtime resolution for PyPageKit components."""
 
-from pypagekit.domain import Component, Container, Content
+from pypagekit.domain import Component, Container, Content, LayoutRegion
 from pypagekit.exceptions import (
     ComponentCycleError,
     ComponentResolutionDepthError,
@@ -52,23 +52,12 @@ class ComponentRuntime:
             )
 
         if isinstance(content, Container):
-            resolved_children = tuple(
-                self._resolve(
-                    child,
-                    active_component_ids=active_component_ids,
-                    component_depth=component_depth,
-                )
-                for child in content.children
+            resolved_children = self._resolve_children(
+                content.children,
+                active_component_ids=active_component_ids,
+                component_depth=component_depth,
             )
-
-            if all(
-                resolved is original
-                for resolved, original in zip(
-                    resolved_children,
-                    content.children,
-                    strict=True,
-                )
-            ):
+            if resolved_children is content.children:
                 return content
 
             return Container(
@@ -76,7 +65,50 @@ class ComponentRuntime:
                 attributes=content.attributes,
             )
 
+        if isinstance(content, LayoutRegion):
+            resolved_children = self._resolve_children(
+                content.children,
+                active_component_ids=active_component_ids,
+                component_depth=component_depth,
+            )
+            if resolved_children is content.children:
+                return content
+
+            return LayoutRegion(
+                content.name,
+                resolved_children,
+                attributes=content.attributes,
+            )
+
         return content
+
+    def _resolve_children(
+        self,
+        children: tuple[Content, ...],
+        *,
+        active_component_ids: set[int],
+        component_depth: int,
+    ) -> tuple[Content, ...]:
+        resolved_children = tuple(
+            self._resolve(
+                child,
+                active_component_ids=active_component_ids,
+                component_depth=component_depth,
+            )
+            for child in children
+        )
+
+        if all(
+            resolved is original
+            for resolved, original in zip(
+                resolved_children,
+                children,
+                strict=True,
+            )
+        ):
+            return children
+
+        return resolved_children
 
     def _resolve_component(
         self,

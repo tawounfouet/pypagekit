@@ -7,6 +7,8 @@ from .domain import (
     Content,
     Heading,
     Image,
+    Layout,
+    LayoutRegion,
     Link,
     Node,
     Page,
@@ -14,7 +16,7 @@ from .domain import (
     Text,
 )
 
-__version__ = "0.3.0a1"
+__version__ = "0.3.0a2"
 
 __all__ = [
     "Attributes",
@@ -23,6 +25,8 @@ __all__ = [
     "Content",
     "Heading",
     "Image",
+    "Layout",
+    "LayoutRegion",
     "Link",
     "Node",
     "Page",
