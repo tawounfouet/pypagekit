@@ -93,10 +93,7 @@ def test_stable_candidate_facades_are_explicit() -> None:
     modules = inventory["modules"]
     assert isinstance(modules, list)
 
-    classifications = {
-        module["name"]: module["classification"]
-        for module in modules
-    }
+    classifications = {module["name"]: module["classification"] for module in modules}
 
     assert classifications["pypagekit"] == "stable_candidate"
     assert classifications["pypagekit.domain"] == "stable_candidate"
