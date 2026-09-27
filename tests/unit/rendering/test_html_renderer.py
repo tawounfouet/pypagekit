@@ -56,9 +56,7 @@ def test_heading_text_is_escaped() -> None:
 def test_paragraph_renders_with_escaped_text() -> None:
     renderer = HtmlRenderer()
 
-    assert renderer.render(Paragraph('A & "B" <C>')) == (
-        '<p>A &amp; "B" &lt;C&gt;</p>'
-    )
+    assert renderer.render(Paragraph('A & "B" <C>')) == ('<p>A &amp; "B" &lt;C&gt;</p>')
 
 
 def test_container_renders_children_recursively_in_order() -> None:
@@ -71,9 +69,7 @@ def test_container_renders_children_recursively_in_order() -> None:
         ]
     )
 
-    assert renderer.render(container) == (
-        "<div><h1>First</h1><p>Second</p>Third</div>"
-    )
+    assert renderer.render(container) == ("<div><h1>First</h1><p>Second</p>Third</div>")
 
 
 def test_nested_containers_render_recursively() -> None:
@@ -114,10 +110,7 @@ def test_image_renders_as_void_element() -> None:
         src='/assets/logo?a=1&b="two"',
         alt='A & "logo"',
     )
-    expected = (
-        '<img alt="A &amp; &quot;logo&quot;" '
-        'src="/assets/logo?a=1&amp;b=&quot;two&quot;">'
-    )
+    expected = '<img alt="A &amp; &quot;logo&quot;" src="/assets/logo?a=1&amp;b=&quot;two&quot;">'
 
     assert renderer.render(image) == expected
 
@@ -125,17 +118,13 @@ def test_image_renders_as_void_element() -> None:
 def test_decorative_image_preserves_empty_alt() -> None:
     renderer = HtmlRenderer()
 
-    assert renderer.render(Image("/decorative.png", "")) == (
-        '<img alt="" src="/decorative.png">'
-    )
+    assert renderer.render(Image("/decorative.png", "")) == ('<img alt="" src="/decorative.png">')
 
 
 def test_renderer_preserves_unicode() -> None:
     renderer = HtmlRenderer()
 
-    assert renderer.render(Paragraph("Café 東京 你好 🔥")) == (
-        "<p>Café 東京 你好 🔥</p>"
-    )
+    assert renderer.render(Paragraph("Café 東京 你好 🔥")) == ("<p>Café 東京 你好 🔥</p>")
 
 
 def test_renderer_rejects_unknown_node_type() -> None:
