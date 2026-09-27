@@ -12,6 +12,11 @@
 | LOT-08 | Security & Escaping | QUALIFIED | `0.2.0b1` |
 | LOT-09 | Page Metadata | QUALIFIED | `0.2.0b2` |
 | LOT-10 | Attributes & Styling Hooks | QUALIFIED | `0.2.0b3` |
+| LOT-11 | Component Model | QUALIFIED | `0.3.0a1` |
+| LOT-12 | Layout Model | NOT STARTED | `0.3.0a2` |
+| LOT-13 | Reusable Components | NOT STARTED | `0.3.0b1` |
+| LOT-14 | Slots & Composition | NOT STARTED | `0.3.0b2` |
+| LOT-15 | Component Registry | NOT STARTED | `0.3.0b3` |
 
 ## LOT-07 exit criteria
 
@@ -119,4 +124,33 @@ Next: **LOT-11 — Component Model**.
 - controlled domain attribute surface added without `dict[str, Any]`
 - renderer maps domain hooks to serializer attributes through an internal adapter
 - security corpus covers id/class/title/data/aria injection attempts
+- GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
+
+
+## LOT-11 exit criteria
+
+- [x] public abstract `Component` derives from `Content`
+- [x] `Component.compose() -> Content` is the composition contract
+- [x] components have no rendering method
+- [x] public `ComponentRuntime` resolves components explicitly
+- [x] components may return ordinary content
+- [x] components may return other components
+- [x] components nested inside containers resolve recursively
+- [x] invalid compose results fail explicitly
+- [x] direct component cycles are detected
+- [x] indirect component cycles are detected
+- [x] fresh recursive component generation is bounded by max depth
+- [x] unchanged ordinary content preserves identity
+- [x] source containers are not mutated during resolution
+- [x] `HtmlRenderer` resolves components before HTML mapping
+- [x] existing escaping and URL security still apply to component output
+- [x] layouts, slots, registry, and reusable component catalogues remain deferred
+
+Next: **LOT-12 — Layout Model**.
+
+## LOT-11 qualification evidence
+
+- component composition remains domain-first and renderer-independent
+- explicit runtime isolates composition resolution from HTML serialization
+- integration tests cover `Component → Content → HtmlRenderer`
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
