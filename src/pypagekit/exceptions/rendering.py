@@ -7,6 +7,10 @@ class RenderingError(PyPageKitError):
     """Base exception for failures while producing a representation."""
 
 
+class UnsupportedNodeError(RenderingError):
+    """Raised when a renderer does not support a domain node type."""
+
+
 class SerializationError(RenderingError):
     """Base exception for invalid HTML serialization operations."""
 
