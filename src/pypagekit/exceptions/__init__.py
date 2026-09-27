@@ -1,5 +1,11 @@
 """Public PyPageKit exception hierarchy."""
 
+from .component import (
+    ComponentCycleError,
+    ComponentError,
+    ComponentResolutionDepthError,
+    InvalidComponentResultError,
+)
 from .domain import (
     DomainError,
     InvalidAriaAttributeNameError,
@@ -28,10 +34,14 @@ from .rendering import (
 )
 
 __all__ = [
+    "ComponentCycleError",
+    "ComponentError",
+    "ComponentResolutionDepthError",
     "DomainError",
     "InvalidAriaAttributeNameError",
     "InvalidAttributeError",
     "InvalidClassTokenError",
+    "InvalidComponentResultError",
     "InvalidContainerChildError",
     "InvalidDataAttributeNameError",
     "InvalidHeadingLevelError",
