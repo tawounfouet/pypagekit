@@ -1,6 +1,8 @@
 """PyPageKit public package."""
 
 from .domain import (
+    Asset,
+    Assets,
     Attributes,
     Component,
     ComponentRef,
@@ -28,9 +30,11 @@ from .domain import (
     bind_slots,
 )
 
-__version__ = "0.4.0b1"
+__version__ = "0.5.0a1"
 
 __all__ = [
+    "Asset",
+    "Assets",
     "Attributes",
     "Component",
     "ComponentRef",
