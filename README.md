@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-13 — Reusable Components** (`0.3.0b1`).
+Current implementation milestone: **LOT-14 — Slots & Composition** (`0.3.0b2`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -35,7 +35,8 @@ Implemented so far:
 - deterministic page metadata rendering for title, language, charset, and description;
 - reusable component abstraction with explicit runtime resolution;
 - named structural layouts and regions without CSS assumptions;
-- built-in reusable components composed entirely from the existing domain primitives.
+- built-in reusable components composed entirely from the existing domain primitives;
+- named slot composition with wrapperless multi-node injection.
 
 ## Quick example
 
@@ -168,7 +169,7 @@ python -m build
 1.0.0  Stable
 ```
 
-The current release line is **`0.3.x — Components`**. The next milestone is **LOT-14 — Slots & Composition**.
+The current release line is **`0.3.x — Components`**. The next milestone is **LOT-15 — Component Registry**.
 
 
 ## Controlled attributes
@@ -282,7 +283,7 @@ Resolved Content
 HtmlRenderer
 ```
 
-Dynamic slots remain a later concern in LOT-14.
+Layouts may now declare and bind named slots while remaining structurally renderer-independent.
 
 
 ## Built-in reusable components
@@ -325,4 +326,75 @@ HtmlRenderer
 
 They add no implicit CSS classes, hidden data markers, event handlers, or alternate renderer behavior. Styling remains opt-in through the existing `Attributes` model.
 
-Dynamic named slots are intentionally deferred to LOT-14.
+Named slots are now available through LOT-14.
+
+
+## Slots and wrapperless composition
+
+LOT-14 adds explicit named injection points:
+
+```python
+from dataclasses import dataclass
+
+from pypagekit import (
+    Content,
+    Fragment,
+    Paragraph,
+    Slot,
+    SlotBindings,
+    SlottedComponent,
+)
+
+
+@dataclass(frozen=True, slots=True)
+class Shell(SlottedComponent):
+    bindings: SlotBindings
+
+    def template(self) -> Content:
+        return Fragment(
+            [
+                Paragraph("Before"),
+                Slot("body", required=True),
+                Paragraph("After"),
+            ]
+        )
+
+    def slot_bindings(self) -> SlotBindings:
+        return self.bindings
+```
+
+Usage:
+
+```python
+shell = Shell(
+    SlotBindings(
+        {
+            "body": [
+                Paragraph("One"),
+                Paragraph("Two"),
+            ]
+        }
+    )
+)
+```
+
+The slot may inject several nodes without creating an artificial wrapper:
+
+```text
+Slot("body")
+    ↓ binding
+Paragraph("One")
+Paragraph("Two")
+    ↓
+Fragment
+    ↓
+ComponentRuntime
+    ↓
+HtmlRenderer
+    ↓
+<p>One</p><p>Two</p>
+```
+
+A missing optional slot uses its fallback, while a required slot must be explicitly bound. An explicit empty binding is valid and intentionally produces no content.
+
+Bindings are lexical: a component or layout resolves only the slots declared in its own template. Global component registration remains the concern of LOT-15.

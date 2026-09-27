@@ -3,6 +3,7 @@ from pypagekit import (
     Component,
     Container,
     Content,
+    Fragment,
     Heading,
     Image,
     Layout,
@@ -11,6 +12,9 @@ from pypagekit import (
     Node,
     Page,
     Paragraph,
+    Slot,
+    SlotBindings,
+    SlottedComponent,
     Text,
     __version__,
 )
@@ -20,9 +24,11 @@ from pypagekit.exceptions import (
     ComponentError,
     InvalidAttributeError,
     InvalidLayoutError,
+    InvalidSlotError,
     RenderingError,
     SecurityError,
     SerializationError,
+    UnresolvedSlotError,
     UnsafeUrlError,
     UnsupportedNodeError,
 )
@@ -36,6 +42,10 @@ def test_package_imports() -> None:
     assert issubclass(Component, Content)
     assert issubclass(Layout, Component)
     assert issubclass(LayoutRegion, Content)
+    assert issubclass(Fragment, Content)
+    assert issubclass(Slot, Content)
+    assert issubclass(SlottedComponent, Component)
+    assert isinstance(SlotBindings(), SlotBindings)
     assert issubclass(Text, Content)
     assert issubclass(Heading, Content)
     assert issubclass(Paragraph, Content)
@@ -51,6 +61,8 @@ def test_package_imports() -> None:
     assert issubclass(Hero, Component)
     assert issubclass(ComponentError, Exception)
     assert issubclass(InvalidLayoutError, Exception)
+    assert issubclass(InvalidSlotError, Exception)
+    assert issubclass(UnresolvedSlotError, InvalidSlotError)
     assert issubclass(SerializationError, RenderingError)
     assert issubclass(SecurityError, RenderingError)
     assert issubclass(UnsafeUrlError, SecurityError)
@@ -62,4 +74,4 @@ def test_package_imports() -> None:
 
 
 def test_current_version() -> None:
-    assert __version__ == "0.3.0b1"
+    assert __version__ == "0.3.0b2"

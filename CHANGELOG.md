@@ -4,6 +4,32 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.3.0b2]
+
+### Added
+
+- Public wrapperless `Fragment(Content)` composition primitive.
+- Public named `Slot(Content)` placeholders with optional fallback content and required-slot semantics.
+- Immutable deterministic `SlotBindings` for explicit named injections.
+- Public abstract `SlottedComponent` with final slot-aware composition.
+- Public `bind_slots()` helper for explicit template composition.
+- Slot support inside `LayoutRegion` through `Layout.slot_bindings()`.
+- Runtime traversal of fragments and explicit rejection of unresolved slots.
+- Wrapperless fragment rendering in `HtmlRenderer`.
+- LOT-14 domain, runtime, layout, rendering, and security coverage.
+
+### Design
+
+- Slots are lexical to the template that declares them; bindings do not implicitly cross component boundaries.
+- Slot names use validated lowercase kebab-case and must be unique within one template.
+- Unknown bindings fail explicitly instead of being silently ignored.
+- Required slots require an explicit binding and cannot define fallback content.
+- Explicit empty bindings are distinct from missing bindings and intentionally render nothing.
+- A slot may inject zero, one, or many content nodes without introducing a wrapper element.
+- Slots remain composition concerns; no HTML representation exists for an unresolved slot.
+- Global component lookup and registration remain deferred to LOT-15.
+
+
 ## [0.3.0b1]
 
 ### Added

@@ -75,3 +75,35 @@ class InvalidLayoutRegionResultError(InvalidLayoutError):
 
 class DuplicateLayoutRegionError(InvalidLayoutError):
     """Raised when a layout declares the same region name more than once."""
+
+
+class InvalidSlotError(ValidationError):
+    """Base exception for invalid slot composition."""
+
+
+class InvalidSlotNameError(InvalidSlotError):
+    """Raised when a slot name is structurally invalid."""
+
+
+class InvalidSlotChildError(InvalidSlotError):
+    """Raised when slot content contains an object that is not Content."""
+
+
+class InvalidSlotBindingError(InvalidSlotError):
+    """Raised when a slotted component provides an invalid template or bindings."""
+
+
+class MissingRequiredSlotError(InvalidSlotError):
+    """Raised when a required slot has no explicit binding."""
+
+
+class UnknownSlotBindingError(InvalidSlotError):
+    """Raised when bindings contain a name absent from the template."""
+
+
+class DuplicateSlotError(InvalidSlotError):
+    """Raised when a template declares the same slot name more than once."""
+
+
+class UnresolvedSlotError(InvalidSlotError):
+    """Raised when a slot placeholder escapes its composition boundary."""

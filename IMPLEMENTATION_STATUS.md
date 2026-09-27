@@ -15,7 +15,7 @@
 | LOT-11 | Component Model | QUALIFIED | `0.3.0a1` |
 | LOT-12 | Layout Model | QUALIFIED | `0.3.0a2` |
 | LOT-13 | Reusable Components | QUALIFIED | `0.3.0b1` |
-| LOT-14 | Slots & Composition | NOT STARTED | `0.3.0b2` |
+| LOT-14 | Slots & Composition | QUALIFIED | `0.3.0b2` |
 | LOT-15 | Component Registry | NOT STARTED | `0.3.0b3` |
 
 ## LOT-07 exit criteria
@@ -210,4 +210,37 @@ Next: **LOT-14 — Slots & Composition**.
 - built-in catalogue is composition-only and renderer-independent
 - integration tests prove reuse inside pages, layouts, and custom component trees
 - security tests prove built-ins inherit the existing rendering safety boundary
+- GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
+
+
+## LOT-14 exit criteria
+
+- [x] public wrapperless `Fragment` content primitive exists
+- [x] public named `Slot` placeholder exists
+- [x] slot names use validated lowercase kebab-case
+- [x] slot fallback content normalizes to immutable tuples
+- [x] required slots require explicit bindings
+- [x] required slots cannot define fallback content
+- [x] immutable deterministic `SlotBindings` exists
+- [x] explicit empty binding is distinct from missing binding
+- [x] unknown bindings fail explicitly
+- [x] duplicate slot names fail explicitly
+- [x] public `SlottedComponent` composes templates through slot bindings
+- [x] layouts can bind slots declared inside regions
+- [x] slot replacement preserves source-tree immutability
+- [x] bound content may contain components resolved by `ComponentRuntime`
+- [x] fragments render without wrapper elements
+- [x] unresolved slots fail explicitly in runtime and renderer
+- [x] text/attribute escaping still applies to injected content
+- [x] URL security still applies to injected actions
+- [x] no raw-HTML bypass is introduced
+- [x] slots remain lexical and no global registry is introduced
+
+Next: **LOT-15 — Component Registry**.
+
+## LOT-14 qualification evidence
+
+- named injection is explicit and deterministic
+- multi-node slot content renders wrapperlessly through `Fragment`
+- runtime/security tests cover resolved and unresolved slot paths
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
