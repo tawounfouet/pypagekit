@@ -1857,7 +1857,7 @@ deep implementation import → internal unless explicitly promoted
 For example:
 
 ```python
-from pypagekit.build import BuildPlan        # public stability candidate
+from pypagekit.build import BuildPlan  # public stability candidate
 from pypagekit.build.model import BuildPlan  # internal import path
 ```
 
