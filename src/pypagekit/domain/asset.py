@@ -53,9 +53,7 @@ def validate_asset_target(target: PurePosixPath) -> None:
 
     decoded_parts = PurePosixPath(decoded).parts
     if any(part in {".", ".."} for part in decoded_parts):
-        raise InvalidAssetTargetError(
-            "Asset target must not encode '.' or '..' path segments."
-        )
+        raise InvalidAssetTargetError("Asset target must not encode '.' or '..' path segments.")
 
 
 @dataclass(frozen=True, slots=True)
@@ -132,6 +130,4 @@ class Assets:
             if asset.target == target:
                 return asset
 
-        raise UnknownAssetTargetError(
-            f"Asset target '{target.as_posix()}' is not declared."
-        )
+        raise UnknownAssetTargetError(f"Asset target '{target.as_posix()}' is not declared.")
