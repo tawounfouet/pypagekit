@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from pypagekit import (
     Component,
+    Container,
     Content,
     Layout,
     LayoutRegion,
@@ -32,7 +33,8 @@ class AppLayout(Layout):
 def test_runtime_resolves_components_inside_layout_regions() -> None:
     resolved = ComponentRuntime().resolve(AppLayout("Body"))
 
-    main_region = resolved.children[1]  # type: ignore[attr-defined]
+    assert isinstance(resolved, Container)
+    main_region = resolved.children[1]
 
     assert isinstance(main_region, LayoutRegion)
     assert main_region.children == (Paragraph("Body"),)
