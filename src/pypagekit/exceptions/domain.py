@@ -23,3 +23,7 @@ class InvalidPageLanguageError(ValidationError):
 
 class InvalidPageContentError(ValidationError):
     """Raised when a page contains an object that is not Content."""
+
+
+class InvalidHeadingLevelError(ValidationError):
+    """Raised when a heading level is outside the supported 1..6 range."""

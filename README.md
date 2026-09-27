@@ -4,17 +4,17 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-02 — Core Domain Foundations** (`0.1.0a2`).
+Current implementation milestone: **LOT-03 — Text Content** (`0.1.0a3`).
 
 Implemented so far:
 
 - typed `src/` package and CI foundations;
-- `Node` as the base domain node;
-- `Content` as the base type for page content;
+- `Node` and `Content` domain foundations;
 - immutable `Page` root document object;
-- early domain validation and explicit exceptions.
+- immutable `Text`, `Heading`, and `Paragraph` content primitives;
+- explicit domain validation and exceptions.
 
-Rendering and concrete text content start in subsequent LOTs.
+HTML rendering is intentionally not implemented yet. Domain text stays raw and will be escaped only at the serialization boundary in later LOTs.
 
 ## Requirements
 
@@ -43,22 +43,22 @@ python -m build
 ## Current domain API
 
 ```python
-from pypagekit import Content, Node, Page
-
-
-class CustomContent(Content):
-    pass
+from pypagekit import Heading, Page, Paragraph, Text
 
 
 page = Page(
     title="Home",
-    content=[CustomContent()],
+    content=[
+        Heading("Welcome", level=1),
+        Paragraph("PyPageKit models pages with Python objects."),
+        Text("Literal text content"),
+    ],
     lang="en",
     description="Example page",
 )
 ```
 
-`Page` normalizes its content into an immutable tuple and rejects objects that do not derive from `Content`.
+`Page` normalizes its content into an immutable tuple. Text content primitives preserve exactly the semantic strings supplied by the author; HTML escaping is not a domain responsibility.
 
 ## Source layout
 
@@ -70,7 +70,8 @@ src/
     ├── domain/
     │   ├── __init__.py
     │   ├── base.py
-    │   └── page.py
+    │   ├── page.py
+    │   └── text.py
     └── exceptions/
         ├── __init__.py
         └── domain.py
@@ -80,7 +81,8 @@ tests/
 └── unit/
     └── domain/
         ├── test_base.py
-        └── test_page.py
+        ├── test_page.py
+        └── test_text.py
 ```
 
 ## Roadmap
@@ -98,4 +100,4 @@ tests/
 1.0.0  Stable
 ```
 
-The immediate next milestone is **LOT-03 — Text Content**.
+The immediate next milestone is **LOT-04 — Composition Tree**.

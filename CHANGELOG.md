@@ -4,6 +4,23 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.1.0a3]
+
+### Added
+
+- Immutable `Text`, `Heading`, and `Paragraph` content primitives.
+- Heading level validation restricted to semantic levels `1..6`.
+- `InvalidHeadingLevelError` in the domain validation hierarchy.
+- Public package exports for text content primitives.
+- LOT-03 unit test coverage for raw text preservation, Unicode, immutability, type validation, and heading levels.
+
+### Design
+
+- Text values remain raw domain values and are not HTML-escaped at construction time.
+- Empty text values remain representable; rendering and higher-level conformance rules may decide how they are used.
+
+## [0.1.0a2]
+
 ### Added
 
 - `Node` and `Content` core domain abstractions.
