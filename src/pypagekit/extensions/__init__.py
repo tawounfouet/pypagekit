@@ -8,6 +8,15 @@ from .defaults import (
     default_component_extension_registry,
     default_renderer_registry,
 )
+from .discovery import (
+    BUILD_PLANNER_ENTRY_POINT_GROUP,
+    COMPONENT_ENTRY_POINT_GROUP,
+    RENDERER_ENTRY_POINT_GROUP,
+    EntryPointDiscovery,
+    EntryPointReference,
+    EntryPointSource,
+    PluginDiscoveryResult,
+)
 from .model import (
     BuildPlannerExtension,
     BuildPlannerFactory,
@@ -20,15 +29,22 @@ from .model import (
 from .registry import BuildPlannerRegistry, ComponentExtensionRegistry, RendererRegistry
 
 __all__ = [
+    "BUILD_PLANNER_ENTRY_POINT_GROUP",
     "BUILD_PLANNER_EXTENSION_ID",
     "BUILTIN_COMPONENTS_EXTENSION_ID",
+    "COMPONENT_ENTRY_POINT_GROUP",
     "HTML_RENDERER_EXTENSION_ID",
+    "RENDERER_ENTRY_POINT_GROUP",
     "BuildPlannerExtension",
     "BuildPlannerFactory",
     "BuildPlannerRegistry",
     "ComponentExtension",
     "ComponentExtensionRegistry",
+    "EntryPointDiscovery",
+    "EntryPointReference",
+    "EntryPointSource",
     "ExtensionDescriptor",
+    "PluginDiscoveryResult",
     "RendererExtension",
     "RendererFactory",
     "RendererRegistry",

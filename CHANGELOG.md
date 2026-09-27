@@ -4,6 +4,34 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.7.0b1]
+
+### Added
+
+- Explicit installed-plugin discovery through `importlib.metadata.entry_points()`.
+- Public `EntryPointDiscovery` service.
+- Immutable `PluginDiscoveryResult` containing build-planner, component, and renderer registries.
+- Stable entry-point groups:
+  - `pypagekit.renderers`;
+  - `pypagekit.build_planners`;
+  - `pypagekit.components`.
+- Zero-argument provider contract for plugin entry points.
+- Validation that entry-point names are valid extension IDs.
+- Validation that entry-point names exactly match returned extension descriptor IDs.
+- Explicit errors for metadata enumeration, target loading, invalid providers, and provider failures.
+- Real `*.dist-info/entry_points.txt` integration coverage proving deferred standard-library discovery.
+
+### Design
+
+- Importing PyPageKit performs no plugin discovery.
+- Constructing `EntryPointDiscovery` performs no metadata enumeration and loads no plugin module.
+- Plugin target imports and provider execution happen only during an explicit `discover()` call.
+- Discovery feeds the immutable registries established by LOT-27 and LOT-28 rather than bypassing them.
+- Entry-point ordering is normalized deterministically before provider execution.
+- Discovery performs no network access.
+- No process-global mutable plugin registry is introduced.
+- Plugin lifecycle, compatibility negotiation, ordering, activation state, and conformance remain LOT-30.
+
 ## [0.7.0a2]
 
 ### Added

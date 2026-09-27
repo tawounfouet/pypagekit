@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current qualified milestone: **LOT-28 — Build & Component Extension Points** (`0.7.0a2`). Next: **LOT-29 — Plugin Discovery & Entry Points**.
+Current qualified milestone: **LOT-29 — Plugin Discovery & Entry Points** (`0.7.0b1`). Next: **LOT-30 — Plugin Lifecycle & Conformance**.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -50,7 +50,8 @@ Implemented so far:
 - local static development serving through `pypagekit serve`;
 - read-only developer diagnostics through `pypagekit doctor` and `pypagekit inspect`;
 - explicit renderer extension contracts and immutable registration through `pypagekit.extensions`;
-- structural build-planner extensions and component-extension bundles.
+- structural build-planner extensions and component-extension bundles;
+- explicit installed-plugin discovery through Python entry points.
 
 ## Quick example
 
@@ -1279,3 +1280,83 @@ Renderer
 
 LOT-28 still performs no installed-package scanning, no entry-point loading, and no import-time
 discovery. Those concerns remain reserved for LOT-29.
+
+
+## Installed plugin discovery
+
+LOT-29 adds an explicit bridge from standard Python package metadata to the registries introduced in
+LOT-27 and LOT-28.
+
+PyPageKit recognizes exactly three entry-point groups:
+
+```text
+pypagekit.renderers
+pypagekit.build_planners
+pypagekit.components
+```
+
+A plugin package declares providers in `pyproject.toml`:
+
+```toml
+[project.entry-points."pypagekit.renderers"]
+"acme.renderer.custom" = "acme_pypagekit:provide_renderer"
+
+[project.entry-points."pypagekit.build_planners"]
+"acme.build.custom" = "acme_pypagekit:provide_build_planner"
+
+[project.entry-points."pypagekit.components"]
+"acme.components.ui" = "acme_pypagekit:provide_components"
+```
+
+Each target is a zero-argument callable. It must return the extension type corresponding to the
+group:
+
+```python
+def provide_renderer() -> RendererExtension: ...
+
+
+def provide_build_planner() -> BuildPlannerExtension: ...
+
+
+def provide_components() -> ComponentExtension: ...
+```
+
+The entry-point name is the public extension identity and must exactly match
+`extension.descriptor.extension_id`.
+
+Discovery is always explicit:
+
+```python
+from pypagekit.extensions import EntryPointDiscovery
+
+plugins = EntryPointDiscovery().discover()
+
+renderer = plugins.renderers.create("acme.renderer.custom")
+planner = plugins.build_planners.create("acme.build.custom")
+component_registry = plugins.components.component_registry()
+```
+
+The execution path is therefore:
+
+```text
+installed distribution metadata
+        ↓
+importlib.metadata.entry_points(...)
+        ↓
+explicit EntryPointDiscovery.discover()
+        ↓
+provider callable
+        ↓
+RendererExtension / BuildPlannerExtension / ComponentExtension
+        ↓
+existing immutable registry
+        ↓
+existing runtime/build boundary
+```
+
+Creating `EntryPointDiscovery` performs no metadata enumeration and imports no plugin module.
+Plugin modules are loaded only during an explicit `discover()` call. Discovery performs no network
+access and does not mutate process-global extension state.
+
+LOT-29 intentionally does not add plugin activation/deactivation state, dependency ordering,
+compatibility negotiation, or lifecycle callbacks. Those concerns belong to LOT-30.

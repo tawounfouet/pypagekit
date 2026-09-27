@@ -35,6 +35,22 @@ class InvalidRendererExtensionError(ExtensionError):
     """Raised when a renderer extension does not produce a renderer."""
 
 
+class PluginDiscoveryError(ExtensionError):
+    """Base exception for installed plugin discovery failures."""
+
+
+class InvalidPluginEntryPointError(PluginDiscoveryError):
+    """Raised when a plugin entry point violates the discovery contract."""
+
+
+class PluginEntryPointLoadError(PluginDiscoveryError):
+    """Raised when an entry point target cannot be loaded."""
+
+
+class PluginProviderError(PluginDiscoveryError):
+    """Raised when an entry point provider fails while creating an extension."""
+
+
 __all__ = [
     "DuplicateComponentContributionError",
     "DuplicateExtensionRegistrationError",
@@ -42,6 +58,10 @@ __all__ = [
     "InvalidBuildPlannerExtensionError",
     "InvalidExtensionDescriptorError",
     "InvalidExtensionIdError",
+    "InvalidPluginEntryPointError",
     "InvalidRendererExtensionError",
+    "PluginDiscoveryError",
+    "PluginEntryPointLoadError",
+    "PluginProviderError",
     "UnknownExtensionError",
 ]
