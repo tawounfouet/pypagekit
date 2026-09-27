@@ -97,7 +97,7 @@ def test_registry_rejects_duplicate_ids() -> None:
 
 
 def test_unknown_extension_fails_explicitly() -> None:
-    with pytest.raises(UnknownExtensionError, match="acme.renderer.missing"):
+    with pytest.raises(UnknownExtensionError, match=r"acme\.renderer\.missing"):
         RendererRegistry().extension("acme.renderer.missing")
 
 
