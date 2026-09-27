@@ -313,9 +313,7 @@ def test_rejected_plugin_cannot_be_activated() -> None:
 
 
 def test_unknown_plugin_cannot_be_activated() -> None:
-    qualified = PluginLifecycle.from_discovery(
-        _discovery(renderers=(_renderer(),))
-    ).qualify()
+    qualified = PluginLifecycle.from_discovery(_discovery(renderers=(_renderer(),))).qualify()
 
     with pytest.raises(UnknownPluginError, match="missing"):
         qualified.activate(("acme.renderer.missing",))
@@ -331,9 +329,9 @@ def test_duplicate_activation_request_is_rejected() -> None:
 
 
 def test_deactivate_returns_plugin_to_qualified_state() -> None:
-    active = PluginLifecycle.from_discovery(
-        _discovery(renderers=(_renderer(),))
-    ).qualify().activate()
+    active = (
+        PluginLifecycle.from_discovery(_discovery(renderers=(_renderer(),))).qualify().activate()
+    )
 
     deactivated = active.deactivate(("acme.renderer.plain",))
 
@@ -343,12 +341,16 @@ def test_deactivate_returns_plugin_to_qualified_state() -> None:
 
 
 def test_deactivate_all_active_plugins() -> None:
-    active = PluginLifecycle.from_discovery(
-        _discovery(
-            planners=(_planner(),),
-            renderers=(_renderer(),),
+    active = (
+        PluginLifecycle.from_discovery(
+            _discovery(
+                planners=(_planner(),),
+                renderers=(_renderer(),),
+            )
         )
-    ).qualify().activate()
+        .qualify()
+        .activate()
+    )
 
     deactivated = active.deactivate()
 
@@ -376,9 +378,7 @@ def test_active_renderer_is_usable_through_existing_registry_contract() -> None:
 
 
 def test_active_planner_is_usable_through_existing_registry_contract() -> None:
-    active = PluginLifecycle.from_discovery(
-        _discovery(planners=(_planner(),))
-    ).qualify().activate()
+    active = PluginLifecycle.from_discovery(_discovery(planners=(_planner(),))).qualify().activate()
 
     planner = active.active_plugins.build_planners.create("acme.build.empty")
 
