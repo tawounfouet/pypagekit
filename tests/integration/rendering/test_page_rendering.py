@@ -60,8 +60,7 @@ def test_page_description_is_attribute_escaped() -> None:
     html = HtmlRenderer().render(page)
 
     assert (
-        '<meta content="A &amp; &quot;quoted&quot; &lt;description&gt;" '
-        'name="description">'
+        '<meta content="A &amp; &quot;quoted&quot; &lt;description&gt;" name="description">'
     ) in html
 
 
