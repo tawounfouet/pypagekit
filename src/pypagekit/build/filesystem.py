@@ -4,9 +4,14 @@ import shutil
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
+from pypagekit._filesystem_transaction import (
+    FilesystemTransaction,
+    FilesystemTransactionRollbackError,
+)
 from pypagekit.exceptions import (
     AssetSourceOutputConflictError,
     ExistingOutputError,
+    FilesystemRollbackError,
     FilesystemWriteError,
     InvalidAssetSourceForOutputError,
     InvalidOutputRootError,
@@ -53,13 +58,19 @@ class FilesystemWriter:
 
         self._preflight(plan, output_root, overwrite=overwrite)
 
-        try:
-            output_root.mkdir(parents=True, exist_ok=True)
+        transaction = FilesystemTransaction()
+        page_files: list[Path] = []
+        asset_files: list[Path] = []
 
-            page_files: list[Path] = []
+        try:
+            transaction.ensure_directory(output_root)
+
             for page_entry in plan.pages:
                 destination = _destination(output_root, page_entry.target)
-                destination.parent.mkdir(parents=True, exist_ok=True)
+                transaction.prepare_file(
+                    destination,
+                    backup_existing=overwrite,
+                )
                 text_mode = "w" if overwrite else "x"
                 with destination.open(
                     text_mode,
@@ -69,10 +80,12 @@ class FilesystemWriter:
                     output_file.write(page_entry.content)
                 page_files.append(destination)
 
-            asset_files: list[Path] = []
             for asset_entry in plan.assets:
                 destination = _destination(output_root, asset_entry.target)
-                destination.parent.mkdir(parents=True, exist_ok=True)
+                transaction.prepare_file(
+                    destination,
+                    backup_existing=overwrite,
+                )
                 binary_mode = "wb" if overwrite else "xb"
                 with (
                     asset_entry.asset.source.open("rb") as source_file,
@@ -80,7 +93,17 @@ class FilesystemWriter:
                 ):
                     shutil.copyfileobj(source_file, output_file)
                 asset_files.append(destination)
-        except OSError as exc:
+
+            transaction.commit()
+        except Exception as exc:
+            try:
+                transaction.rollback()
+            except FilesystemTransactionRollbackError as rollback_exc:
+                raise FilesystemRollbackError(
+                    f"Filesystem rollback failed under '{output_root}' after "
+                    f"{type(exc).__name__}."
+                ) from rollback_exc
+
             raise FilesystemWriteError(
                 f"Filesystem output failed under '{output_root}'."
             ) from exc
