@@ -142,26 +142,23 @@ class ComponentRuntime:
         active_component_ids: set[int],
         component_depth: int,
     ) -> tuple[Content, ...]:
-        resolved_children = tuple(
-            self._resolve(
+        changed_children: list[Content] | None = None
+
+        for index, child in enumerate(children):
+            resolved = self._resolve(
                 child,
                 active_component_ids=active_component_ids,
                 component_depth=component_depth,
             )
-            for child in children
-        )
+            if changed_children is not None:
+                changed_children.append(resolved)
+            elif resolved is not child:
+                changed_children = [*children[:index], resolved]
 
-        if all(
-            resolved is original
-            for resolved, original in zip(
-                resolved_children,
-                children,
-                strict=True,
-            )
-        ):
+        if changed_children is None:
             return children
 
-        return resolved_children
+        return tuple(changed_children)
 
     def _resolve_component(
         self,
