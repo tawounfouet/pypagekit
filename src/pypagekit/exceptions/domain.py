@@ -31,3 +31,11 @@ class InvalidHeadingLevelError(ValidationError):
 
 class InvalidContainerChildError(ValidationError):
     """Raised when a container includes an object that is not Content."""
+
+
+class InvalidLinkHrefError(ValidationError):
+    """Raised when a link destination is structurally empty."""
+
+
+class InvalidImageSourceError(ValidationError):
+    """Raised when an image source reference is structurally empty."""
