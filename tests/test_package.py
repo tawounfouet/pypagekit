@@ -78,6 +78,7 @@ from pypagekit.exceptions import (
     UnsafeUrlError,
     UnsupportedNodeError,
 )
+from pypagekit.project import ProjectFile, ProjectPlan, ProjectScaffolder
 from pypagekit.rendering import HtmlRenderer, Renderer
 
 
@@ -90,6 +91,13 @@ def test_package_imports() -> None:
     assert isinstance(BuildPlanner(), BuildPlanner)
     assert isinstance(FilesystemWriter(), FilesystemWriter)
     assert isinstance(StaticSiteGenerator(), StaticSiteGenerator)
+    project_file = ProjectFile(PurePosixPath("site.py"), "print('hello')\n")
+    assert isinstance(project_file, ProjectFile)
+    assert isinstance(
+        ProjectPlan(Path("demo"), "demo", [project_file]),
+        ProjectPlan,
+    )
+    assert isinstance(ProjectScaffolder(), ProjectScaffolder)
     write_result = FilesystemWriteResult(Path("dist"), (), ())
     assert isinstance(write_result, FilesystemWriteResult)
     assert isinstance(
