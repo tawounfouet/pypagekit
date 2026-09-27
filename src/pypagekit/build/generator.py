@@ -5,6 +5,7 @@ from pathlib import Path
 
 from pypagekit.domain import Assets, Site
 
+from .base import BuildPlannerProtocol
 from .filesystem import FilesystemWriteResult, FilesystemWriter
 from .model import BuildPlan
 from .planner import BuildPlanner
@@ -56,12 +57,12 @@ class StaticSiteGenerator:
     def __init__(
         self,
         *,
-        planner: BuildPlanner | None = None,
+        planner: BuildPlannerProtocol | None = None,
         writer: FilesystemWriter | None = None,
     ) -> None:
-        if planner is not None and not isinstance(planner, BuildPlanner):
+        if planner is not None and not callable(getattr(planner, "plan", None)):
             raise TypeError(
-                "Static site generator planner must be a BuildPlanner or None."
+                "Static site generator planner must satisfy BuildPlannerProtocol or be None."
             )
         if writer is not None and not isinstance(writer, FilesystemWriter):
             raise TypeError(
@@ -72,7 +73,7 @@ class StaticSiteGenerator:
         self._writer = writer if writer is not None else FilesystemWriter()
 
     @property
-    def planner(self) -> BuildPlanner:
+    def planner(self) -> BuildPlannerProtocol:
         """Build planner used by this generator."""
 
         return self._planner
