@@ -31,7 +31,7 @@
 | LOT-27 | Extension Contracts & Renderer Registry | QUALIFIED | `0.7.0a1` |
 | LOT-28 | Build & Component Extension Points | QUALIFIED | `0.7.0a2` |
 | LOT-29 | Plugin Discovery & Entry Points | QUALIFIED | `0.7.0b1` |
-| LOT-30 | Plugin Lifecycle & Conformance | IN QUALIFICATION | `0.7.0b2` |
+| LOT-30 | Plugin Lifecycle & Conformance | QUALIFIED | `0.7.0b2` |
 | LOT-31 | Security Hardening | NOT STARTED | `0.8.0a1` |
 | LOT-32 | Reliability & Failure Hardening | NOT STARTED | `0.8.0a2` |
 | LOT-33 | Performance & Scalability Hardening | NOT STARTED | `0.8.0b1` |
@@ -834,7 +834,7 @@ Next after qualification: **LOT-30 — Plugin Lifecycle & Conformance**.
 - [x] no hidden discovery or activation exists
 - [x] installed entry-point plugin is covered end-to-end through activation
 - [x] package version advances to `0.7.0b2`
-- [ ] GitHub CI qualification is fully green
+- [x] GitHub CI qualification is fully green
 
 After qualification, the `0.7.x — Extensibility` line is complete.
 
