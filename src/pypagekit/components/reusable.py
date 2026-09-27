@@ -33,8 +33,7 @@ def _normalize_children(
     if invalid:
         invalid_type = type(invalid[0]).__name__
         raise TypeError(
-            f"{component_name} children must contain only Content objects; "
-            f"got {invalid_type}."
+            f"{component_name} children must contain only Content objects; got {invalid_type}."
         )
 
     return normalized
@@ -42,13 +41,9 @@ def _normalize_children(
 
 def _validate_heading_level(level: int, *, component_name: str) -> None:
     if not isinstance(level, int) or isinstance(level, bool):
-        raise TypeError(
-            f"{component_name} heading level must be an integer from 1 through 6."
-        )
+        raise TypeError(f"{component_name} heading level must be an integer from 1 through 6.")
     if not 1 <= level <= 6:
-        raise InvalidHeadingLevelError(
-            f"{component_name} heading level must be between 1 and 6."
-        )
+        raise InvalidHeadingLevelError(f"{component_name} heading level must be between 1 and 6.")
 
 
 def _validate_attributes(value: Attributes, *, field_name: str) -> None:
