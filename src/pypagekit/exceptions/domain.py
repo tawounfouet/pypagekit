@@ -57,7 +57,6 @@ class InvalidAriaAttributeNameError(InvalidAttributeError):
     """Raised when an ARIA attribute suffix is structurally invalid."""
 
 
-
 class InvalidLayoutError(ValidationError):
     """Base exception for invalid layout structure."""
 
