@@ -3,6 +3,7 @@
 from .domain import (
     Attributes,
     Component,
+    ComponentRef,
     Container,
     Content,
     Fragment,
@@ -21,11 +22,12 @@ from .domain import (
     bind_slots,
 )
 
-__version__ = "0.3.0b2"
+__version__ = "0.3.0b3"
 
 __all__ = [
     "Attributes",
     "Component",
+    "ComponentRef",
     "Container",
     "Content",
     "Fragment",

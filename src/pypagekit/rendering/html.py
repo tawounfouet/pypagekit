@@ -3,6 +3,7 @@
 from pypagekit.components import ComponentRuntime
 from pypagekit.domain import (
     Component,
+    ComponentRef,
     Container,
     Fragment,
     Heading,
@@ -38,7 +39,7 @@ class HtmlRenderer:
 
         if isinstance(node, Page):
             return self._render_page(node)
-        if isinstance(node, Component):
+        if isinstance(node, Component | ComponentRef):
             return self.render(self._component_runtime.resolve(node))
         if isinstance(node, Slot):
             raise UnresolvedSlotError(f"Slot '{node.name}' reached the HTML renderer unresolved.")

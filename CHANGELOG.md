@@ -4,6 +4,30 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.3.0b3]
+
+### Added
+
+- Public immutable `ComponentRef(Content)` symbolic component reference.
+- Public immutable `ComponentRegistry` under `pypagekit.components`.
+- Stable lowercase kebab-case registry names.
+- Deterministic normalized keyword properties for component references.
+- Persistent `register()` API that returns a new registry instead of mutating the existing instance.
+- Explicit factory lookup and component instantiation.
+- `ComponentRuntime(registry=...)` support for resolving `ComponentRef`.
+- Registry-specific errors for duplicates, unknown names, missing registries, invalid names/properties, and invalid factory results.
+- LOT-15 unit, integration, and security coverage.
+
+### Design
+
+- There is no process-global or module-global mutable component registry.
+- Symbolic references resolve only through a registry explicitly supplied to `ComponentRuntime`.
+- The registry stores callables but does not perform dynamic imports or module discovery.
+- Registered components enter the existing `Component → Content → HtmlRenderer` pipeline after instantiation.
+- Factory argument errors remain visible instead of being silently coerced or swallowed.
+- Completing LOT-15 closes the `0.3.x — Components` implementation line.
+
+
 ## [0.3.0b2]
 
 ### Added
