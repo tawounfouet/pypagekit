@@ -10,6 +10,7 @@ CORE_PACKAGES = (
     "build",
     "development",
     "diagnostics",
+    "extensions",
     "project",
 )
 FORBIDDEN_CLI_DEPENDENCIES = {"typer", "rich"}
