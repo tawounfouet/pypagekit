@@ -45,10 +45,7 @@ class _StaticRequestHandler(SimpleHTTPRequestHandler):
         if (
             "\\" in decoded_path
             or "\x00" in decoded_path
-            or any(
-                ord(character) < 32 or ord(character) == 0x7F
-                for character in decoded_path
-            )
+            or any(ord(character) < 32 or ord(character) == 0x7F for character in decoded_path)
         ):
             return str(self._forbidden_path())
 
@@ -82,8 +79,7 @@ class _StaticRequestHandler(SimpleHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store")
         self.send_header(
             "Content-Security-Policy",
-            "default-src 'self'; object-src 'none'; base-uri 'none'; "
-            "frame-ancestors 'none'",
+            "default-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",
         )
         self.send_header("Referrer-Policy", "no-referrer")
         self.send_header("X-Content-Type-Options", "nosniff")
