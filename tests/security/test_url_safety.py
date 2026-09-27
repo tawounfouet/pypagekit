@@ -112,3 +112,24 @@ def test_renderer_preserves_safe_url_value_then_attribute_escapes_it() -> None:
     )
 
     assert html == ('<a href="https://example.com/?a=1&amp;b=&quot;two&quot;">Docs</a>')
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "javascript%3Aalert(1)",
+        "java%0Ascript:alert(1)",
+        "https://example.com/%00bad",
+        "https://example.com/%7Fbad",
+        "https://example.com/%ZZbad",
+    ],
+)
+def test_percent_encoded_url_ambiguity_is_rejected(value: str) -> None:
+    with pytest.raises(UnsafeUrlError):
+        validate_link_href(value)
+
+
+def test_percent_encoded_safe_https_scheme_is_accepted() -> None:
+    value = "https%3A//example.com/docs"
+
+    assert validate_link_href(value) == value
