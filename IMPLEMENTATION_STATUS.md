@@ -25,7 +25,7 @@
 | LOT-21 | Filesystem Output | QUALIFIED | `0.5.0b1` |
 | LOT-22 | Static Site Generation | QUALIFIED | `0.5.0b2` |
 | LOT-23 | CLI Foundations | QUALIFIED | `0.6.0a1` |
-| LOT-24 | Project Scaffolding | NOT STARTED | `0.6.0a2` |
+| LOT-24 | Project Scaffolding | QUALIFIED | `0.6.0a2` |
 | LOT-25 | Development Server | NOT STARTED | `0.6.0b1` |
 | LOT-26 | Developer Diagnostics | NOT STARTED | `0.6.0b2` |
 
@@ -529,4 +529,43 @@ Next: **LOT-24 — Project Scaffolding**.
 - the CLI boundary is installed and independently testable
 - Typer and Rich remain isolated from the framework core
 - shell and module entry points expose the same package version
+- GitHub CI is the authoritative Ruff, formatting, mypy, pytest, package, and CLI-smoke gate
+
+
+## LOT-24 exit criteria
+
+- [x] public `pypagekit.project` package exists
+- [x] immutable `ProjectFile` exists
+- [x] immutable `ProjectPlan` exists
+- [x] immutable `ProjectScaffoldResult` exists
+- [x] public `ProjectScaffolder` exists
+- [x] planning and filesystem materialization are separate operations
+- [x] project planning creates no target files
+- [x] project names normalize deterministically
+- [x] scaffold contains .gitignore, README.md, pyproject.toml, and site.py
+- [x] generated pyproject metadata is valid TOML
+- [x] generated project declares a compatible PyPageKit 0.6.x dependency
+- [x] generated site.py is immediately executable
+- [x] generated site.py produces dist/index.html through StaticSiteGenerator
+- [x] existing unplanned files are preserved
+- [x] managed existing files fail by default
+- [x] --force explicitly replaces managed regular files
+- [x] target-root files fail explicitly
+- [x] target-root and ancestor symlinks fail explicitly
+- [x] managed target symlinks fail even with --force
+- [x] pypagekit new TARGET is registered
+- [x] pypagekit new . is supported
+- [x] pypagekit new --help succeeds
+- [x] missing CLI target remains usage exit code 2
+- [x] scaffolding runtime failures become stderr + exit code 1
+- [x] unimplemented build/serve/inspect/doctor commands remain unadvertised
+- [x] project services remain independent from Typer and Rich
+
+Next: **LOT-25 — Development Server**.
+
+## LOT-24 qualification evidence
+
+- project scaffolding works through both the Python service and Typer adapter
+- the generated scaffold is valid and immediately executable
+- preflight and symlink tests protect project creation boundaries
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, package, and CLI-smoke gate

@@ -4,6 +4,33 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.6.0a2]
+
+### Added
+
+- Public `pypagekit.project` application-service package.
+- Immutable `ProjectFile`, `ProjectPlan`, and `ProjectScaffoldResult` models.
+- Public `ProjectScaffolder` with explicit plan-then-write workflow.
+- Deterministic minimal scaffold containing `.gitignore`, `README.md`, `pyproject.toml`, and executable `site.py`.
+- Project-name normalization derived from the target directory or an explicit project name.
+- Generated project dependency constrained to the current PyPageKit `0.6.x` release line.
+- Safe-by-default protection for existing scaffold-managed files.
+- Explicit `force=True` / CLI `--force` replacement policy for regular managed files.
+- Symlink protections for target roots, target-root ancestors, and managed target files.
+- `pypagekit new TARGET` command.
+- CLI translation of scaffolding failures to stderr with execution exit code `1`.
+- Unit, integration, security, and installed-command help coverage.
+
+### Design
+
+- The Typer command is a thin adapter over `ProjectScaffolder`.
+- Project planning is independent from Typer and Rich.
+- Existing unplanned files inside a target directory are preserved.
+- Scaffold preflight completes before predictable writes begin.
+- The generated `site.py` uses the existing Python API and `StaticSiteGenerator` directly.
+- LOT-24 does not introduce a project loader, CLI build command, development server, or diagnostics subsystem.
+
+
 ## [0.6.0a1]
 
 ### Added
