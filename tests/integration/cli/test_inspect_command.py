@@ -51,5 +51,6 @@ def test_inspect_missing_root_is_execution_error(tmp_path: Path) -> None:
     result = runner.invoke(app, ["inspect", str(tmp_path / "missing")])
 
     assert result.exit_code == EXECUTION_ERROR
-    assert "Project inspection failed:" in result.stderr
-    assert "does not exist" in result.stderr
+    stderr = " ".join(result.stderr.split())
+    assert "Project inspection failed:" in stderr
+    assert "does not exist" in stderr
