@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-26 — Developer Diagnostics** (`0.6.0b2`).
+Current implementation milestone: **LOT-27 — Extension Contracts & Renderer Registry** (`0.7.0a1`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -174,14 +174,14 @@ python -m build
 0.3.x  Components              ✅ feature-complete
 0.4.x  Routing & Site           ✅ feature-complete
 0.5.x  Static Build              ✅ feature-complete
-0.6.x  CLI & Developer Workflow   ← current
-0.7.x  Extensibility
+0.6.x  CLI & Developer Workflow   ✅ feature-complete
+0.7.x  Extensibility               ← current
 0.8.x  Hardening
 0.9.x  API Freeze
 1.0.0  Stable
 ```
 
-The **`0.6.x — CLI & Developer Workflow`** line is now feature-complete through LOT-26.
+The **`0.6.x — CLI & Developer Workflow`** line is feature-complete. LOT-27 opens the `0.7.x — Extensibility` line.
 
 
 ## Controlled attributes
