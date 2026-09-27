@@ -78,7 +78,7 @@ def test_component_can_live_directly_inside_page_content() -> None:
     html = HtmlRenderer().render(page)
 
     assert '<div class="hero" id="hero">' in html
-    assert "<h1 class="hero-title">Welcome</h1>" in html
+    assert '<h1 class="hero-title">Welcome</h1>' in html
 
 
 def test_component_output_still_uses_text_escaping() -> None:
