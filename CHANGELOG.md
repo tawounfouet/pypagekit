@@ -4,6 +4,24 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.2.0b2]
+
+### Added
+
+- Rendering of `Page.description` as a deterministic HTML meta description.
+- Dedicated head-content assembly preserving the order `charset → title → description`.
+- Integration tests for optional, empty, escaped, and deterministic description metadata.
+- Security coverage proving description metadata cannot break out of its attribute context.
+
+### Design
+
+- The existing `Page` metadata model remains intentionally small: `title`, `lang`, and optional `description`.
+- `description=None` emits no meta description.
+- `description=""` remains explicitly representable.
+- Metadata values remain semantic domain strings and are escaped only at the HTML serialization boundary.
+- Canonical URLs, stylesheets, additional head entries, and richer metadata remain outside LOT-09.
+
+
 ## [0.2.0b1]
 
 ### Added

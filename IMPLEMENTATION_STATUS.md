@@ -10,8 +10,8 @@
 | LOT-06 | HTML Serialization | QUALIFIED | `0.2.0a1` |
 | LOT-07 | HTML Renderer | QUALIFIED | `0.2.0a2` |
 | LOT-08 | Security & Escaping | QUALIFIED | `0.2.0b1` |
-| LOT-09 | Page Metadata | NOT STARTED | `0.2.0b2` |
-| LOT-10 | Attributes & Styling Hooks | NOT STARTED | `0.2.0b2` |
+| LOT-09 | Page Metadata | QUALIFIED | `0.2.0b2` |
+| LOT-10 | Attributes & Styling Hooks | NOT STARTED | `0.2.0b3` |
 
 ## LOT-07 exit criteria
 
@@ -68,4 +68,28 @@ Next: **LOT-09 — Page Metadata**.
 
 - dedicated `tests/security/` corpus added
 - URL validation occurs before HTML attribute serialization
+- GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
+
+
+## LOT-09 exit criteria
+
+- [x] page title remains rendered in `<title>`
+- [x] page language remains rendered on the root `html` element
+- [x] UTF-8 charset remains first in the head
+- [x] optional page description renders as `<meta name="description">`
+- [x] absent description emits no metadata element
+- [x] empty description remains explicitly representable
+- [x] description values are attribute-escaped safely
+- [x] description metadata cannot inject active markup or attributes
+- [x] head metadata ordering is deterministic
+- [x] rendering does not mutate page metadata
+- [x] no new metadata abstraction is introduced prematurely
+
+Next: **LOT-10 — Attributes & Styling Hooks**.
+
+## LOT-09 qualification evidence
+
+- existing `Page` metadata fields are now fully represented in HTML
+- deterministic head assembly is covered by integration tests
+- security corpus covers description attribute breakout attempts
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate

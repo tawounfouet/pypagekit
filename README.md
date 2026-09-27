@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-08 — Security & Escaping** (`0.2.0b1`).
+Current implementation milestone: **LOT-09 — Page Metadata** (`0.2.0b2`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -27,7 +27,8 @@ Implemented so far:
 - recursive rendering for the complete current domain tree;
 - compact complete HTML5 document output for `Page`;
 - render-time URL safety validation for links and images;
-- adversarial XSS coverage for text, attributes, nested composition, and unsafe schemes.
+- adversarial XSS coverage for text, attributes, nested composition, and unsafe schemes;
+- deterministic page metadata rendering for title, language, charset, and description.
 
 ## Quick example
 
@@ -39,6 +40,7 @@ from pypagekit.rendering import HtmlRenderer
 page = Page(
     title="Home & Docs",
     lang="en",
+    description="A Python-first structured page.",
     content=[
         Container(
             children=[
@@ -55,7 +57,7 @@ html = HtmlRenderer().render(page)
 print(html)
 ```
 
-The result is a deterministic HTML5 document containing the doctype, language, UTF-8 charset, title, body, and recursively rendered content.
+The result is a deterministic HTML5 document containing the doctype, language, UTF-8 charset, title, optional description metadata, body, and recursively rendered content.
 
 ## Rendering architecture
 
@@ -120,7 +122,6 @@ Text remains escaped at the HTML boundary and the core exposes no raw-HTML escap
 
 LOT-08 does not yet introduce:
 
-- rich page metadata such as description — LOT-09;
 - generic domain attributes/classes/data/aria hooks — LOT-10;
 - filesystem output — later build/output LOTs.
 
@@ -157,4 +158,4 @@ python -m build
 1.0.0  Stable
 ```
 
-The immediate next milestone is **LOT-09 — Page Metadata**.
+The immediate next milestone is **LOT-10 — Attributes & Styling Hooks**.

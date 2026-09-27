@@ -68,16 +68,7 @@ class HtmlRenderer:
         )
         head = serialize_element(
             "head",
-            content=(
-                serialize_void_element(
-                    "meta",
-                    attributes={"charset": "utf-8"},
-                )
-                + serialize_element(
-                    "title",
-                    content=escape_text(page.title),
-                )
-            ),
+            content=self._render_head_content(page),
         )
         document = serialize_element(
             "html",
@@ -86,6 +77,31 @@ class HtmlRenderer:
         )
 
         return serialize_doctype() + document
+
+    def _render_head_content(self, page: Page) -> str:
+        fragments = [
+            serialize_void_element(
+                "meta",
+                attributes={"charset": "utf-8"},
+            ),
+            serialize_element(
+                "title",
+                content=escape_text(page.title),
+            ),
+        ]
+
+        if page.description is not None:
+            fragments.append(
+                serialize_void_element(
+                    "meta",
+                    attributes={
+                        "name": "description",
+                        "content": page.description,
+                    },
+                )
+            )
+
+        return "".join(fragments)
 
     def _render_children(self, children: tuple[Node, ...]) -> str:
         return "".join(self.render(child) for child in children)

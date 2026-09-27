@@ -118,3 +118,17 @@ def test_domain_value_remains_raw_after_rendering() -> None:
     HtmlRenderer().render(paragraph)
 
     assert paragraph.text == payload
+
+
+def test_page_description_cannot_break_out_of_meta_attribute() -> None:
+    page = Page(
+        title="Metadata",
+        description='safe" onload="alert(1) <script>alert(1)</script>',
+    )
+
+    html = HtmlRenderer().render(page)
+
+    assert ' onload="' not in html
+    assert "<script" not in html.lower()
+    assert "&quot; onload=&quot;" in html
+    assert "&lt;script&gt;" in html
