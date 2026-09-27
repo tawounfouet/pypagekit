@@ -163,9 +163,7 @@ def _validate_target_root_symlinks(target_root: Path) -> None:
     cursor = target_root
     while True:
         if cursor.is_symlink():
-            raise ProjectSymlinkError(
-                f"Project target path '{cursor}' must not be a symlink."
-            )
+            raise ProjectSymlinkError(f"Project target path '{cursor}' must not be a symlink.")
         if cursor == cursor.parent:
             break
         cursor = cursor.parent
@@ -187,18 +185,12 @@ def _validate_destination(
     for part in relative.parts[:-1]:
         cursor = cursor / part
         if cursor.is_symlink():
-            raise ProjectSymlinkError(
-                f"Project path ancestor '{cursor}' must not be a symlink."
-            )
+            raise ProjectSymlinkError(f"Project path ancestor '{cursor}' must not be a symlink.")
         if cursor.exists() and not cursor.is_dir():
-            raise ProjectPathConflictError(
-                f"Project path ancestor '{cursor}' is not a directory."
-            )
+            raise ProjectPathConflictError(f"Project path ancestor '{cursor}' is not a directory.")
 
     if destination.is_symlink():
-        raise ProjectSymlinkError(
-            f"Project target '{destination}' must not be a symlink."
-        )
+        raise ProjectSymlinkError(f"Project target '{destination}' must not be a symlink.")
 
     if destination.exists():
         if destination.is_dir():
@@ -206,9 +198,7 @@ def _validate_destination(
                 f"Project target '{destination}' is an existing directory."
             )
         if not force:
-            raise ExistingProjectFileError(
-                f"Project target '{destination}' already exists."
-            )
+            raise ExistingProjectFileError(f"Project target '{destination}' already exists.")
 
 
 def _gitignore_content() -> str:
