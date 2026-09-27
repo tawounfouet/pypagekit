@@ -37,7 +37,7 @@
 | LOT-33 | Performance & Scalability Hardening | QUALIFIED | `0.8.0b1` |
 | LOT-34 | Public API Inventory & Stability Classification | QUALIFIED | `0.9.0a1` |
 | LOT-35 | Compatibility, Deprecation & Migration | QUALIFIED | `0.9.0b1` |
-| LOT-36 | 1.0 Contract Freeze | IN QUALIFICATION | `0.9.0rc1` |
+| LOT-36 | 1.0 Contract Freeze | QUALIFIED | `0.9.0rc1` |
 | LOT-37 | 1.0 Release Qualification | NOT STARTED | `1.0.0` |
 
 ## LOT-07 exit criteria
@@ -1036,6 +1036,6 @@ Next after qualification: **LOT-36 — 1.0 Contract Freeze** (`0.9.0rc1`).
 - [x] exact contract baseline passes Python 3.12
 - [x] exact contract baseline passes Python 3.13
 - [x] exact contract baseline passes Python 3.14
-- [ ] GitHub CI qualification is fully green on the final documentation head
+- [x] GitHub CI qualification is fully green on the final documentation head
 
 Next after qualification: **LOT-37 — 1.0 Release Qualification** (`1.0.0`).
