@@ -47,9 +47,11 @@ class NavigationItem:
         ]
         if invalid_children:
             invalid_type = type(invalid_children[0]).__name__
-            raise InvalidNavigationChildError(
-                f"Navigation item children must contain only NavigationItem objects; got {invalid_type}."
+            message = (
+                "Navigation item children must contain only NavigationItem objects; "
+                f"got {invalid_type}."
             )
+            raise InvalidNavigationChildError(message)
 
         object.__setattr__(self, "label", label)
         object.__setattr__(self, "route", route)
