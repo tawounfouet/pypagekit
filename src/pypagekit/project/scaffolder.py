@@ -4,12 +4,17 @@ import re
 from pathlib import Path, PurePosixPath
 
 from pypagekit import __version__
+from pypagekit._filesystem_transaction import (
+    FilesystemTransaction,
+    FilesystemTransactionRollbackError,
+)
 
 from .exceptions import (
     ExistingProjectFileError,
     InvalidProjectNameError,
     InvalidProjectTargetError,
     ProjectPathConflictError,
+    ProjectScaffoldRollbackError,
     ProjectScaffoldWriteError,
     ProjectSymlinkError,
 )
@@ -105,12 +110,17 @@ class ProjectScaffolder:
 
         self._preflight(plan, force=force)
 
+        transaction = FilesystemTransaction()
+        written_files: list[Path] = []
+
         try:
-            plan.target_root.mkdir(parents=True, exist_ok=True)
-            written_files: list[Path] = []
+            transaction.ensure_directory(plan.target_root)
             for project_file in plan.files:
                 destination = _destination(plan.target_root, project_file.target)
-                destination.parent.mkdir(parents=True, exist_ok=True)
+                transaction.prepare_file(
+                    destination,
+                    backup_existing=force,
+                )
                 mode = "w" if force else "x"
                 with destination.open(
                     mode,
@@ -119,7 +129,17 @@ class ProjectScaffolder:
                 ) as output_file:
                     output_file.write(project_file.content)
                 written_files.append(destination)
-        except OSError as exc:
+
+            transaction.commit()
+        except Exception as exc:
+            try:
+                transaction.rollback()
+            except FilesystemTransactionRollbackError as rollback_exc:
+                raise ProjectScaffoldRollbackError(
+                    f"Project rollback failed under '{plan.target_root}' after "
+                    f"{type(exc).__name__}."
+                ) from rollback_exc
+
             raise ProjectScaffoldWriteError(
                 f"Project scaffolding failed under '{plan.target_root}'."
             ) from exc
