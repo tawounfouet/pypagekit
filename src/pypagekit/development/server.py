@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from contextlib import suppress
 from functools import partial
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -178,10 +179,8 @@ class DevelopmentServer:
 
         with self.create(config) as session:
             info = session.info
-            try:
+            with suppress(KeyboardInterrupt):
                 session.serve_forever()
-            except KeyboardInterrupt:
-                pass
             return info
 
 
