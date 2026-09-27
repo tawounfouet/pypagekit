@@ -6,7 +6,6 @@ from pypagekit import (
     Image,
     Link,
     Node,
-    Page,
     Paragraph,
     Text,
 )
