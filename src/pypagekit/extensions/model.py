@@ -10,6 +10,9 @@ from pypagekit.exceptions import InvalidExtensionDescriptorError, InvalidExtensi
 from pypagekit.rendering import Renderer
 
 _EXTENSION_ID_RE = re.compile(r"[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*\Z")
+_EXTENSION_API_VERSION_RE = re.compile(r"(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\Z")
+
+PYPAGEKIT_EXTENSION_API_VERSION = "0.7"
 
 BuildPlannerFactory = Callable[[], BuildPlannerProtocol]
 RendererFactory = Callable[[], Renderer]
@@ -33,11 +36,19 @@ class ExtensionDescriptor:
     extension_id: str
     name: str
     version: str
+    api_version: str | None = None
 
     def __post_init__(self) -> None:
         validate_extension_id(self.extension_id)
         _validate_non_empty_literal(self.name, field_name="Extension name")
         _validate_non_empty_literal(self.version, field_name="Extension version")
+        if self.api_version is not None:
+            if not isinstance(self.api_version, str):
+                raise TypeError("Extension API version must be a string or None.")
+            if not _EXTENSION_API_VERSION_RE.fullmatch(self.api_version):
+                raise InvalidExtensionDescriptorError(
+                    "Extension API version must use '<major>.<minor>' numeric form."
+                )
 
 
 @dataclass(frozen=True, slots=True)
@@ -107,6 +118,7 @@ __all__ = [
     "BuildPlannerFactory",
     "ComponentExtension",
     "ExtensionDescriptor",
+    "PYPAGEKIT_EXTENSION_API_VERSION",
     "RendererExtension",
     "RendererFactory",
     "validate_extension_id",
