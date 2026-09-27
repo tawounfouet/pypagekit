@@ -14,9 +14,7 @@ def test_encoded_backslash_path_is_not_served(tmp_path: Path) -> None:
     root.mkdir()
     (root / "safe.txt").write_text("safe", encoding="utf-8")
 
-    session = DevelopmentServer().create(
-        DevelopmentServerConfig(root, port=0)
-    )
+    session = DevelopmentServer().create(DevelopmentServerConfig(root, port=0))
     thread = Thread(target=session.serve_forever, daemon=True)
     thread.start()
     try:
