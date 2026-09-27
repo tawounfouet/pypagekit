@@ -173,7 +173,6 @@ class UnknownSiteRouteError(InvalidSiteError):
     """Raised when a requested logical path is absent from a site."""
 
 
-
 class InvalidAssetError(ValidationError):
     """Base exception for invalid asset declarations."""
 
