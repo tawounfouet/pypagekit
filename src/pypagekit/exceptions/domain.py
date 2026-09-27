@@ -39,3 +39,19 @@ class InvalidLinkHrefError(ValidationError):
 
 class InvalidImageSourceError(ValidationError):
     """Raised when an image source reference is structurally empty."""
+
+
+class InvalidAttributeError(ValidationError):
+    """Base exception for invalid author-facing attribute metadata."""
+
+
+class InvalidClassTokenError(InvalidAttributeError):
+    """Raised when a CSS class token is empty or contains whitespace."""
+
+
+class InvalidDataAttributeNameError(InvalidAttributeError):
+    """Raised when a data attribute suffix is structurally invalid."""
+
+
+class InvalidAriaAttributeNameError(InvalidAttributeError):
+    """Raised when an ARIA attribute suffix is structurally invalid."""
