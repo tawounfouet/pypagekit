@@ -52,6 +52,8 @@ from .domain import (
     NavigationCycleError,
     NavigationRouteMismatchError,
     PyPageKitError,
+    UnknownNavigationRouteError,
+    UnknownSiteRouteError,
     UnknownSlotBindingError,
     UnresolvedSlotError,
     ValidationError,
