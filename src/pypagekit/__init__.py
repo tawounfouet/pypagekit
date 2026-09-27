@@ -30,7 +30,7 @@ from .domain import (
     bind_slots,
 )
 
-__version__ = "0.9.0rc1"
+__version__ = "1.0.0"
 
 __all__ = [
     "Asset",
