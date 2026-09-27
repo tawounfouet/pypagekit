@@ -38,9 +38,69 @@ def test_empty_page_renders_valid_document_shell() -> None:
     )
 
 
+def test_page_description_renders_as_meta_description() -> None:
+    page = Page(
+        title="Metadata",
+        description="A concise page description.",
+    )
+
+    assert HtmlRenderer().render(page) == (
+        '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
+        '<title>Metadata</title><meta content="A concise page description." '
+        'name="description"></head><body></body></html>'
+    )
+
+
+def test_page_description_is_attribute_escaped() -> None:
+    page = Page(
+        title="Metadata",
+        description='A & "quoted" <description>',
+    )
+
+    html = HtmlRenderer().render(page)
+
+    assert (
+        '<meta content="A &amp; &quot;quoted&quot; &lt;description&gt;" '
+        'name="description">'
+    ) in html
+
+
+def test_empty_page_description_is_preserved() -> None:
+    page = Page(
+        title="Metadata",
+        description="",
+    )
+
+    assert '<meta content="" name="description">' in HtmlRenderer().render(page)
+
+
+def test_absent_page_description_emits_no_description_meta() -> None:
+    page = Page(title="Metadata")
+
+    html = HtmlRenderer().render(page)
+
+    assert 'name="description"' not in html
+
+
+def test_head_metadata_order_is_deterministic() -> None:
+    page = Page(
+        title="Metadata",
+        description="Description",
+    )
+
+    html = HtmlRenderer().render(page)
+
+    charset_index = html.index('<meta charset="utf-8">')
+    title_index = html.index("<title>Metadata</title>")
+    description_index = html.index('<meta content="Description" name="description">')
+
+    assert charset_index < title_index < description_index
+
+
 def test_page_rendering_is_deterministic() -> None:
     page = Page(
         title="Stable",
+        description="Stable metadata",
         content=[
             Heading("Heading"),
             Paragraph("Paragraph"),
@@ -49,15 +109,3 @@ def test_page_rendering_is_deterministic() -> None:
     renderer = HtmlRenderer()
 
     assert renderer.render(page) == renderer.render(page)
-
-
-def test_page_description_is_not_yet_part_of_lot_07_output_contract() -> None:
-    page = Page(
-        title="Metadata Later",
-        description="Introduced into the HTML head in LOT-09.",
-    )
-
-    html = HtmlRenderer().render(page)
-
-    assert "Metadata Later" in html
-    assert "Introduced into the HTML head in LOT-09." not in html
