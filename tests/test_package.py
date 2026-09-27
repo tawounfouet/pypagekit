@@ -1,4 +1,6 @@
-from pathlib import Path, PurePosixPath\n\nfrom pypagekit import (
+from pathlib import Path, PurePosixPath
+
+from pypagekit import (
     Asset,
     Assets,
     Attributes,
