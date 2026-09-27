@@ -54,9 +54,7 @@ def _validate_url_reference(
     if not _SCHEME_RE.fullmatch(normalized_prefix):
         return value
     if normalized_prefix not in allowed_schemes:
-        raise UnsafeUrlError(
-            f"Unsafe {context}: URL scheme '{normalized_prefix}' is not allowed."
-        )
+        raise UnsafeUrlError(f"Unsafe {context}: URL scheme '{normalized_prefix}' is not allowed.")
 
     return value
 
