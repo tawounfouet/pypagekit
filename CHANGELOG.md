@@ -4,6 +4,30 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.8.0a1]
+
+### Security
+
+- Reject output-root paths whose existing ancestors are symlinks.
+- Reject hard-linked output files before overwrite materialization.
+- Detect asset source/output conflicts by filesystem identity, including hard links.
+- Reject hard-linked generated project files before `--force` overwrite.
+- Reject malformed URL percent escapes and percent-encoded ASCII control characters.
+- Detect unsafe schemes after ASCII percent decoding, including encoded-colon obfuscation.
+- Reject malformed percent escapes and DEL characters in development-server request paths.
+- Add defensive development-server response headers for content sniffing, framing, referrer leakage, caching, and baseline CSP.
+- Reject duplicate plugin entry-point identities before loading any provider target.
+- Add adversarial coverage for hard links, symlinked output-root ancestors, encoded URL ambiguity, malformed HTTP request paths, response headers, and duplicate entry points.
+
+### Design
+
+- Security hardening strengthens existing boundaries instead of adding privileged bypass APIs.
+- Filesystem hardening remains fail-closed before write operations.
+- URL validation preserves approved author values rather than normalizing output.
+- Development-server headers are local-preview defenses and do not replace deployment security policy.
+- Installed plugin Python code is still trusted code once explicit discovery/qualification executes it; LOT-31 reduces avoidable provider execution but does not attempt process sandboxing.
+- The package advances to `0.8.0a1`.
+
 ## [0.7.0b2]
 
 ### Added
