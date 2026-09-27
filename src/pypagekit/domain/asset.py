@@ -139,7 +139,6 @@ class Assets:
         raise UnknownAssetTargetError(f"Asset target '{target.as_posix()}' is not declared.")
 
 
-
 def _lookup_asset(
     index: tuple[tuple[str, Asset], ...],
     target: str,
