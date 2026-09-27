@@ -43,9 +43,7 @@ def test_runtime_resolves_components_in_bound_slot_content() -> None:
         )
     )
 
-    assert ComponentRuntime().resolve(host) == Fragment(
-        [Fragment([Paragraph("Resolved")])]
-    )
+    assert ComponentRuntime().resolve(host) == Fragment([Fragment([Paragraph("Resolved")])])
 
 
 def test_runtime_preserves_plain_fragment_identity() -> None:
