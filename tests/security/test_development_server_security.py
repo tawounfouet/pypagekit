@@ -59,3 +59,76 @@ def test_symlinked_directory_inside_root_is_not_served(tmp_path: Path) -> None:
         session.shutdown()
         thread.join(timeout=2)
         session.close()
+
+
+def test_malformed_percent_escape_is_not_served(tmp_path: Path) -> None:
+    root = tmp_path / "dist"
+    root.mkdir()
+    (root / "safe.txt").write_text("safe", encoding="utf-8")
+
+    session = DevelopmentServer().create(DevelopmentServerConfig(root, port=0))
+    thread = Thread(target=session.serve_forever, daemon=True)
+    thread.start()
+    try:
+        connection = HTTPConnection(session.info.host, session.info.port, timeout=2)
+        connection.request("GET", "/%ZZsafe.txt")
+        response = connection.getresponse()
+        body = response.read()
+        connection.close()
+
+        assert response.status == 404
+        assert b"safe" not in body
+    finally:
+        session.shutdown()
+        thread.join(timeout=2)
+        session.close()
+
+
+def test_percent_encoded_del_character_is_not_served(tmp_path: Path) -> None:
+    root = tmp_path / "dist"
+    root.mkdir()
+    (root / "safe.txt").write_text("safe", encoding="utf-8")
+
+    session = DevelopmentServer().create(DevelopmentServerConfig(root, port=0))
+    thread = Thread(target=session.serve_forever, daemon=True)
+    thread.start()
+    try:
+        connection = HTTPConnection(session.info.host, session.info.port, timeout=2)
+        connection.request("GET", "/%7fsafe.txt")
+        response = connection.getresponse()
+        body = response.read()
+        connection.close()
+
+        assert response.status == 404
+        assert b"safe" not in body
+    finally:
+        session.shutdown()
+        thread.join(timeout=2)
+        session.close()
+
+
+def test_development_server_emits_defensive_headers(tmp_path: Path) -> None:
+    root = tmp_path / "dist"
+    root.mkdir()
+    (root / "index.html").write_text("<p>safe</p>", encoding="utf-8")
+
+    session = DevelopmentServer().create(DevelopmentServerConfig(root, port=0))
+    thread = Thread(target=session.serve_forever, daemon=True)
+    thread.start()
+    try:
+        connection = HTTPConnection(session.info.host, session.info.port, timeout=2)
+        connection.request("GET", "/index.html")
+        response = connection.getresponse()
+        response.read()
+        headers = dict(response.getheaders())
+        connection.close()
+
+        assert headers["X-Content-Type-Options"] == "nosniff"
+        assert headers["X-Frame-Options"] == "DENY"
+        assert headers["Referrer-Policy"] == "no-referrer"
+        assert "default-src 'self'" in headers["Content-Security-Policy"]
+        assert headers["Cache-Control"] == "no-store"
+    finally:
+        session.shutdown()
+        thread.join(timeout=2)
+        session.close()
