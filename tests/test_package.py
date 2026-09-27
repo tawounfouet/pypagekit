@@ -57,10 +57,7 @@ def test_package_imports() -> None:
     assert issubclass(Layout, Component)
     assert issubclass(LayoutRegion, Content)
     assert isinstance(Navigation(), Navigation)
-    assert isinstance(
-        NavigationItem("Root", Route("/", Page("Root"))),
-        NavigationItem,
-    )
+    assert isinstance(NavigationItem("Root", Route("/", Page("Root"))), NavigationItem)
     assert issubclass(Fragment, Content)
     assert issubclass(Slot, Content)
     assert issubclass(SlottedComponent, Component)
