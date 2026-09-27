@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 from contextlib import suppress
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -14,6 +15,7 @@ from .exceptions import DevelopmentServerBindError
 from .model import DevelopmentServerConfig, DevelopmentServerInfo
 
 _FORBIDDEN_SENTINEL = ".pypagekit-forbidden-resource"
+_PERCENT_ESCAPE_RE = re.compile(r"%(?![0-9A-Fa-f]{2})")
 
 
 class _DevelopmentHTTPServer(ThreadingHTTPServer):
@@ -32,6 +34,9 @@ class _StaticRequestHandler(SimpleHTTPRequestHandler):
         """Translate one URL path while keeping it inside the static root."""
 
         raw_path = urlsplit(path).path
+        if _PERCENT_ESCAPE_RE.search(raw_path):
+            return str(self._forbidden_path())
+
         try:
             decoded_path = unquote(raw_path, errors="strict")
         except UnicodeDecodeError:
@@ -40,7 +45,10 @@ class _StaticRequestHandler(SimpleHTTPRequestHandler):
         if (
             "\\" in decoded_path
             or "\x00" in decoded_path
-            or any(ord(character) < 32 for character in decoded_path)
+            or any(
+                ord(character) < 32 or ord(character) == 0x7F
+                for character in decoded_path
+            )
         ):
             return str(self._forbidden_path())
 
@@ -69,9 +77,13 @@ class _StaticRequestHandler(SimpleHTTPRequestHandler):
         self.send_error(HTTPStatus.NOT_FOUND, "Directory listing is disabled")
 
     def end_headers(self) -> None:
-        """Disable browser caching for local development responses."""
+        """Emit defensive headers for local development responses."""
 
         self.send_header("Cache-Control", "no-store")
+        self.send_header("Content-Security-Policy", "default-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'")
+        self.send_header("Referrer-Policy", "no-referrer")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("X-Frame-Options", "DENY")
         super().end_headers()
 
     def log_message(self, format: str, *args: object) -> None:
