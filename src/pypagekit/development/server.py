@@ -146,9 +146,7 @@ class DevelopmentServer:
         """Bind a server and return an explicitly managed session."""
 
         if not isinstance(config, DevelopmentServerConfig):
-            raise TypeError(
-                "Development server config must be a DevelopmentServerConfig object."
-            )
+            raise TypeError("Development server config must be a DevelopmentServerConfig object.")
 
         handler = partial(
             _StaticRequestHandler,
