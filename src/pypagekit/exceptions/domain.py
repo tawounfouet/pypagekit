@@ -171,3 +171,24 @@ class NavigationRouteMismatchError(InvalidSiteError):
 
 class UnknownSiteRouteError(InvalidSiteError):
     """Raised when a requested logical path is absent from a site."""
+
+
+
+class InvalidAssetError(ValidationError):
+    """Base exception for invalid asset declarations."""
+
+
+class InvalidAssetSourceError(InvalidAssetError):
+    """Raised when an asset source or collection member is invalid."""
+
+
+class InvalidAssetTargetError(InvalidAssetError):
+    """Raised when an asset publish target is invalid."""
+
+
+class DuplicateAssetTargetError(InvalidAssetError):
+    """Raised when two assets declare the same publish target."""
+
+
+class UnknownAssetTargetError(InvalidAssetError):
+    """Raised when an asset target lookup has no matching declaration."""
