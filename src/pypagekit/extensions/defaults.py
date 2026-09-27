@@ -6,6 +6,7 @@ from pypagekit.components import Card, Hero, Section
 from pypagekit.rendering import HtmlRenderer
 
 from .model import (
+    PYPAGEKIT_EXTENSION_API_VERSION,
     BuildPlannerExtension,
     ComponentExtension,
     ExtensionDescriptor,
@@ -28,6 +29,7 @@ def default_build_planner_registry() -> BuildPlannerRegistry:
                     extension_id=BUILD_PLANNER_EXTENSION_ID,
                     name="Static Build Planner",
                     version=__version__,
+                    api_version=PYPAGEKIT_EXTENSION_API_VERSION,
                 ),
                 factory=BuildPlanner,
             ),
@@ -45,6 +47,7 @@ def default_component_extension_registry() -> ComponentExtensionRegistry:
                     extension_id=BUILTIN_COMPONENTS_EXTENSION_ID,
                     name="Built-in Components",
                     version=__version__,
+                    api_version=PYPAGEKIT_EXTENSION_API_VERSION,
                 ),
                 components={
                     "card": Card,
@@ -66,6 +69,7 @@ def default_renderer_registry() -> RendererRegistry:
                     extension_id=HTML_RENDERER_EXTENSION_ID,
                     name="HTML Renderer",
                     version=__version__,
+                    api_version=PYPAGEKIT_EXTENSION_API_VERSION,
                 ),
                 factory=HtmlRenderer,
             ),
