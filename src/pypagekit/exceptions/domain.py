@@ -119,3 +119,28 @@ class InvalidRoutePathError(InvalidRouteError):
 
 class InvalidRoutePageError(InvalidRouteError):
     """Raised when a route target is not a Page."""
+
+
+
+class InvalidNavigationError(ValidationError):
+    """Base exception for invalid navigation structure."""
+
+
+class InvalidNavigationLabelError(InvalidNavigationError):
+    """Raised when a navigation label is empty or invalid."""
+
+
+class InvalidNavigationRouteError(InvalidNavigationError):
+    """Raised when a navigation item does not reference a Route."""
+
+
+class InvalidNavigationChildError(InvalidNavigationError):
+    """Raised when a navigation tree contains an invalid child object."""
+
+
+class DuplicateNavigationRouteError(InvalidNavigationError):
+    """Raised when one route appears more than once in a navigation tree."""
+
+
+class NavigationCycleError(InvalidNavigationError):
+    """Raised when navigation items form an object cycle."""
