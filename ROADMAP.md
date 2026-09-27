@@ -38,10 +38,10 @@ This file freezes the remaining implementation train from the qualified `0.6.0b2
 
 ```text
 LOT-36  0.9.0rc1  contract freeze         ✅ qualified
-LOT-37  1.0.0     release qualification   ← in progress
+LOT-37  1.0.0     release qualification   ✅ qualified
 ```
 
-No new feature scope may enter LOT-37.
+The LOT-01 → LOT-37 implementation train is complete. Post-1.0 feature work belongs to a new roadmap.
 
 ## Extensibility sequencing
 
