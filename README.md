@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-31 — Security Hardening** (`0.8.0a1`). The **0.7.x — Extensibility** line is complete.
+Current qualified milestone: **LOT-31 — Security Hardening** (`0.8.0a1`). Next: **LOT-32 — Reliability & Failure Hardening**.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
