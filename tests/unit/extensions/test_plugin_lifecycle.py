@@ -357,9 +357,7 @@ def test_deactivate_all_active_plugins() -> None:
 
 
 def test_deactivating_inactive_plugin_fails_explicitly() -> None:
-    qualified = PluginLifecycle.from_discovery(
-        _discovery(renderers=(_renderer(),))
-    ).qualify()
+    qualified = PluginLifecycle.from_discovery(_discovery(renderers=(_renderer(),))).qualify()
 
     with pytest.raises(PluginActivationError, match="not active"):
         qualified.deactivate(("acme.renderer.plain",))
