@@ -40,9 +40,7 @@ class LayoutRegion(Content):
         if not isinstance(name, str):
             raise TypeError("Layout region name must be a string.")
         if not _REGION_NAME_RE.fullmatch(name):
-            raise InvalidLayoutRegionNameError(
-                "Layout region names must use lowercase kebab-case."
-            )
+            raise InvalidLayoutRegionNameError("Layout region names must use lowercase kebab-case.")
 
         try:
             normalized_children = tuple(children)
@@ -57,8 +55,7 @@ class LayoutRegion(Content):
         if invalid_children:
             invalid_type = type(invalid_children[0]).__name__
             raise InvalidLayoutRegionChildError(
-                "Layout region children must contain only Content objects; "
-                f"got {invalid_type}."
+                f"Layout region children must contain only Content objects; got {invalid_type}."
             )
 
         if not isinstance(attributes, Attributes):
@@ -85,9 +82,7 @@ class Layout(Component, ABC):
         try:
             normalized_regions = tuple(self.regions())
         except TypeError as exc:
-            raise TypeError(
-                "Layout regions must be an iterable of LayoutRegion objects."
-            ) from exc
+            raise TypeError("Layout regions must be an iterable of LayoutRegion objects.") from exc
 
         invalid_regions = [
             region for region in normalized_regions if not isinstance(region, LayoutRegion)
@@ -95,14 +90,11 @@ class Layout(Component, ABC):
         if invalid_regions:
             invalid_type = type(invalid_regions[0]).__name__
             raise InvalidLayoutRegionResultError(
-                "Layout regions must contain only LayoutRegion objects; "
-                f"got {invalid_type}."
+                f"Layout regions must contain only LayoutRegion objects; got {invalid_type}."
             )
 
         names = [region.name for region in normalized_regions]
         if len(names) != len(set(names)):
-            raise DuplicateLayoutRegionError(
-                "Layout region names must be unique within a layout."
-            )
+            raise DuplicateLayoutRegionError("Layout region names must be unique within a layout.")
 
         return Container(normalized_regions)
