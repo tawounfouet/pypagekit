@@ -2,8 +2,6 @@
 
 import re
 
-from urllib.parse import unquote_to_bytes
-
 from pypagekit.exceptions import UnsafeUrlError
 
 _LINK_SCHEMES = frozenset({"http", "https", "mailto"})
