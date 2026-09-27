@@ -28,14 +28,6 @@ from .component import (
     MissingComponentRegistryError,
     UnknownComponentError,
 )
-from .extension import (
-    DuplicateExtensionRegistrationError,
-    ExtensionError,
-    InvalidExtensionDescriptorError,
-    InvalidExtensionIdError,
-    InvalidRendererExtensionError,
-    UnknownExtensionError,
-)
 from .domain import (
     DomainError,
     DuplicateAssetTargetError,
@@ -86,6 +78,14 @@ from .domain import (
     UnresolvedSlotError,
     ValidationError,
 )
+from .extension import (
+    DuplicateExtensionRegistrationError,
+    ExtensionError,
+    InvalidExtensionDescriptorError,
+    InvalidExtensionIdError,
+    InvalidRendererExtensionError,
+    UnknownExtensionError,
+)
 from .rendering import (
     InvalidHtmlAttributeNameError,
     InvalidHtmlTagError,
@@ -106,7 +106,6 @@ __all__ = [
     "ComponentRegistryError",
     "ComponentResolutionDepthError",
     "DomainError",
-    "ExtensionError",
     "DuplicateAssetTargetError",
     "DuplicateComponentRegistrationError",
     "DuplicateExtensionRegistrationError",
@@ -115,6 +114,7 @@ __all__ = [
     "DuplicateSiteRouteError",
     "DuplicateSlotError",
     "ExistingOutputError",
+    "ExtensionError",
     "FilesystemOutputError",
     "FilesystemWriteError",
     "InvalidAriaAttributeNameError",
