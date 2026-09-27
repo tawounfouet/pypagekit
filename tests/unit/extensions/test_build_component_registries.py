@@ -156,7 +156,6 @@ def test_default_component_extension_registry_exposes_builtin_components() -> No
     assert registry.component_names == ("card", "hero", "section")
 
 
-
 def test_build_planner_factory_failure_is_wrapped_with_extension_context() -> None:
     def broken_factory() -> EmptyPlanner:
         raise RuntimeError("boom")
