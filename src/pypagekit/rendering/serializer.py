@@ -81,9 +81,7 @@ def serialize_void_element(
     normalized_name = _validate_tag_name(name)
 
     if normalized_name not in _VOID_ELEMENTS:
-        raise InvalidHtmlTagError(
-            f"Element '{normalized_name}' is not an HTML5 void element."
-        )
+        raise InvalidHtmlTagError(f"Element '{normalized_name}' is not an HTML5 void element.")
 
     serialized_attributes = _serialize_attributes(attributes)
     return f"<{normalized_name}{serialized_attributes}>"
@@ -116,8 +114,7 @@ def _serialize_attributes(
             continue
 
         raise UnsupportedAttributeValueError(
-            f"Unsupported value type for HTML attribute '{name}': "
-            f"{type(value).__name__}."
+            f"Unsupported value type for HTML attribute '{name}': {type(value).__name__}."
         )
 
     if not serialized:
@@ -139,6 +136,4 @@ def _validate_attribute_name(name: str) -> None:
     if not isinstance(name, str):
         raise TypeError("HTML attribute name must be a string.")
     if not _ATTRIBUTE_NAME_RE.fullmatch(name):
-        raise InvalidHtmlAttributeNameError(
-            f"Invalid HTML attribute name: {name!r}."
-        )
+        raise InvalidHtmlAttributeNameError(f"Invalid HTML attribute name: {name!r}.")
