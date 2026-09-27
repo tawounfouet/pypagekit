@@ -106,13 +106,6 @@ class FilesystemWriter:
             for target in plan.targets
         )
 
-        for destination in destinations:
-            _validate_destination(
-                output_root,
-                destination,
-                overwrite=overwrite,
-            )
-
         resolved_destinations = {
             destination.resolve(strict=False) for destination in destinations
         }
@@ -143,6 +136,13 @@ class FilesystemWriter:
                         f"Asset source '{source}' shares an inode with planned output "
                         f"destination '{destination}'."
                     )
+
+        for destination in destinations:
+            _validate_destination(
+                output_root,
+                destination,
+                overwrite=overwrite,
+            )
 
 
 def _destination(output_root: Path, target: PurePosixPath) -> Path:
