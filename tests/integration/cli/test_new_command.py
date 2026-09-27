@@ -1,6 +1,7 @@
 import re
 from pathlib import Path
 
+import pytest
 from typer.testing import CliRunner
 
 from pypagekit.cli.app import app
@@ -29,48 +30,64 @@ def test_new_requires_target_argument() -> None:
     assert result.exit_code == USAGE_ERROR
 
 
-def test_new_creates_project_from_cli() -> None:
-    with runner.isolated_filesystem():
-        result = runner.invoke(app, ["new", "demo"])
+def test_new_creates_project_from_cli(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.chdir(tmp_path)
 
-        assert result.exit_code == SUCCESS
-        assert "Created PyPageKit project 'demo' at demo" in result.stdout
-        target = Path("demo")
-        assert (target / ".gitignore").is_file()
-        assert (target / "README.md").is_file()
-        assert (target / "pyproject.toml").is_file()
-        assert (target / "site.py").is_file()
+    result = runner.invoke(app, ["new", "demo"])
 
-
-def test_new_supports_current_directory() -> None:
-    with runner.isolated_filesystem():
-        result = runner.invoke(app, ["new", "."])
-
-        assert result.exit_code == SUCCESS
-        assert Path("site.py").is_file()
-        assert Path("pyproject.toml").is_file()
+    assert result.exit_code == SUCCESS
+    assert "Created PyPageKit project 'demo' at demo" in result.stdout
+    target = Path("demo")
+    assert (target / ".gitignore").is_file()
+    assert (target / "README.md").is_file()
+    assert (target / "pyproject.toml").is_file()
+    assert (target / "site.py").is_file()
 
 
-def test_new_collision_returns_execution_error_on_stderr() -> None:
-    with runner.isolated_filesystem():
-        first = runner.invoke(app, ["new", "demo"])
-        second = runner.invoke(app, ["new", "demo"])
+def test_new_supports_current_directory(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.chdir(tmp_path)
 
-        assert first.exit_code == SUCCESS
-        assert second.exit_code == EXECUTION_ERROR
-        assert "Project creation failed:" in second.stderr
-        assert "already exists" in second.stderr
+    result = runner.invoke(app, ["new", "."])
+
+    assert result.exit_code == SUCCESS
+    assert Path("site.py").is_file()
+    assert Path("pyproject.toml").is_file()
 
 
-def test_new_force_replaces_managed_files() -> None:
-    with runner.isolated_filesystem():
-        first = runner.invoke(app, ["new", "demo"])
-        assert first.exit_code == SUCCESS
+def test_new_collision_returns_execution_error_on_stderr(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.chdir(tmp_path)
 
-        site_file = Path("demo/site.py")
-        site_file.write_text("custom content", encoding="utf-8")
+    first = runner.invoke(app, ["new", "demo"])
+    second = runner.invoke(app, ["new", "demo"])
 
-        second = runner.invoke(app, ["new", "demo", "--force"])
+    assert first.exit_code == SUCCESS
+    assert second.exit_code == EXECUTION_ERROR
+    assert "Project creation failed:" in second.stderr
+    assert "already exists" in second.stderr
 
-        assert second.exit_code == SUCCESS
-        assert "StaticSiteGenerator" in site_file.read_text(encoding="utf-8")
+
+def test_new_force_replaces_managed_files(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.chdir(tmp_path)
+
+    first = runner.invoke(app, ["new", "demo"])
+    assert first.exit_code == SUCCESS
+
+    site_file = Path("demo/site.py")
+    site_file.write_text("custom content", encoding="utf-8")
+
+    second = runner.invoke(app, ["new", "demo", "--force"])
+
+    assert second.exit_code == SUCCESS
+    assert "StaticSiteGenerator" in site_file.read_text(encoding="utf-8")
