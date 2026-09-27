@@ -46,9 +46,7 @@ class BuildPlannerRegistry:
                     )
                 seen.add(extension_id)
                 collected.append(extension)
-            normalized = tuple(
-                sorted(collected, key=lambda item: item.descriptor.extension_id)
-            )
+            normalized = tuple(sorted(collected, key=lambda item: item.descriptor.extension_id))
 
         object.__setattr__(self, "entries", normalized)
 
