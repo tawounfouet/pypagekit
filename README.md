@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-27 — Extension Contracts & Renderer Registry** (`0.7.0a1`).
+Current qualified milestone: **LOT-27 — Extension Contracts & Renderer Registry** (`0.7.0a1`). Next: **LOT-28 — Build & Component Extension Points**.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
