@@ -338,7 +338,7 @@ renderer_entry_point_group = "pypagekit.renderers"
 build_planner_entry_point_group = "pypagekit.build_planners"
 component_entry_point_group = "pypagekit.components"
 builtin_renderer_id = "pypagekit.renderer.html"
-builtin_build_planner_id = "pypagekit.build.default"
+builtin_build_planner_id = "pypagekit.build.planner"
 builtin_components_id = "pypagekit.components.builtin"
 
 [typing]
