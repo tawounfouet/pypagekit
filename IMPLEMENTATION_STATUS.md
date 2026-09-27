@@ -29,7 +29,7 @@
 | LOT-25 | Development Server | QUALIFIED | `0.6.0b1` |
 | LOT-26 | Developer Diagnostics | QUALIFIED | `0.6.0b2` |
 | LOT-27 | Extension Contracts & Renderer Registry | QUALIFIED | `0.7.0a1` |
-| LOT-28 | Build & Component Extension Points | IN QUALIFICATION | `0.7.0a2` |
+| LOT-28 | Build & Component Extension Points | QUALIFIED | `0.7.0a2` |
 | LOT-29 | Plugin Discovery & Entry Points | NOT STARTED | `0.7.0b1` |
 | LOT-30 | Plugin Lifecycle & Conformance | NOT STARTED | `0.7.0b2` |
 | LOT-31 | Security Hardening | NOT STARTED | `0.8.0a1` |
@@ -765,6 +765,6 @@ Next after qualification: **LOT-28 — Build & Component Extension Points**.
 - [x] no package scanning, dynamic import-string loading, or entry-point discovery exists yet
 - [x] extensions remain independent from Typer and Rich
 - [x] package version advances to `0.7.0a2`
-- [ ] GitHub CI qualification is fully green
+- [x] GitHub CI qualification is fully green
 
 Next after qualification: **LOT-29 — Plugin Discovery & Entry Points**.
