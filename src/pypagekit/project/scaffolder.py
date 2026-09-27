@@ -237,6 +237,16 @@ pypagekit serve
 ```
 
 The development server serves `dist/` at `http://127.0.0.1:8000` by default.
+
+## Diagnostics
+
+```bash
+pypagekit doctor
+pypagekit inspect
+```
+
+`doctor` checks whether the local project environment is usable. `inspect` reports
+project facts without executing `site.py`.
 """
 
 
