@@ -156,9 +156,7 @@ def test_bind_slots_uses_default_when_binding_is_absent() -> None:
         ]
     )
 
-    assert bind_slots(template, SlotBindings()) == Container(
-        [Fragment([Paragraph("Fallback")])]
-    )
+    assert bind_slots(template, SlotBindings()) == Container([Fragment([Paragraph("Fallback")])])
 
 
 def test_explicit_empty_binding_suppresses_default() -> None:
