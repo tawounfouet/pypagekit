@@ -71,7 +71,7 @@ def test_deprecation_registry_has_unique_complete_entries() -> None:
     ids: set[str] = set()
     for entry in entries:
         assert isinstance(entry, dict)
-        assert REQUIRED_DEPRECATION_FIELDS <= entry.keys()
+        assert entry.keys() >= REQUIRED_DEPRECATION_FIELDS
         deprecation_id = entry["id"]
         assert isinstance(deprecation_id, str)
         assert deprecation_id not in ids
