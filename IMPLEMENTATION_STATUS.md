@@ -27,7 +27,7 @@
 | LOT-23 | CLI Foundations | QUALIFIED | `0.6.0a1` |
 | LOT-24 | Project Scaffolding | QUALIFIED | `0.6.0a2` |
 | LOT-25 | Development Server | QUALIFIED | `0.6.0b1` |
-| LOT-26 | Developer Diagnostics | NOT STARTED | `0.6.0b2` |
+| LOT-26 | Developer Diagnostics | IN QUALIFICATION | `0.6.0b2` |
 
 ## LOT-07 exit criteria
 
@@ -611,4 +611,44 @@ Next: **LOT-26 — Developer Diagnostics**.
 - the static development server is independently usable from Python and the CLI
 - actual HTTP tests cover pages, assets, cache headers, traversal and symlink boundaries
 - CLI tests prove deterministic host/port/root delegation and exit-code behavior
+- GitHub CI is the authoritative Ruff, formatting, mypy, pytest, package, and CLI-smoke gate
+
+
+## LOT-26 exit criteria
+
+- [x] public `pypagekit.diagnostics` package exists
+- [x] immutable diagnostic result models exist
+- [x] PASS / WARNING / FAIL statuses are explicit
+- [x] diagnostic check ordering is deterministic
+- [x] supported Python version is checked
+- [x] installed PyPageKit version is reported
+- [x] project root is checked without mutation
+- [x] pyproject.toml presence is checked
+- [x] project metadata is parsed read-only through stdlib tomllib
+- [x] site.py presence is checked without importing or executing it
+- [x] dist directory presence is checked
+- [x] dist/index.html presence is checked
+- [x] missing generated output remains a warning rather than a project-definition failure
+- [x] symlinked diagnostic targets are not treated as trusted regular project files
+- [x] public ProjectInspector exists
+- [x] inspection reports project/package/output facts
+- [x] malformed metadata is reported without executing project code
+- [x] pypagekit doctor is registered
+- [x] pypagekit inspect is registered
+- [x] diagnostic failures use execution exit code 1
+- [x] CLI usage failures remain exit code 2
+- [x] services perform no filesystem writes
+- [x] services perform no subprocess execution
+- [x] services perform no network access
+- [x] diagnostics services remain independent from Typer and Rich
+- [x] installed-wheel smoke covers doctor and inspect help
+
+Next: **0.7.x — Extensibility**.
+
+## LOT-26 qualification evidence
+
+- diagnostics and inspection are distinct read-only application services
+- CLI adapters only present structured service results and translate exit status
+- tests prove inspection does not execute site.py
+- architecture tests enforce the Typer/Rich dependency boundary for diagnostics
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, package, and CLI-smoke gate
