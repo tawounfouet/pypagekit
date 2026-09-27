@@ -4,6 +4,40 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.5.0b1]
+
+### Added
+
+- Public `FilesystemWriter` for materializing a qualified `BuildPlan`.
+- Immutable `FilesystemWriteResult` reporting page and asset files written.
+- Explicit `output_root` boundary supplied at write time.
+- Recursive output-directory creation.
+- UTF-8 page output.
+- Binary asset copying from declared `Asset.source`.
+- Safe-by-default no-overwrite behavior with explicit `overwrite=True`.
+- Full preflight for output-root type, existing targets, target ancestors, asset sources, and source/output overlap.
+- Symlink rejection for output root, target ancestors, and target files.
+- Filesystem-specific output errors.
+- LOT-21 unit, integration, and security coverage.
+
+### Security
+
+- Existing targets are never overwritten unless explicitly requested.
+- Default writes use exclusive creation modes to protect against post-preflight target creation.
+- Symlinked output roots and target paths are rejected even when overwrite is enabled.
+- Asset sources may not coincide with any planned output destination.
+- Missing, broken, or non-file asset sources fail before output directories are created.
+- Predictable filesystem conflicts are detected before any materialization starts.
+
+### Design
+
+- LOT-21 executes a precomputed `BuildPlan`; it does not decide routes, render pages, or recalculate targets.
+- Unplanned existing files under the output root are preserved.
+- No global clean/delete operation is introduced.
+- Asset bytes are copied as-is; bundling, hashing, fingerprinting, and transformations remain outside this LOT.
+- End-to-end `Site + Assets → output tree` orchestration remains LOT-22.
+
+
 ## [0.5.0a2]
 
 ### Added
