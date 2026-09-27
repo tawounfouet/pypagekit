@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current qualified milestone: **LOT-34 — Public API Inventory & Stability Classification** (`0.9.0a1`). Next: **LOT-35 — Compatibility, Deprecation & Migration**.
+Current implementation milestone: **LOT-35 — Compatibility, Deprecation & Migration** (`0.9.0b1`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -1866,3 +1866,44 @@ names, exit semantics, extension entry-point groups, built-in extension IDs, ext
 `py.typed`, and the minimum Python version are inventoried as operational contracts.
 
 See [PUBLIC_API.md](PUBLIC_API.md) for the classification policy.
+
+
+## Compatibility and migration
+
+LOT-35 defines how the public contract may evolve.
+
+Canonical policy:
+
+```text
+COMPATIBILITY.md
+COMPATIBILITY.toml
+```
+
+Active public deprecation registry:
+
+```text
+DEPRECATIONS.toml
+```
+
+Migration guide:
+
+```text
+MIGRATION_0_9_TO_1_0.md
+```
+
+The stable-major rule is deliberately strong:
+
+```text
+deprecate during 1.x
+        ↓
+keep compatibility alias through 1.x
+        ↓
+eligible for removal in 2.0
+```
+
+PyPageKit uses the standard `DeprecationWarning` category. At `0.9.0b1`, the active public
+deprecation registry is empty: no supported facade-based application code needs a rename migration.
+
+For the final pre-1.0 migration, applications should eliminate deep implementation imports, enable
+deprecation warnings in CI, and validate plugins against the exported extension API compatibility
+constant before testing against `0.9.0rc1`.
