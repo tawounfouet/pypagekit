@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-20 — Build Pipeline** (`0.5.0a2`).
+Current implementation milestone: **LOT-21 — Filesystem Output** (`0.5.0b1`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -42,7 +42,8 @@ Implemented so far:
 - immutable hierarchical navigation that references those routes directly;
 - a canonical Site aggregate with deterministic Sitemap projection;
 - declarative static assets with validated publish targets and no filesystem I/O;
-- deterministic in-memory build planning for pages and assets.
+- deterministic in-memory build planning for pages and assets;
+- safe filesystem materialization of qualified build plans.
 
 ## Quick example
 
@@ -175,7 +176,7 @@ python -m build
 1.0.0  Stable
 ```
 
-The current release line is **`0.5.x — Static Build`**. The next milestone is **LOT-21 — Filesystem Output**.
+The current release line is **`0.5.x — Static Build`**. The next milestone is **LOT-22 — Static Site Generation**.
 
 
 ## Controlled attributes
@@ -730,3 +731,72 @@ page  -> docs/index.html/index.html file/directory collision
 ```
 
 LOT-21 will execute an already-qualified `BuildPlan` against an explicit output root.
+
+
+## Filesystem output
+
+LOT-21 materializes an existing `BuildPlan` under an explicit output root:
+
+```python
+from pathlib import Path
+
+from pypagekit.build import FilesystemWriter
+
+
+result = FilesystemWriter().write(
+    plan,
+    Path("dist"),
+)
+```
+
+The responsibility split is now explicit:
+
+```text
+Site + Assets
+      ↓
+BuildPlanner
+      ↓
+BuildPlan
+      ↓
+FilesystemWriter
+      ↓
+dist/
+├── index.html
+├── about/
+│   └── index.html
+└── assets/
+    └── logo.svg
+```
+
+The writer does not render pages and does not derive targets. It executes the already-qualified plan.
+
+By default, existing targets are protected:
+
+```python
+FilesystemWriter().write(plan, Path("dist"))
+# raises ExistingOutputError if a planned file already exists
+```
+
+Replacement must be explicit:
+
+```python
+FilesystemWriter().write(
+    plan,
+    Path("dist"),
+    overwrite=True,
+)
+```
+
+Even with overwrite enabled, output-root symlinks, symlinked target ancestors, and target-file symlinks are rejected. Missing or invalid asset sources are also detected during preflight before predictable writes begin.
+
+Unplanned files are intentionally preserved; LOT-21 does not implement a global clean operation.
+
+The result records exactly what was materialized:
+
+```python
+result.page_files
+result.asset_files
+result.files
+```
+
+LOT-22 will provide the first end-to-end static-site generation facade that plans and writes a `Site` in one controlled workflow.
