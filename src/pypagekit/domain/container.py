@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 from pypagekit.exceptions import InvalidContainerChildError
 
+from .attributes import Attributes
 from .base import Content
 
 
@@ -13,8 +14,14 @@ class Container(Content):
     """Ordered immutable collection of child content nodes."""
 
     children: tuple[Content, ...]
+    attributes: Attributes
 
-    def __init__(self, children: Iterable[Content] = ()) -> None:
+    def __init__(
+        self,
+        children: Iterable[Content] = (),
+        *,
+        attributes: Attributes = Attributes(),
+    ) -> None:
         try:
             normalized_children = tuple(children)
         except TypeError as exc:
@@ -28,4 +35,8 @@ class Container(Content):
             message = f"Container children must contain only Content objects; got {invalid_type}."
             raise InvalidContainerChildError(message)
 
+        if not isinstance(attributes, Attributes):
+            raise TypeError("Container attributes must be an Attributes object.")
+
         object.__setattr__(self, "children", normalized_children)
+        object.__setattr__(self, "attributes", attributes)
