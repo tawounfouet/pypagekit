@@ -11,6 +11,7 @@ from .navigation import Navigation, NavigationItem
 from .page import Page
 from .reference import ComponentRef
 from .route import Route, normalize_route_path
+from .site import Site, Sitemap, SitemapEntry
 from .slots import Fragment, Slot, SlotBindings, SlottedComponent, bind_slots
 from .text import Heading, Paragraph, Text
 
@@ -34,6 +35,9 @@ __all__ = [
     "Page",
     "Paragraph",
     "Route",
+    "Site",
+    "Sitemap",
+    "SitemapEntry",
     "Slot",
     "SlotBindings",
     "SlottedComponent",

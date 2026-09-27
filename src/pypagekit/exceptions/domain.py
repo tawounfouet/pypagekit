@@ -143,3 +143,31 @@ class DuplicateNavigationRouteError(InvalidNavigationError):
 
 class NavigationCycleError(InvalidNavigationError):
     """Raised when navigation items form an object cycle."""
+
+
+class InvalidSiteError(ValidationError):
+    """Base exception for invalid site and sitemap structure."""
+
+
+class InvalidSiteRouteError(InvalidSiteError):
+    """Raised when a site or sitemap contains an object that is not Route."""
+
+
+class DuplicateSiteRouteError(InvalidSiteError):
+    """Raised when a canonical route path appears more than once."""
+
+
+class InvalidSiteNavigationError(InvalidSiteError):
+    """Raised when a site navigation value has the wrong type."""
+
+
+class UnknownNavigationRouteError(InvalidSiteError):
+    """Raised when navigation references a route absent from its site."""
+
+
+class NavigationRouteMismatchError(InvalidSiteError):
+    """Raised when navigation does not reference the site's canonical Route object."""
+
+
+class UnknownSiteRouteError(InvalidSiteError):
+    """Raised when a requested logical path is absent from a site."""

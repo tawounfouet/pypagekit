@@ -18,6 +18,9 @@ from .domain import (
     Page,
     Paragraph,
     Route,
+    Site,
+    Sitemap,
+    SitemapEntry,
     Slot,
     SlotBindings,
     SlottedComponent,
@@ -25,7 +28,7 @@ from .domain import (
     bind_slots,
 )
 
-__version__ = "0.4.0a2"
+__version__ = "0.4.0b1"
 
 __all__ = [
     "Attributes",
@@ -45,6 +48,9 @@ __all__ = [
     "Page",
     "Paragraph",
     "Route",
+    "Site",
+    "Sitemap",
+    "SitemapEntry",
     "Slot",
     "SlotBindings",
     "SlottedComponent",

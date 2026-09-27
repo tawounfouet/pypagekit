@@ -4,6 +4,31 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.4.0b1]
+
+### Added
+
+- Public immutable `Site` aggregate owning canonical `Route` objects.
+- Public immutable `Sitemap` and `SitemapEntry` domain projections.
+- Deterministic site path/page projections and logical-route lookup.
+- Duplicate canonical route-path detection across a site or standalone sitemap.
+- Optional site-level `Navigation` association.
+- Validation that navigation routes belong to the site and reference the site's canonical route objects.
+- Sitemap derivation from every site route, including routes absent from navigation.
+- Site-specific validation errors.
+- LOT-18 unit and security coverage.
+
+### Design
+
+- `Site` is the canonical owner of route objects for a site definition.
+- Navigation may expose a subset of site routes but may not introduce external routes.
+- Navigation must reference the exact immutable `Route` objects owned by the site.
+- Sitemap is a domain projection, not XML serialization.
+- Site lookup canonicalizes logical route input through the existing route validator.
+- No filesystem path, build plan, file writing, or sitemap XML output is introduced.
+- Completing LOT-18 closes the `0.4.x — Routing & Site` implementation line.
+
+
 ## [0.4.0a2]
 
 ### Added
