@@ -63,7 +63,6 @@ def test_python_cli_facade_remains_explicitly_provisional() -> None:
 
     assert provisional == {
         "pypagekit.cli": {
-            "exports": ["app", "main"],
             "frozen": False,
         }
     }
