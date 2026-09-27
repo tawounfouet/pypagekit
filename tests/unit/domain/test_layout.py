@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from dataclasses import FrozenInstanceError, dataclass
 
 import pytest
@@ -115,7 +116,7 @@ def test_layout_compose_returns_container_of_regions_in_order() -> None:
 
 
 class GeneratorLayout(Layout):
-    def regions(self) -> object:
+    def regions(self) -> Iterable[LayoutRegion]:
         return (
             region
             for region in (
@@ -150,8 +151,8 @@ def test_layout_rejects_duplicate_region_names() -> None:
 
 
 class InvalidRegionLayout(Layout):
-    def regions(self) -> object:
-        return [LayoutRegion("main"), Paragraph("invalid")]
+    def regions(self) -> Iterable[LayoutRegion]:
+        return [LayoutRegion("main"), Paragraph("invalid")]  # type: ignore[list-item]
 
 
 def test_layout_rejects_non_region_results() -> None:
@@ -160,8 +161,8 @@ def test_layout_rejects_non_region_results() -> None:
 
 
 class NonIterableLayout(Layout):
-    def regions(self) -> object:
-        return 42
+    def regions(self) -> Iterable[LayoutRegion]:
+        return 42  # type: ignore[return-value]
 
 
 def test_layout_rejects_non_iterable_regions() -> None:
