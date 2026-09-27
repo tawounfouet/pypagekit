@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current qualified milestone: **LOT-31 — Security Hardening** (`0.8.0a1`). Next: **LOT-32 — Reliability & Failure Hardening**.
+Current qualified milestone: **LOT-32 — Reliability & Failure Hardening** (`0.8.0a2`). Next: **LOT-33 — Performance & Scalability Hardening**.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -1608,3 +1608,111 @@ activation
 LOT-31 does not claim sandboxing of third-party Python code. Calling explicit plugin discovery or
 qualification may execute trusted installed plugin code by design; the hardening goal is to reduce
 avoidable execution and preserve clear trust boundaries.
+
+
+## Reliability and failure hardening
+
+LOT-32 strengthens failure semantics after LOT-31 hardened trust boundaries.
+
+### Filesystem rollback
+
+`FilesystemWriter` now treats one materialization call as a local rollback transaction.
+
+Before each managed file is mutated, the writer records whether the destination already exists. When
+overwrite is enabled, the existing file is snapshotted before modification.
+
+If an exception occurs while writing a later page or copying an asset:
+
+```text
+preflight
+   ↓
+page A written
+   ↓
+page B overwritten
+   ↓
+asset copy fails
+   ↓
+rollback
+   ├── remove page A
+   ├── restore previous page B
+   ├── remove partial asset
+   └── remove directories created only by this operation
+```
+
+Unplanned existing files are never part of the transaction and remain untouched.
+
+A normal materialization failure is reported as `FilesystemWriteError` with the original exception
+available through exception chaining.
+
+If restoring state itself fails, PyPageKit raises the more specific
+`FilesystemRollbackError`. This explicitly signals that callers must treat the output tree as
+potentially inconsistent.
+
+The same rollback primitive is used by project scaffolding. A failed
+`ProjectScaffolder.write()` removes newly generated files and restores managed files that had been
+overwritten with `force=True`. A rollback failure is surfaced as
+`ProjectScaffoldRollbackError`.
+
+These guarantees apply to exceptions observed by the running Python process. They do not claim
+crash consistency across abrupt process termination, operating-system failure, or power loss.
+
+### Renderer failure semantics
+
+Build planning now distinguishes framework errors from unexpected renderer failures.
+
+Known PyPageKit exceptions retain their original public type:
+
+```text
+UnsafeUrlError
+ValidationError
+RenderingError
+...
+        ↓
+propagated unchanged
+```
+
+Unexpected third-party renderer exceptions are wrapped as `BuildRenderError` with the affected
+route path and the original exception preserved as `__cause__`.
+
+This keeps security/validation errors actionable while adding route context to unknown failures.
+
+### Third-party planner results
+
+`StaticSiteGenerator` now validates the result returned by a structural third-party planner before
+calling the filesystem writer.
+
+```text
+planner.plan(...)
+      ↓
+BuildPlan? ── no ──> InvalidBuildPlanError
+      │
+     yes
+      ↓
+FilesystemWriter
+```
+
+A faulty planner therefore cannot pass an arbitrary object deeper into materialization.
+
+### Extension factory failures
+
+Explicit renderer and build-planner registries now wrap exceptions raised by their zero-argument
+factories as `ExtensionFactoryError`.
+
+```text
+registry.create(extension_id)
+        ↓
+extension.factory()
+        ↓
+unexpected exception
+        ↓
+ExtensionFactoryError
+        ↓
+original exception retained as cause
+```
+
+Plugin lifecycle qualification continues to isolate such a contribution as `REJECTED`, now with a
+stable framework-level failure class rather than an arbitrary third-party exception type.
+
+LOT-32 intentionally does not add retries, background recovery, process supervision, filesystem
+journaling, or crash-safe multi-file atomic commits. Those would require stronger operational
+semantics than the local library contract currently needs.

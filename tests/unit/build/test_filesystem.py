@@ -3,6 +3,7 @@ from pathlib import Path, PurePosixPath
 
 import pytest
 
+import pypagekit._filesystem_transaction as transaction_module
 import pypagekit.build.filesystem as filesystem_module
 
 from pypagekit import Asset, Page, Route
@@ -16,6 +17,7 @@ from pypagekit.build import (
 from pypagekit.exceptions import (
     AssetSourceOutputConflictError,
     ExistingOutputError,
+    FilesystemRollbackError,
     FilesystemWriteError,
     InvalidAssetSourceForOutputError,
     InvalidOutputRootError,
@@ -328,3 +330,115 @@ def test_target_symlink_is_rejected_even_with_overwrite(tmp_path: Path) -> None:
         )
 
     assert outside.read_text(encoding="utf-8") == "outside"
+
+
+
+def test_write_failure_rolls_back_prior_new_files_and_directories(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = tmp_path / "source.bin"
+    source.write_bytes(b"source")
+    output_root = tmp_path / "dist"
+    plan = BuildPlan(
+        pages=[page_entry("docs/index.html", "generated")],
+        assets=[asset_entry(source, "assets/source.bin")],
+    )
+
+    def fail_copy(*args: object, **kwargs: object) -> None:
+        raise OSError("simulated copy failure")
+
+    monkeypatch.setattr(filesystem_module.shutil, "copyfileobj", fail_copy)
+
+    with pytest.raises(FilesystemWriteError, match="Filesystem output failed"):
+        FilesystemWriter().write(plan, output_root)
+
+    assert not output_root.exists()
+
+
+def test_overwrite_failure_restores_existing_files_and_removes_new_files(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    output_root = tmp_path / "dist"
+    output_root.mkdir()
+    page = output_root / "index.html"
+    page.write_text("old page", encoding="utf-8")
+    unrelated = output_root / "keep.txt"
+    unrelated.write_text("keep", encoding="utf-8")
+    source = tmp_path / "source.bin"
+    source.write_bytes(b"source")
+    plan = BuildPlan(
+        pages=[
+            page_entry("index.html", "new page"),
+            page_entry("docs/new.html", "new nested page"),
+        ],
+        assets=[asset_entry(source, "assets/source.bin")],
+    )
+
+    def fail_copy(*args: object, **kwargs: object) -> None:
+        raise OSError("simulated copy failure")
+
+    monkeypatch.setattr(filesystem_module.shutil, "copyfileobj", fail_copy)
+
+    with pytest.raises(FilesystemWriteError):
+        FilesystemWriter().write(plan, output_root, overwrite=True)
+
+    assert page.read_text(encoding="utf-8") == "old page"
+    assert unrelated.read_text(encoding="utf-8") == "keep"
+    assert not (output_root / "docs").exists()
+    assert not (output_root / "assets").exists()
+    assert not tuple(output_root.glob(".pypagekit-backup-*"))
+
+
+def test_partial_asset_copy_is_removed_during_rollback(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = tmp_path / "source.bin"
+    source.write_bytes(b"source")
+    output_root = tmp_path / "dist"
+
+    def partial_copy(source_file: object, output_file: object) -> None:
+        del source_file
+        output_file.write(b"partial")  # type: ignore[attr-defined]
+        raise OSError("copy interrupted")
+
+    monkeypatch.setattr(filesystem_module.shutil, "copyfileobj", partial_copy)
+
+    with pytest.raises(FilesystemWriteError):
+        FilesystemWriter().write(
+            BuildPlan(assets=[asset_entry(source, "assets/source.bin")]),
+            output_root,
+        )
+
+    assert not output_root.exists()
+
+
+def test_rollback_failure_is_reported_explicitly(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    output_root = tmp_path / "dist"
+    output_root.mkdir()
+    page = output_root / "index.html"
+    page.write_text("old page", encoding="utf-8")
+    source = tmp_path / "source.bin"
+    source.write_bytes(b"source")
+    plan = BuildPlan(
+        pages=[page_entry("index.html", "new page")],
+        assets=[asset_entry(source, "assets/source.bin")],
+    )
+
+    def fail_copy(*args: object, **kwargs: object) -> None:
+        raise OSError("simulated copy failure")
+
+    def fail_restore(source_path: object, destination_path: object) -> None:
+        del source_path, destination_path
+        raise OSError("simulated rollback failure")
+
+    monkeypatch.setattr(filesystem_module.shutil, "copyfileobj", fail_copy)
+    monkeypatch.setattr(transaction_module.os, "replace", fail_restore)
+
+    with pytest.raises(FilesystemRollbackError, match="rollback failed"):
+        FilesystemWriter().write(plan, output_root, overwrite=True)

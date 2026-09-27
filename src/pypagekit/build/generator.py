@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from pypagekit.domain import Assets, Site
+from pypagekit.exceptions import InvalidBuildPlanError
 
 from .base import BuildPlannerProtocol
 from .filesystem import FilesystemWriteResult, FilesystemWriter
@@ -95,6 +96,11 @@ class StaticSiteGenerator:
         """Plan and materialize a complete static site."""
 
         plan = self._planner.plan(site, assets)
+        if not isinstance(plan, BuildPlan):
+            raise InvalidBuildPlanError(
+                f"Build planner returned {type(plan).__name__}; expected BuildPlan."
+            )
+
         write_result = self._writer.write(
             plan,
             output_root,

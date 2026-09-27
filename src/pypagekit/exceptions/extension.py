@@ -35,6 +35,10 @@ class InvalidRendererExtensionError(ExtensionError):
     """Raised when a renderer extension does not produce a renderer."""
 
 
+class ExtensionFactoryError(ExtensionError):
+    """Raised when an extension factory fails during explicit creation."""
+
+
 class PluginDiscoveryError(ExtensionError):
     """Base exception for installed plugin discovery failures."""
 
@@ -71,6 +75,7 @@ __all__ = [
     "DuplicateComponentContributionError",
     "DuplicateExtensionRegistrationError",
     "ExtensionError",
+    "ExtensionFactoryError",
     "InvalidBuildPlannerExtensionError",
     "InvalidExtensionDescriptorError",
     "InvalidExtensionIdError",

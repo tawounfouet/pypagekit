@@ -51,6 +51,7 @@ from pypagekit.domain import Action, Media
 from pypagekit.exceptions import (
     AssetSourceOutputConflictError,
     BuildError,
+    BuildRenderError,
     BuildTargetCollisionError,
     ComponentError,
     ComponentRegistryError,
@@ -60,13 +61,16 @@ from pypagekit.exceptions import (
     DuplicateExtensionRegistrationError,
     ExistingOutputError,
     ExtensionError,
+    ExtensionFactoryError,
     FilesystemOutputError,
+    FilesystemRollbackError,
     FilesystemWriteError,
     InvalidAssetError,
     InvalidAssetSourceForOutputError,
     InvalidAttributeError,
     InvalidBuildContentError,
     InvalidBuildInputError,
+    InvalidBuildPlanError,
     InvalidBuildPlannerExtensionError,
     InvalidBuildTargetError,
     InvalidComponentNameError,
@@ -125,7 +129,13 @@ from pypagekit.extensions import (
     default_component_extension_registry,
     default_renderer_registry,
 )
-from pypagekit.project import ProjectFile, ProjectPlan, ProjectScaffolder
+from pypagekit.project import (
+    ProjectFile,
+    ProjectPlan,
+    ProjectScaffolder,
+    ProjectScaffoldRollbackError,
+    ProjectScaffoldWriteError,
+)
 from pypagekit.rendering import HtmlRenderer, Renderer
 
 
@@ -237,13 +247,16 @@ def test_package_imports() -> None:
     assert issubclass(DuplicateAssetTargetError, InvalidAssetError)
     assert issubclass(DuplicateComponentContributionError, ExtensionError)
     assert issubclass(AssetSourceOutputConflictError, FilesystemOutputError)
+    assert issubclass(BuildRenderError, BuildError)
     assert issubclass(BuildTargetCollisionError, BuildError)
     assert issubclass(ExistingOutputError, FilesystemOutputError)
     assert issubclass(FilesystemOutputError, BuildError)
+    assert issubclass(FilesystemRollbackError, FilesystemWriteError)
     assert issubclass(FilesystemWriteError, FilesystemOutputError)
     assert issubclass(InvalidBuildContentError, BuildError)
     assert issubclass(InvalidBuildPlannerExtensionError, ExtensionError)
     assert issubclass(InvalidBuildInputError, BuildError)
+    assert issubclass(InvalidBuildPlanError, BuildError)
     assert issubclass(InvalidAssetSourceForOutputError, FilesystemOutputError)
     assert issubclass(InvalidBuildTargetError, BuildError)
     assert issubclass(InvalidOutputRootError, FilesystemOutputError)
@@ -253,6 +266,7 @@ def test_package_imports() -> None:
     assert issubclass(ComponentRegistryError, ComponentError)
     assert issubclass(DuplicateComponentRegistrationError, ComponentRegistryError)
     assert issubclass(ExtensionError, Exception)
+    assert issubclass(ExtensionFactoryError, ExtensionError)
     assert issubclass(DuplicateExtensionRegistrationError, ExtensionError)
     assert issubclass(InvalidExtensionDescriptorError, ExtensionError)
     assert issubclass(InvalidExtensionIdError, InvalidExtensionDescriptorError)
@@ -281,10 +295,11 @@ def test_package_imports() -> None:
     assert issubclass(UnsafeUrlError, SecurityError)
     assert issubclass(InvalidAttributeError, Exception)
     assert issubclass(UnsupportedNodeError, RenderingError)
+    assert issubclass(ProjectScaffoldRollbackError, ProjectScaffoldWriteError)
 
     renderer: Renderer = HtmlRenderer()
     assert isinstance(renderer, HtmlRenderer)
 
 
 def test_current_version() -> None:
-    assert __version__ == "0.8.0a1"
+    assert __version__ == "0.8.0a2"

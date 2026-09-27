@@ -7,6 +7,7 @@ from .exceptions import (
     ProjectError,
     ProjectPathConflictError,
     ProjectScaffoldingError,
+    ProjectScaffoldRollbackError,
     ProjectScaffoldWriteError,
     ProjectSymlinkError,
 )
@@ -22,6 +23,7 @@ __all__ = [
     "ProjectPathConflictError",
     "ProjectPlan",
     "ProjectScaffoldResult",
+    "ProjectScaffoldRollbackError",
     "ProjectScaffoldWriteError",
     "ProjectScaffolder",
     "ProjectScaffoldingError",

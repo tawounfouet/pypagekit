@@ -1,4 +1,5 @@
 from pathlib import Path, PurePosixPath
+from typing import Any
 
 import pytest
 
@@ -8,6 +9,7 @@ from pypagekit.project import (
     InvalidProjectNameError,
     InvalidProjectTargetError,
     ProjectScaffolder,
+    ProjectScaffoldWriteError,
     ProjectSymlinkError,
     normalize_project_name,
     pypagekit_requirement,
@@ -158,3 +160,60 @@ def test_force_does_not_replace_symlinked_managed_file(tmp_path: Path) -> None:
         ProjectScaffolder().scaffold(target, force=True)
 
     assert outside.read_text(encoding="utf-8") == "protected"
+
+
+def test_scaffold_failure_rolls_back_new_project_tree(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    target = tmp_path / "demo"
+    original_open = Path.open
+
+    def fail_pyproject(
+        path: Path,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Any:
+        if path.name == "pyproject.toml":
+            raise OSError("simulated project write failure")
+        return original_open(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "open", fail_pyproject)
+
+    with pytest.raises(ProjectScaffoldWriteError, match="Project scaffolding failed"):
+        ProjectScaffolder().scaffold(target)
+
+    assert not target.exists()
+
+
+def test_force_failure_restores_existing_managed_files(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    target = tmp_path / "demo"
+    target.mkdir()
+    existing_readme = target / "README.md"
+    existing_readme.write_text("original README", encoding="utf-8")
+    unrelated = target / "notes.txt"
+    unrelated.write_text("keep", encoding="utf-8")
+    original_open = Path.open
+
+    def fail_pyproject(
+        path: Path,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Any:
+        if path.name == "pyproject.toml":
+            raise OSError("simulated project write failure")
+        return original_open(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "open", fail_pyproject)
+
+    with pytest.raises(ProjectScaffoldWriteError):
+        ProjectScaffolder().scaffold(target, force=True)
+
+    assert existing_readme.read_text(encoding="utf-8") == "original README"
+    assert unrelated.read_text(encoding="utf-8") == "keep"
+    assert not (target / ".gitignore").exists()
+    assert not (target / "site.py").exists()
+    assert not tuple(target.glob(".pypagekit-backup-*"))

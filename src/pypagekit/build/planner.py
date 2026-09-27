@@ -3,7 +3,12 @@
 from pathlib import PurePosixPath
 
 from pypagekit.domain import Assets, Route, Site
-from pypagekit.exceptions import InvalidBuildContentError, InvalidBuildInputError
+from pypagekit.exceptions import (
+    BuildRenderError,
+    InvalidBuildContentError,
+    InvalidBuildInputError,
+    PyPageKitError,
+)
 from pypagekit.rendering import HtmlRenderer, Renderer
 
 from .model import (
@@ -65,7 +70,15 @@ class BuildPlanner:
 
         pages: list[PageBuildEntry] = []
         for route, target in zip(site.routes, page_targets, strict=True):
-            content = self._renderer.render(route.page)
+            try:
+                content = self._renderer.render(route.page)
+            except PyPageKitError:
+                raise
+            except Exception as exc:
+                raise BuildRenderError(
+                    f"Renderer failed unexpectedly for route '{route.path}'."
+                ) from exc
+
             if not isinstance(content, str):
                 raise InvalidBuildContentError(
                     f"Renderer returned {type(content).__name__} for route "

@@ -12,7 +12,11 @@ from pypagekit.build import (
     StaticSiteGenerationResult,
     StaticSiteGenerator,
 )
-from pypagekit.exceptions import BuildTargetCollisionError, ExistingOutputError
+from pypagekit.exceptions import (
+    BuildTargetCollisionError,
+    ExistingOutputError,
+    InvalidBuildPlanError,
+)
 
 
 class RecordingPlanner(BuildPlanner):
@@ -179,6 +183,30 @@ def test_generator_does_not_write_when_planning_fails(tmp_path: Path) -> None:
     with pytest.raises(BuildTargetCollisionError):
         StaticSiteGenerator(writer=FailIfCalledWriter()).generate(
             site,
+            tmp_path / "dist",
+        )
+
+    assert not (tmp_path / "dist").exists()
+
+
+
+class InvalidResultPlanner:
+    def plan(self, site: Site, assets: Assets | None = None) -> BuildPlan:
+        del site, assets
+        return object()  # type: ignore[return-value]
+
+
+def test_generator_rejects_invalid_third_party_plan_before_writer(
+    tmp_path: Path,
+) -> None:
+    writer = FailIfCalledWriter()
+
+    with pytest.raises(InvalidBuildPlanError, match="expected BuildPlan"):
+        StaticSiteGenerator(
+            planner=InvalidResultPlanner(),  # type: ignore[arg-type]
+            writer=writer,
+        ).generate(
+            Site(),
             tmp_path / "dist",
         )
 

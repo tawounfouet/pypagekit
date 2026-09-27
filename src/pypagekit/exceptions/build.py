@@ -23,6 +23,14 @@ class InvalidBuildContentError(BuildError):
     """Raised when a renderer does not produce string page content."""
 
 
+class BuildRenderError(BuildError):
+    """Raised when a renderer fails unexpectedly while planning a route."""
+
+
+class InvalidBuildPlanError(BuildError):
+    """Raised when a planner does not return a BuildPlan."""
+
+
 class FilesystemOutputError(BuildError):
     """Base exception for filesystem materialization failures."""
 
@@ -52,4 +60,8 @@ class AssetSourceOutputConflictError(FilesystemOutputError):
 
 
 class FilesystemWriteError(FilesystemOutputError):
-    """Raised when filesystem I/O fails after successful preflight."""
+    """Raised when filesystem materialization fails after successful preflight."""
+
+
+class FilesystemRollbackError(FilesystemWriteError):
+    """Raised when filesystem state cannot be restored after a write failure."""
