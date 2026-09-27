@@ -9,6 +9,7 @@ from pypagekit.components import ComponentRuntime
 from pypagekit.exceptions import (
     DuplicateComponentContributionError,
     DuplicateExtensionRegistrationError,
+    ExtensionFactoryError,
     InvalidBuildPlannerExtensionError,
 )
 from pypagekit.extensions import (
@@ -153,3 +154,16 @@ def test_default_component_extension_registry_exposes_builtin_components() -> No
 
     assert registry.ids == (BUILTIN_COMPONENTS_EXTENSION_ID,)
     assert registry.component_names == ("card", "hero", "section")
+
+
+
+def test_build_planner_factory_failure_is_wrapped_with_extension_context() -> None:
+    def broken_factory() -> EmptyPlanner:
+        raise RuntimeError("boom")
+
+    registry = BuildPlannerRegistry((_build_extension(factory=broken_factory),))
+
+    with pytest.raises(ExtensionFactoryError, match="acme.build.empty") as exc_info:
+        registry.create("acme.build.empty")
+
+    assert isinstance(exc_info.value.__cause__, RuntimeError)
