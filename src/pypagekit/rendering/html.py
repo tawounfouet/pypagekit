@@ -6,6 +6,7 @@ from pypagekit.domain import (
     Container,
     Heading,
     Image,
+    LayoutRegion,
     Link,
     Node,
     Page,
@@ -56,6 +57,15 @@ class HtmlRenderer:
                 "div",
                 content=self._render_children(node.children),
                 attributes=html_attributes(node.attributes),
+            )
+        if isinstance(node, LayoutRegion):
+            return serialize_element(
+                "div",
+                content=self._render_children(node.children),
+                attributes=html_attributes(
+                    node.attributes,
+                    intrinsic={"data-layout-region": node.name},
+                ),
             )
         if isinstance(node, Link):
             return serialize_element(
