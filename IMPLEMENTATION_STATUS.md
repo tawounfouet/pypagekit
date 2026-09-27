@@ -34,7 +34,7 @@
 | LOT-30 | Plugin Lifecycle & Conformance | QUALIFIED | `0.7.0b2` |
 | LOT-31 | Security Hardening | QUALIFIED | `0.8.0a1` |
 | LOT-32 | Reliability & Failure Hardening | QUALIFIED | `0.8.0a2` |
-| LOT-33 | Performance & Scalability Hardening | IN QUALIFICATION | `0.8.0b1` |
+| LOT-33 | Performance & Scalability Hardening | QUALIFIED | `0.8.0b1` |
 | LOT-34 | Public API Inventory & Stability Classification | NOT STARTED | `0.9.0a1` |
 | LOT-35 | Compatibility, Deprecation & Migration | NOT STARTED | `0.9.0b1` |
 | LOT-36 | 1.0 Contract Freeze | NOT STARTED | `0.9.0rc1` |
@@ -925,7 +925,7 @@ Next after qualification: **LOT-33 — Performance & Scalability Hardening** (`0
 - [x] large build-target collection is covered without timing assertions
 - [x] large Site/Assets/registry lookup collections are covered without timing assertions
 - [x] package version advances to `0.8.0b1`
-- [ ] GitHub CI qualification is fully green
+- [x] GitHub CI qualification is fully green
 
 After qualification, the `0.8.x — Hardening` line is complete.
 
