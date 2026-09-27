@@ -92,9 +92,7 @@ class ComponentRuntime:
 
         identity = id(component)
         if identity in active_component_ids:
-            raise ComponentCycleError(
-                f"Component cycle detected at {type(component).__name__}."
-            )
+            raise ComponentCycleError(f"Component cycle detected at {type(component).__name__}.")
 
         active_component_ids.add(identity)
         try:
