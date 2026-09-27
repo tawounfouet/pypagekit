@@ -132,9 +132,9 @@ from pypagekit.extensions import (
 from pypagekit.project import (
     ProjectFile,
     ProjectPlan,
+    ProjectScaffolder,
     ProjectScaffoldRollbackError,
     ProjectScaffoldWriteError,
-    ProjectScaffolder,
 )
 from pypagekit.rendering import HtmlRenderer, Renderer
 
