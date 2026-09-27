@@ -14,7 +14,7 @@
 | LOT-10 | Attributes & Styling Hooks | QUALIFIED | `0.2.0b3` |
 | LOT-11 | Component Model | QUALIFIED | `0.3.0a1` |
 | LOT-12 | Layout Model | QUALIFIED | `0.3.0a2` |
-| LOT-13 | Reusable Components | NOT STARTED | `0.3.0b1` |
+| LOT-13 | Reusable Components | QUALIFIED | `0.3.0b1` |
 | LOT-14 | Slots & Composition | NOT STARTED | `0.3.0b2` |
 | LOT-15 | Component Registry | NOT STARTED | `0.3.0b3` |
 
@@ -181,4 +181,33 @@ Next: **LOT-13 — Reusable Components**.
 - layout semantics remain domain-first and renderer-independent
 - regions compose through the existing component runtime
 - rendering stays neutral and deterministic
+- GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
+
+
+## LOT-13 exit criteria
+
+- [x] public built-in reusable component catalogue exists
+- [x] `Section`, `Card`, and `Hero` derive from `Component`
+- [x] built-ins compose only existing core content primitives
+- [x] reusable child collections normalize to immutable tuples
+- [x] title/body/action inputs have explicit type validation
+- [x] semantic heading levels remain configurable and validated
+- [x] outer and heading attributes use the existing controlled `Attributes` model
+- [x] no implicit CSS classes or component markers are emitted
+- [x] reusable components may contain custom components
+- [x] reusable components may be nested
+- [x] reusable components work inside layouts and pages
+- [x] rendering continues through `ComponentRuntime → HtmlRenderer`
+- [x] text/attribute escaping still applies
+- [x] URL security still applies to reusable component actions
+- [x] no raw-HTML escape hatch is introduced
+- [x] dynamic slots remain deferred to LOT-14
+
+Next: **LOT-14 — Slots & Composition**.
+
+## LOT-13 qualification evidence
+
+- built-in catalogue is composition-only and renderer-independent
+- integration tests prove reuse inside pages, layouts, and custom component trees
+- security tests prove built-ins inherit the existing rendering safety boundary
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate

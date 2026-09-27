@@ -14,7 +14,7 @@ from pypagekit import (
     Text,
     __version__,
 )
-from pypagekit.components import ComponentRuntime
+from pypagekit.components import Card, ComponentRuntime, Hero, Section
 from pypagekit.domain import Action, Media
 from pypagekit.exceptions import (
     ComponentError,
@@ -46,6 +46,9 @@ def test_package_imports() -> None:
     assert issubclass(Image, Media)
     assert isinstance(Attributes(), Attributes)
     assert isinstance(ComponentRuntime(), ComponentRuntime)
+    assert issubclass(Section, Component)
+    assert issubclass(Card, Component)
+    assert issubclass(Hero, Component)
     assert issubclass(ComponentError, Exception)
     assert issubclass(InvalidLayoutError, Exception)
     assert issubclass(SerializationError, RenderingError)
@@ -59,4 +62,4 @@ def test_package_imports() -> None:
 
 
 def test_current_version() -> None:
-    assert __version__ == "0.3.0a2"
+    assert __version__ == "0.3.0b1"
