@@ -6,7 +6,7 @@ from typer.testing import CliRunner
 
 from pypagekit.cli.app import app
 from pypagekit.cli.exit_codes import EXECUTION_ERROR, SUCCESS, USAGE_ERROR
-from pypagekit.development import DevelopmentServerInfo
+from pypagekit.development import DevelopmentServerConfig, DevelopmentServerInfo
 
 runner = CliRunner()
 _ANSI_RE = re.compile(r"\x1b\[[0-9;]*m")
@@ -82,12 +82,15 @@ def test_serve_delegates_to_development_service(
 ) -> None:
     root = tmp_path / "public"
     root.mkdir()
-    captured: dict[str, object] = {}
+    captured: list[DevelopmentServerConfig] = []
     session = _FakeSession(root)
 
-    def fake_create(self: object, config: object) -> _FakeSession:
+    def fake_create(
+        self: object,
+        config: DevelopmentServerConfig,
+    ) -> _FakeSession:
         del self
-        captured["config"] = config
+        captured.append(config)
         return session
 
     monkeypatch.setattr(
@@ -108,10 +111,10 @@ def test_serve_delegates_to_development_service(
     )
 
     assert result.exit_code == SUCCESS
-    config = captured["config"]
-    assert getattr(config, "root") == root
-    assert getattr(config, "host") == "127.0.0.1"
-    assert getattr(config, "port") == 9000
+    config = captured[0]
+    assert config.root == root
+    assert config.host == "127.0.0.1"
+    assert config.port == 9000
     assert session.served
     assert session.closed
     assert "http://127.0.0.1:9123" in result.stdout
