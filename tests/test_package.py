@@ -194,9 +194,7 @@ def test_package_imports() -> None:
         ComponentExtensionRegistry((component_extension,)),
         ComponentExtensionRegistry,
     )
-    assert default_component_extension_registry().ids == (
-        BUILTIN_COMPONENTS_EXTENSION_ID,
-    )
+    assert default_component_extension_registry().ids == (BUILTIN_COMPONENTS_EXTENSION_ID,)
     assert issubclass(Section, Component)
     assert issubclass(Card, Component)
     assert issubclass(Hero, Component)
