@@ -104,3 +104,8 @@ class UnknownSlotBindingError(InvalidSlotError):
 
 class DuplicateSlotError(InvalidSlotError):
     """Raised when a template declares the same slot name more than once."""
+
+
+
+class UnresolvedSlotError(InvalidSlotError):
+    """Raised when a slot placeholder escapes its composition boundary."""
