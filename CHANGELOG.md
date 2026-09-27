@@ -4,6 +4,22 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.1.0a4]
+
+### Added
+
+- Immutable `Container` content primitive for ordered composition trees.
+- Iterable-to-tuple normalization for container children.
+- Recursive composition through nested `Container` instances.
+- `InvalidContainerChildError` for non-`Content` children.
+- LOT-04 tests covering order, generators, nesting, immutability, validation, and input isolation.
+
+### Design
+
+- Empty containers are valid.
+- `Container` models composition only; it introduces no rendering, layout, HTML, filesystem, or component-runtime behavior.
+- Child order is author-defined and preserved exactly.
+
 ## [0.1.0a3]
 
 ### Added

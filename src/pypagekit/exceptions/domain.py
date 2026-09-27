@@ -27,3 +27,7 @@ class InvalidPageContentError(ValidationError):
 
 class InvalidHeadingLevelError(ValidationError):
     """Raised when a heading level is outside the supported 1..6 range."""
+
+
+class InvalidContainerChildError(ValidationError):
+    """Raised when a container includes an object that is not Content."""

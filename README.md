@@ -4,17 +4,18 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-03 — Text Content** (`0.1.0a3`).
+Current implementation milestone: **LOT-04 — Composition Tree** (`0.1.0a4`).
 
 Implemented so far:
 
 - typed `src/` package and CI foundations;
 - `Node` and `Content` domain foundations;
 - immutable `Page` root document object;
-- immutable `Text`, `Heading`, and `Paragraph` content primitives;
+- immutable `Text`, `Heading`, and `Paragraph` text primitives;
+- immutable `Container` for ordered recursive composition;
 - explicit domain validation and exceptions.
 
-HTML rendering is intentionally not implemented yet. Domain text stays raw and will be escaped only at the serialization boundary in later LOTs.
+HTML rendering is intentionally not implemented yet. The domain describes page structure without embedding HTML behavior.
 
 ## Requirements
 
@@ -43,22 +44,41 @@ python -m build
 ## Current domain API
 
 ```python
-from pypagekit import Heading, Page, Paragraph, Text
+from pypagekit import Container, Heading, Page, Paragraph, Text
 
 
 page = Page(
     title="Home",
     content=[
-        Heading("Welcome", level=1),
-        Paragraph("PyPageKit models pages with Python objects."),
-        Text("Literal text content"),
+        Container(
+            children=[
+                Heading("Welcome", level=1),
+                Paragraph("PyPageKit models pages as composition trees."),
+                Container(
+                    children=[
+                        Text("Nested content remains ordinary Content."),
+                    ]
+                ),
+            ]
+        )
     ],
     lang="en",
     description="Example page",
 )
 ```
 
-`Page` normalizes its content into an immutable tuple. Text content primitives preserve exactly the semantic strings supplied by the author; HTML escaping is not a domain responsibility.
+`Page` and `Container` normalize their content collections into immutable tuples. Text values remain raw semantic data; rendering and HTML escaping belong to later layers.
+
+## Composition model
+
+```text
+Page
+└── Container
+    ├── Heading
+    ├── Paragraph
+    └── Container
+        └── Text
+```
 
 ## Source layout
 
@@ -70,6 +90,7 @@ src/
     ├── domain/
     │   ├── __init__.py
     │   ├── base.py
+    │   ├── container.py
     │   ├── page.py
     │   └── text.py
     └── exceptions/
@@ -81,6 +102,7 @@ tests/
 └── unit/
     └── domain/
         ├── test_base.py
+        ├── test_container.py
         ├── test_page.py
         └── test_text.py
 ```
@@ -100,4 +122,4 @@ tests/
 1.0.0  Stable
 ```
 
-The immediate next milestone is **LOT-04 — Composition Tree**.
+The immediate next milestone is **LOT-05 — Actions & Media**.
