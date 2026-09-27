@@ -16,7 +16,7 @@
 | LOT-12 | Layout Model | QUALIFIED | `0.3.0a2` |
 | LOT-13 | Reusable Components | QUALIFIED | `0.3.0b1` |
 | LOT-14 | Slots & Composition | QUALIFIED | `0.3.0b2` |
-| LOT-15 | Component Registry | NOT STARTED | `0.3.0b3` |
+| LOT-15 | Component Registry | QUALIFIED | `0.3.0b3` |
 
 ## LOT-07 exit criteria
 
@@ -243,4 +243,33 @@ Next: **LOT-15 — Component Registry**.
 - named injection is explicit and deterministic
 - multi-node slot content renders wrapperlessly through `Fragment`
 - runtime/security tests cover resolved and unresolved slot paths
+- GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
+
+
+## LOT-15 exit criteria
+
+- [x] public immutable `ComponentRef` exists
+- [x] component names use validated lowercase kebab-case
+- [x] component reference properties normalize deterministically
+- [x] invalid keyword property names fail explicitly
+- [x] public immutable `ComponentRegistry` exists
+- [x] registry names are deterministic
+- [x] registration returns a new registry instead of mutating the source
+- [x] duplicate registrations fail explicitly
+- [x] unknown components fail explicitly
+- [x] registered factories must return `Component`
+- [x] runtime requires an explicit registry for symbolic references
+- [x] symbolic references resolve inside nested content trees
+- [x] renderer works through an injected registry-aware runtime
+- [x] text escaping and URL security still apply after registry resolution
+- [x] no global mutable registry exists
+- [x] no dynamic import or implicit module discovery exists
+
+Next: **LOT-16 — Route Model**.
+
+## LOT-15 qualification evidence
+
+- registry resolution is explicit, local, and deterministic
+- symbolic references enter the existing component/runtime/rendering pipeline
+- security tests cover malicious text, URLs, and registry names
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
