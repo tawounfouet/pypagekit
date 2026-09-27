@@ -62,10 +62,11 @@ def test_unknown_command_is_usage_error() -> None:
     assert "not-a-command" in result.output
 
 
-def test_cli_help_does_not_advertise_unimplemented_workflow_commands() -> None:
+def test_cli_help_advertises_only_implemented_workflow_commands() -> None:
     result = runner.invoke(app, ["--help"])
 
     assert result.exit_code == SUCCESS
     output = _plain(result.output)
-    for command in ("build", "new", "serve", "inspect", "doctor"):
+    assert " new " in output
+    for command in ("build", "serve", "inspect", "doctor"):
         assert f" {command} " not in output
