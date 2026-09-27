@@ -176,7 +176,6 @@ def _validate_navigation_membership(
             )
 
 
-
 def _lookup_route(
     index: tuple[tuple[str, Route], ...],
     path: str,
