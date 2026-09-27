@@ -18,7 +18,7 @@ This file freezes the remaining implementation train from the qualified `0.6.0b2
 | `0.9.x` | API Freeze | LOT-34..36 |
 | `1.0.0` | Stable | LOT-37 |
 
-## Remaining lots
+## Frozen implementation lots
 
 | LOT | Scope | Target |
 |---|---|---|
@@ -33,6 +33,15 @@ This file freezes the remaining implementation train from the qualified `0.6.0b2
 | LOT-35 | Compatibility, Deprecation & Migration | `0.9.0b1` |
 | LOT-36 | 1.0 Contract Freeze | `0.9.0rc1` |
 | LOT-37 | 1.0 Release Qualification | `1.0.0` |
+
+## Current position
+
+```text
+LOT-36  0.9.0rc1  contract freeze         ✅ qualified
+LOT-37  1.0.0     release qualification   ← in progress
+```
+
+No new feature scope may enter LOT-37.
 
 ## Extensibility sequencing
 
