@@ -8,6 +8,7 @@ from pypagekit.components import ComponentRegistry
 from pypagekit.exceptions import (
     DuplicateComponentContributionError,
     DuplicateExtensionRegistrationError,
+    ExtensionFactoryError,
     InvalidBuildPlannerExtensionError,
     InvalidRendererExtensionError,
     UnknownExtensionError,
@@ -88,7 +89,14 @@ class BuildPlannerRegistry:
     def create(self, extension_id: str) -> BuildPlannerProtocol:
         """Instantiate and validate the build planner registered under an ID."""
 
-        planner = self.extension(extension_id).factory()
+        extension = self.extension(extension_id)
+        try:
+            planner = extension.factory()
+        except Exception as exc:
+            raise ExtensionFactoryError(
+                f"Build planner extension '{extension_id}' factory failed."
+            ) from exc
+
         if not callable(getattr(planner, "plan", None)):
             raise InvalidBuildPlannerExtensionError(
                 f"Build planner extension '{extension_id}' must produce an object "
@@ -249,7 +257,14 @@ class RendererRegistry:
     def create(self, extension_id: str) -> Renderer:
         """Instantiate and validate the renderer registered under an ID."""
 
-        renderer = self.extension(extension_id).factory()
+        extension = self.extension(extension_id)
+        try:
+            renderer = extension.factory()
+        except Exception as exc:
+            raise ExtensionFactoryError(
+                f"Renderer extension '{extension_id}' factory failed."
+            ) from exc
+
         if not callable(getattr(renderer, "render", None)):
             raise InvalidRendererExtensionError(
                 f"Renderer extension '{extension_id}' must produce an object "
