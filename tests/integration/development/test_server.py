@@ -36,11 +36,13 @@ def test_server_serves_root_index_and_disables_cache(tmp_path: Path) -> None:
     root.mkdir()
     (root / "index.html").write_text("<h1>Home</h1>", encoding="utf-8")
 
-    with running_server(root) as session:
-        with urlopen(f"{session.info.url}/", timeout=2) as response:
-            body = response.read().decode("utf-8")
-            assert response.status == 200
-            assert response.headers["Cache-Control"] == "no-store"
+    with (
+        running_server(root) as session,
+        urlopen(f"{session.info.url}/", timeout=2) as response,
+    ):
+        body = response.read().decode("utf-8")
+        assert response.status == 200
+        assert response.headers["Cache-Control"] == "no-store"
 
     assert body == "<h1>Home</h1>"
 
@@ -51,9 +53,11 @@ def test_server_serves_pretty_url_index(tmp_path: Path) -> None:
     page.parent.mkdir(parents=True)
     page.write_text("<h1>About</h1>", encoding="utf-8")
 
-    with running_server(root) as session:
-        with urlopen(f"{session.info.url}/about/", timeout=2) as response:
-            body = response.read().decode("utf-8")
+    with (
+        running_server(root) as session,
+        urlopen(f"{session.info.url}/about/", timeout=2) as response,
+    ):
+        body = response.read().decode("utf-8")
 
     assert body == "<h1>About</h1>"
 
@@ -64,12 +68,14 @@ def test_server_serves_binary_assets(tmp_path: Path) -> None:
     asset.parent.mkdir(parents=True)
     asset.write_bytes(b"\x00\x01asset")
 
-    with running_server(root) as session:
-        with urlopen(
+    with (
+        running_server(root) as session,
+        urlopen(
             f"{session.info.url}/assets/logo.bin",
             timeout=2,
-        ) as response:
-            body = response.read()
+        ) as response,
+    ):
+        body = response.read()
 
     assert body == b"\x00\x01asset"
 
@@ -79,9 +85,8 @@ def test_directory_listing_is_disabled(tmp_path: Path) -> None:
     (root / "private").mkdir(parents=True)
     (root / "private" / "secret.txt").write_text("secret", encoding="utf-8")
 
-    with running_server(root) as session:
-        with pytest.raises(HTTPError) as exc_info:
-            urlopen(f"{session.info.url}/private/", timeout=2)
+    with running_server(root) as session, pytest.raises(HTTPError) as exc_info:
+        urlopen(f"{session.info.url}/private/", timeout=2)
 
     assert exc_info.value.code == 404
 
@@ -90,9 +95,8 @@ def test_missing_resource_returns_404(tmp_path: Path) -> None:
     root = tmp_path / "dist"
     root.mkdir()
 
-    with running_server(root) as session:
-        with pytest.raises(HTTPError) as exc_info:
-            urlopen(f"{session.info.url}/missing.txt", timeout=2)
+    with running_server(root) as session, pytest.raises(HTTPError) as exc_info:
+        urlopen(f"{session.info.url}/missing.txt", timeout=2)
 
     assert exc_info.value.code == 404
 
@@ -124,9 +128,8 @@ def test_symlinked_file_inside_root_is_not_served(tmp_path: Path) -> None:
     outside.write_text("protected", encoding="utf-8")
     (root / "leak.txt").symlink_to(outside)
 
-    with running_server(root) as session:
-        with pytest.raises(HTTPError) as exc_info:
-            urlopen(f"{session.info.url}/leak.txt", timeout=2)
+    with running_server(root) as session, pytest.raises(HTTPError) as exc_info:
+        urlopen(f"{session.info.url}/leak.txt", timeout=2)
 
     assert exc_info.value.code == 404
 
