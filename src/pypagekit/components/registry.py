@@ -34,9 +34,7 @@ class ComponentRegistry:
             for name, factory in values.items():
                 validate_component_name(name)
                 if not callable(factory):
-                    raise TypeError(
-                        f"Component factory for '{name}' must be callable."
-                    )
+                    raise TypeError(f"Component factory for '{name}' must be callable.")
                 entries.append((name, factory))
 
             normalized_entries = tuple(sorted(entries, key=lambda item: item[0]))
@@ -66,9 +64,7 @@ class ComponentRegistry:
         if not callable(factory):
             raise TypeError(f"Component factory for '{name}' must be callable.")
         if self.contains(name):
-            raise DuplicateComponentRegistrationError(
-                f"Component '{name}' is already registered."
-            )
+            raise DuplicateComponentRegistrationError(f"Component '{name}' is already registered.")
 
         values = dict(self.entries)
         values[name] = factory
