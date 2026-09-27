@@ -4,6 +4,28 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.9.0a1]
+
+### Added
+
+- Canonical human-readable public API policy in `PUBLIC_API.md`.
+- Machine-readable public API inventory in `PUBLIC_API.toml`.
+- Explicit stability classifications: `stable_candidate`, `provisional_public`, `operational_contract`, and `internal`.
+- Exact inventory of every current public facade `__all__`.
+- Explicit operational inventory for CLI commands, process exit semantics, extension entry-point groups, built-in extension IDs, extension API version, PEP 561 typing marker, and minimum Python version.
+- Architecture CI that verifies the runtime public exports match the inventory exactly.
+- Explicit rule that deep implementation imports are not independent compatibility paths unless promoted by a later compatibility document.
+
+### Design
+
+- Public API stability is attached to documented facade imports rather than physical source-file paths.
+- `pypagekit.cli` remains provisional at the Python/Typer adapter level while the shell CLI is tracked as an operational contract.
+- The extension facade is a stable candidate, while its compatibility line remains independently versioned as `0.7`.
+- LOT-34 freezes the inventory/classification process, not the final 1.0 signatures.
+- LOT-35 will define compatibility, deprecation, and migration rules.
+- LOT-36 will freeze the accepted 1.0 contract.
+- The package advances to `0.9.0a1`.
+
 ## [0.8.0b1]
 
 ### Performance
