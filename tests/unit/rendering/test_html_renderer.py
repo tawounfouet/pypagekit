@@ -103,11 +103,9 @@ def test_link_renders_escaped_label_and_attribute() -> None:
         label='A & "B" <C>',
         href='/docs?a=1&b="two"',
     )
+    expected = '<a href="/docs?a=1&amp;b=&quot;two&quot;">A &amp; "B" &lt;C&gt;</a>'
 
-    assert renderer.render(link) == (
-        '<a href="/docs?a=1&amp;b=&quot;two&quot;">'
-        'A &amp; "B" &lt;C&gt;</a>'
-    )
+    assert renderer.render(link) == expected
 
 
 def test_image_renders_as_void_element() -> None:
@@ -116,11 +114,12 @@ def test_image_renders_as_void_element() -> None:
         src='/assets/logo?a=1&b="two"',
         alt='A & "logo"',
     )
-
-    assert renderer.render(image) == (
+    expected = (
         '<img alt="A &amp; &quot;logo&quot;" '
         'src="/assets/logo?a=1&amp;b=&quot;two&quot;">'
     )
+
+    assert renderer.render(image) == expected
 
 
 def test_decorative_image_preserves_empty_alt() -> None:
