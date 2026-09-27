@@ -4,6 +4,32 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.9.0rc1]
+
+### Contract Freeze
+
+- Promote all accepted public Python facades from `stable_candidate` to frozen `stable`.
+- Add human-readable 1.0 contract documentation in `API_CONTRACT_1_0.md`.
+- Add exact machine-readable 1.0 baseline in `API_CONTRACT_1_0.json`.
+- Add deterministic contract snapshot generation through `tools/api_contract_snapshot.py`.
+- Add architecture CI requiring exact runtime/baseline equality during the RC-to-1.0 interval.
+- Freeze stable facade exports, function/constructor signatures, public class/protocol members, public inheritance relationships, public dataclass semantics, exception hierarchy, enum values, type aliases, and constants.
+- Freeze shell CLI commands, root options, entry points, and process exit semantics.
+- Freeze plugin entry-point groups, built-in extension IDs, and extension compatibility line `0.7`.
+- Freeze PEP 561 typing and minimum supported Python 3.11.
+- Keep the Python/Typer `pypagekit.cli` facade explicitly provisional.
+- Confirm zero active public deprecations at the 1.0 freeze.
+- Normalize standard-library runtime representation differences so one baseline passes identically on Python 3.11, 3.12, 3.13, and 3.14.
+
+### Design
+
+- The frozen contract attaches to canonical public facades, not physical implementation modules.
+- Private dataclass fields and internal source-module paths are excluded from the compatibility baseline.
+- `pypagekit.__version__` is represented as a version symbol rather than frozen to the RC value, allowing the same contract to qualify `1.0.0`.
+- The extension API remains `0.7` because package and plugin compatibility versions are independent.
+- Any contract drift between this RC and 1.0 fails CI.
+- LOT-37 may finalize release metadata/versioning but must not change the frozen 1.0 contract.
+
 ## [0.9.0b1]
 
 ### Added
