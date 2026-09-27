@@ -1,4 +1,5 @@
 from pathlib import Path, PurePosixPath
+from typing import Any
 
 import pytest
 
@@ -161,7 +162,6 @@ def test_force_does_not_replace_symlinked_managed_file(tmp_path: Path) -> None:
     assert outside.read_text(encoding="utf-8") == "protected"
 
 
-
 def test_scaffold_failure_rolls_back_new_project_tree(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -171,9 +171,9 @@ def test_scaffold_failure_rolls_back_new_project_tree(
 
     def fail_pyproject(
         path: Path,
-        *args: object,
-        **kwargs: object,
-    ):
+        *args: Any,
+        **kwargs: Any,
+    ) -> Any:
         if path.name == "pyproject.toml":
             raise OSError("simulated project write failure")
         return original_open(path, *args, **kwargs)
@@ -200,9 +200,9 @@ def test_force_failure_restores_existing_managed_files(
 
     def fail_pyproject(
         path: Path,
-        *args: object,
-        **kwargs: object,
-    ):
+        *args: Any,
+        **kwargs: Any,
+    ) -> Any:
         if path.name == "pyproject.toml":
             raise OSError("simulated project write failure")
         return original_open(path, *args, **kwargs)
