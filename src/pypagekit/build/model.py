@@ -146,24 +146,39 @@ def _validate_build_target(target: PurePosixPath) -> None:
 
 
 def _validate_target_collisions(targets: tuple[PurePosixPath, ...]) -> None:
-    for index, target in enumerate(targets):
-        for other in targets[index + 1 :]:
-            if _targets_conflict(target, other):
-                raise BuildTargetCollisionError(
-                    f"Build targets '{target.as_posix()}' and "
-                    f"'{other.as_posix()}' conflict."
-                )
+    seen_files: dict[tuple[str, ...], tuple[int, PurePosixPath]] = {}
+    required_directories: dict[tuple[str, ...], tuple[int, PurePosixPath]] = {}
+    best_conflict: tuple[int, int, PurePosixPath, PurePosixPath] | None = None
 
+    for second_index, target in enumerate(targets):
+        parts = target.parts
+        candidates: list[tuple[int, PurePosixPath]] = []
 
-def _targets_conflict(first: PurePosixPath, second: PurePosixPath) -> bool:
-    if first == second:
-        return True
+        duplicate = seen_files.get(parts)
+        if duplicate is not None:
+            candidates.append(duplicate)
 
-    first_parts = first.parts
-    second_parts = second.parts
-    shared = min(len(first_parts), len(second_parts))
+        ancestor = required_directories.get(parts)
+        if ancestor is not None:
+            candidates.append(ancestor)
 
-    return (
-        first_parts[:shared] == second_parts[:shared]
-        and len(first_parts) != len(second_parts)
-    )
+        for depth in range(1, len(parts)):
+            prefix_owner = seen_files.get(parts[:depth])
+            if prefix_owner is not None:
+                candidates.append(prefix_owner)
+
+        if candidates:
+            first_index, first_target = min(candidates, key=lambda item: item[0])
+            conflict = (first_index, second_index, first_target, target)
+            if best_conflict is None or conflict[:2] < best_conflict[:2]:
+                best_conflict = conflict
+
+        seen_files.setdefault(parts, (second_index, target))
+        for depth in range(1, len(parts)):
+            required_directories.setdefault(parts[:depth], (second_index, target))
+
+    if best_conflict is not None:
+        _, _, first, second = best_conflict
+        raise BuildTargetCollisionError(
+            f"Build targets '{first.as_posix()}' and '{second.as_posix()}' conflict."
+        )

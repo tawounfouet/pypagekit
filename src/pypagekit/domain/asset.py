@@ -2,7 +2,7 @@
 
 import re
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from urllib.parse import unquote
 
@@ -80,6 +80,7 @@ class Assets:
     """Immutable validated collection of asset declarations."""
 
     items: tuple[Asset, ...]
+    _target_index: tuple[tuple[str, Asset], ...] = field(repr=False, compare=False)
 
     def __init__(self, items: Iterable[Asset] = ()) -> None:
         try:
@@ -103,6 +104,11 @@ class Assets:
             seen_targets.add(asset.target)
 
         object.__setattr__(self, "items", normalized_items)
+        object.__setattr__(
+            self,
+            "_target_index",
+            tuple(sorted((asset.target.as_posix(), asset) for asset in normalized_items)),
+        )
 
     @property
     def targets(self) -> tuple[PurePosixPath, ...]:
@@ -120,14 +126,32 @@ class Assets:
         """Return whether a target exists in this asset set."""
 
         validate_asset_target(target)
-        return any(asset.target == target for asset in self.items)
+        return _lookup_asset(self._target_index, target.as_posix()) is not None
 
     def asset(self, target: PurePosixPath) -> Asset:
         """Look up an asset by its validated target path."""
 
         validate_asset_target(target)
-        for asset in self.items:
-            if asset.target == target:
-                return asset
+        asset = _lookup_asset(self._target_index, target.as_posix())
+        if asset is not None:
+            return asset
 
         raise UnknownAssetTargetError(f"Asset target '{target.as_posix()}' is not declared.")
+
+
+def _lookup_asset(
+    index: tuple[tuple[str, Asset], ...],
+    target: str,
+) -> Asset | None:
+    low = 0
+    high = len(index)
+    while low < high:
+        middle = (low + high) // 2
+        candidate_target, candidate_asset = index[middle]
+        if candidate_target < target:
+            low = middle + 1
+        elif candidate_target > target:
+            high = middle
+        else:
+            return candidate_asset
+    return None

@@ -132,6 +132,12 @@ class FilesystemWriter:
         resolved_destinations = {
             destination.resolve(strict=False) for destination in destinations
         }
+        destination_identities: dict[tuple[int, int], Path] = {}
+        for destination in destinations:
+            if destination.is_symlink() or not destination.exists() or not destination.is_file():
+                continue
+            stat = destination.stat(follow_symlinks=False)
+            destination_identities.setdefault((stat.st_dev, stat.st_ino), destination)
 
         for entry in plan.assets:
             source = entry.asset.source
@@ -153,12 +159,15 @@ class FilesystemWriter:
                     f"Asset source '{source}' is also a planned output destination."
                 )
 
-            for destination in destinations:
-                if destination.exists() and source.samefile(destination):
-                    raise AssetSourceOutputConflictError(
-                        f"Asset source '{source}' shares an inode with planned output "
-                        f"destination '{destination}'."
-                    )
+            source_stat = source.stat()
+            conflicting_destination = destination_identities.get(
+                (source_stat.st_dev, source_stat.st_ino)
+            )
+            if conflicting_destination is not None:
+                raise AssetSourceOutputConflictError(
+                    f"Asset source '{source}' shares an inode with planned output "
+                    f"destination '{conflicting_destination}'."
+                )
 
         for destination in destinations:
             _validate_destination(

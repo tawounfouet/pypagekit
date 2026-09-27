@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current qualified milestone: **LOT-32 — Reliability & Failure Hardening** (`0.8.0a2`). Next: **LOT-33 — Performance & Scalability Hardening**.
+Current qualified milestone: **LOT-33 — Performance & Scalability Hardening** (`0.8.0b1`). The **0.8.x — Hardening** line is complete. Next: **LOT-34 — Public API Inventory & Stability Classification**.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -1716,3 +1716,116 @@ stable framework-level failure class rather than an arbitrary third-party except
 LOT-32 intentionally does not add retries, background recovery, process supervision, filesystem
 journaling, or crash-safe multi-file atomic commits. Those would require stronger operational
 semantics than the local library contract currently needs.
+
+
+## Performance and scalability hardening
+
+LOT-33 reduces avoidable algorithmic and I/O amplification without changing PyPageKit's public
+authoring model or weakening the security and rollback guarantees introduced in LOT-31 and LOT-32.
+
+### Build target collision validation
+
+Build target collision detection no longer compares every target with every later target.
+
+Previous conceptual cost:
+
+```text
+target 1  × every later target
+target 2  × every later target
+...
+        → O(n²)
+```
+
+LOT-33 tracks previously declared files and directory prefixes while visiting targets once:
+
+```text
+target
+  ↓
+exact-file index
+  ↓
+ancestor-file prefixes
+  ↓
+required-directory index
+  ↓
+register target + prefixes
+```
+
+The work is now proportional to the total number of path segments across targets rather than the
+square of the number of targets. Collision error ordering remains deterministic.
+
+### Immutable lookup indexes
+
+Public declaration order remains unchanged, while hot lookups use private immutable sorted indexes:
+
+```text
+Site.route()/has_route()             O(log n)
+Assets.asset()/has_target()          O(log n)
+ComponentRegistry factory/contains   O(log n)
+Extension registry lookup/contains   O(log n)
+```
+
+The public tuples (`routes`, `items`, `entries`) remain the canonical immutable surfaces and
+retain their existing deterministic order. Private lookup indexes are excluded from equality and
+repr semantics.
+
+Repeated `ids`, component-name, and component-registry-name projections are also retained as
+immutable cached tuples instead of being rebuilt for each lookup.
+
+### Filesystem preflight
+
+Asset source/output hard-link detection no longer performs an assets × destinations scan.
+
+Existing destination filesystem identities are indexed once by `(st_dev, st_ino)`, then each
+asset source performs one identity lookup. Security behavior remains fail-closed and the existing
+hard-link conflict errors are unchanged.
+
+### Overwrite rollback snapshots
+
+LOT-32 originally preserved overwritten files by copying their full contents into temporary backup
+files. LOT-33 replaces that data copy with a same-directory `os.replace()` move:
+
+```text
+old destination
+      ↓ os.replace
+temporary rollback name
+      ↓
+write new destination
+```
+
+Successful commit removes the rollback name. On failure, rollback moves the original inode back into
+place.
+
+This removes an extra full-file read/write cycle for every overwritten output while preserving the
+same Python-exception rollback semantics. Existing hard-link protections remain in preflight.
+
+### Component runtime allocation
+
+When a container/fragment/layout region contains no resolvable component changes, the runtime no
+longer constructs a speculative replacement tuple merely to discard it. A replacement child list
+is allocated only after the first child actually resolves to a different object.
+
+### Plugin discovery
+
+Duplicate entry-point detection now uses one pass over the sorted metadata instead of counting each
+name against the complete collection. Provider loading behavior and fail-before-load semantics are
+unchanged.
+
+### Scalability qualification
+
+LOT-33 uses deterministic scale-smoke coverage rather than wall-clock assertions. CI exercises:
+
+```text
+8,000 safe build targets
+2,048 Site routes
+2,048 Assets
+2,048 component registrations
+2,048 renderer extensions
+```
+
+The tests assert ordinary semantic behavior at scale and avoid machine-dependent timing thresholds.
+Performance regressions therefore remain testable without turning CI scheduling noise into false
+failures.
+
+LOT-33 does not introduce parallel rendering, asynchronous filesystem writes, worker pools,
+incremental build caching, content hashing, or cross-process build caches. Those are separate
+product capabilities rather than hardening requirements.

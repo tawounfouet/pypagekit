@@ -1,7 +1,7 @@
 """Site aggregate and sitemap projection for logical routes."""
 
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from pypagekit.exceptions import (
     DuplicateSiteRouteError,
@@ -74,6 +74,7 @@ class Site:
     routes: tuple[Route, ...]
     navigation: Navigation | None
     sitemap: Sitemap
+    _route_index: tuple[tuple[str, Route], ...] = field(repr=False, compare=False)
 
     def __init__(
         self,
@@ -91,6 +92,11 @@ class Site:
         object.__setattr__(self, "routes", normalized_routes)
         object.__setattr__(self, "navigation", navigation)
         object.__setattr__(self, "sitemap", Sitemap(normalized_routes))
+        object.__setattr__(
+            self,
+            "_route_index",
+            tuple(sorted((route.path, route) for route in normalized_routes)),
+        )
 
     @property
     def paths(self) -> tuple[str, ...]:
@@ -108,15 +114,15 @@ class Site:
         """Return whether a canonicalized logical path belongs to this site."""
 
         normalized_path = normalize_route_path(path)
-        return any(route.path == normalized_path for route in self.routes)
+        return _lookup_route(self._route_index, normalized_path) is not None
 
     def route(self, path: str) -> Route:
         """Look up a site route by logical path."""
 
         normalized_path = normalize_route_path(path)
-        for route in self.routes:
-            if route.path == normalized_path:
-                return route
+        route = _lookup_route(self._route_index, normalized_path)
+        if route is not None:
+            return route
 
         raise UnknownSiteRouteError(f"Route '{normalized_path}' does not belong to this site.")
 
@@ -168,3 +174,21 @@ def _validate_navigation_membership(
                 f"Navigation route '{navigation_route.path}' must reference "
                 "the canonical Route object owned by Site."
             )
+
+
+def _lookup_route(
+    index: tuple[tuple[str, Route], ...],
+    path: str,
+) -> Route | None:
+    low = 0
+    high = len(index)
+    while low < high:
+        middle = (low + high) // 2
+        candidate_path, candidate_route = index[middle]
+        if candidate_path < path:
+            low = middle + 1
+        elif candidate_path > path:
+            high = middle
+        else:
+            return candidate_route
+    return None

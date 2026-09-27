@@ -1,7 +1,7 @@
 """Explicit immutable registry for symbolic component lookup."""
 
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from pypagekit.domain import Component, ComponentRef
 from pypagekit.domain.reference import validate_component_name
@@ -19,6 +19,7 @@ class ComponentRegistry:
     """Immutable mapping from stable names to component factories."""
 
     entries: tuple[tuple[str, ComponentFactory], ...]
+    _names: tuple[str, ...] = field(repr=False, compare=False)
 
     def __init__(
         self,
@@ -40,18 +41,19 @@ class ComponentRegistry:
             normalized_entries = tuple(sorted(entries, key=lambda item: item[0]))
 
         object.__setattr__(self, "entries", normalized_entries)
+        object.__setattr__(self, "_names", tuple(name for name, _ in normalized_entries))
 
     @property
     def names(self) -> tuple[str, ...]:
         """Return registered names in deterministic order."""
 
-        return tuple(name for name, _ in self.entries)
+        return self._names
 
     def contains(self, name: str) -> bool:
         """Return whether a component name is registered."""
 
         validate_component_name(name)
-        return any(registered_name == name for registered_name, _ in self.entries)
+        return _component_index(self._names, name) is not None
 
     def register(
         self,
@@ -74,9 +76,9 @@ class ComponentRegistry:
         """Return the factory registered under a stable name."""
 
         validate_component_name(name)
-        for registered_name, factory in self.entries:
-            if registered_name == name:
-                return factory
+        index = _component_index(self._names, name)
+        if index is not None:
+            return self.entries[index][1]
         raise UnknownComponentError(f"Unknown component: '{name}'.")
 
     def instantiate(self, reference: ComponentRef) -> Component:
@@ -94,3 +96,18 @@ class ComponentRegistry:
             )
 
         return component
+
+
+def _component_index(names: tuple[str, ...], name: str) -> int | None:
+    low = 0
+    high = len(names)
+    while low < high:
+        middle = (low + high) // 2
+        candidate = names[middle]
+        if candidate < name:
+            low = middle + 1
+        elif candidate > name:
+            high = middle
+        else:
+            return middle
+    return None
