@@ -5,8 +5,10 @@ from dataclasses import dataclass
 from pathlib import PurePosixPath
 
 from pypagekit.domain import Asset, Route
+from pypagekit.domain.asset import validate_asset_target
 from pypagekit.exceptions import (
     BuildTargetCollisionError,
+    InvalidAssetTargetError,
     InvalidBuildContentError,
     InvalidBuildTargetError,
 )
@@ -23,7 +25,7 @@ class PageBuildEntry:
     def __post_init__(self) -> None:
         if not isinstance(self.route, Route):
             raise TypeError("Page build entry route must be a Route object.")
-        _validate_target_type(self.target)
+        _validate_build_target(self.target)
         if not isinstance(self.content, str):
             raise InvalidBuildContentError("Page build entry content must be a string.")
 
@@ -57,18 +59,10 @@ class BuildPlan:
         pages: Iterable[PageBuildEntry] = (),
         assets: Iterable[AssetBuildEntry] = (),
     ) -> None:
-        normalized_pages = _normalize_entries(
-            pages,
-            expected_type=PageBuildEntry,
-            owner="BuildPlan pages",
-        )
-        normalized_assets = _normalize_entries(
-            assets,
-            expected_type=AssetBuildEntry,
-            owner="BuildPlan assets",
-        )
+        normalized_pages = _normalize_page_entries(pages)
+        normalized_assets = _normalize_asset_entries(assets)
 
-        _validate_target_collisions(
+        validate_build_targets(
             tuple(entry.target for entry in normalized_pages)
             + tuple(entry.target for entry in normalized_assets)
         )
@@ -96,45 +90,59 @@ class BuildPlan:
 
 
 def validate_build_targets(targets: Iterable[PurePosixPath]) -> None:
-    """Validate that planned file targets do not collide structurally."""
+    """Validate that planned file targets are safe and do not conflict."""
 
     normalized_targets = tuple(targets)
     for target in normalized_targets:
-        _validate_target_type(target)
+        _validate_build_target(target)
     _validate_target_collisions(normalized_targets)
 
 
-def _normalize_entries(
-    entries: Iterable[PageBuildEntry] | Iterable[AssetBuildEntry],
-    *,
-    expected_type: type[PageBuildEntry] | type[AssetBuildEntry],
-    owner: str,
-) -> tuple[PageBuildEntry, ...] | tuple[AssetBuildEntry, ...]:
+def _normalize_page_entries(
+    entries: Iterable[PageBuildEntry],
+) -> tuple[PageBuildEntry, ...]:
     try:
         normalized = tuple(entries)
     except TypeError as exc:
-        raise TypeError(f"{owner} must be an iterable.") from exc
+        raise TypeError("BuildPlan pages must be an iterable.") from exc
 
-    invalid = [entry for entry in normalized if not isinstance(entry, expected_type)]
+    invalid = [entry for entry in normalized if not isinstance(entry, PageBuildEntry)]
     if invalid:
         invalid_type = type(invalid[0]).__name__
         raise TypeError(
-            f"{owner} must contain only {expected_type.__name__} objects; "
+            "BuildPlan pages must contain only PageBuildEntry objects; "
             f"got {invalid_type}."
         )
 
     return normalized
 
 
-def _validate_target_type(target: PurePosixPath) -> None:
-    if not isinstance(target, PurePosixPath):
-        raise InvalidBuildTargetError("Build target must be a PurePosixPath.")
-    if target.is_absolute() or target == PurePosixPath("."):
-        raise InvalidBuildTargetError(
-            "Build target must be a non-empty path relative to the output root."
+def _normalize_asset_entries(
+    entries: Iterable[AssetBuildEntry],
+) -> tuple[AssetBuildEntry, ...]:
+    try:
+        normalized = tuple(entries)
+    except TypeError as exc:
+        raise TypeError("BuildPlan assets must be an iterable.") from exc
+
+    invalid = [entry for entry in normalized if not isinstance(entry, AssetBuildEntry)]
+    if invalid:
+        invalid_type = type(invalid[0]).__name__
+        raise TypeError(
+            "BuildPlan assets must contain only AssetBuildEntry objects; "
+            f"got {invalid_type}."
         )
-    if any(part in {".", ".."} for part in target.parts):
-        raise InvalidBuildTargetError("Build target must not contain traversal segments.")
+
+    return normalized
+
+
+def _validate_build_target(target: PurePosixPath) -> None:
+    try:
+        validate_asset_target(target)
+    except (TypeError, InvalidAssetTargetError) as exc:
+        raise InvalidBuildTargetError(
+            "Build target must be a safe output-root-relative PurePosixPath."
+        ) from exc
 
 
 def _validate_target_collisions(targets: tuple[PurePosixPath, ...]) -> None:
