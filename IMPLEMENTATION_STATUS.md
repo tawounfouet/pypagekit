@@ -30,7 +30,7 @@
 | LOT-26 | Developer Diagnostics | QUALIFIED | `0.6.0b2` |
 | LOT-27 | Extension Contracts & Renderer Registry | QUALIFIED | `0.7.0a1` |
 | LOT-28 | Build & Component Extension Points | QUALIFIED | `0.7.0a2` |
-| LOT-29 | Plugin Discovery & Entry Points | NOT STARTED | `0.7.0b1` |
+| LOT-29 | Plugin Discovery & Entry Points | IN QUALIFICATION | `0.7.0b1` |
 | LOT-30 | Plugin Lifecycle & Conformance | NOT STARTED | `0.7.0b2` |
 | LOT-31 | Security Hardening | NOT STARTED | `0.8.0a1` |
 | LOT-32 | Reliability & Failure Hardening | NOT STARTED | `0.8.0a2` |
@@ -768,3 +768,37 @@ Next after qualification: **LOT-28 — Build & Component Extension Points**.
 - [x] GitHub CI qualification is fully green
 
 Next after qualification: **LOT-29 — Plugin Discovery & Entry Points**.
+
+
+## LOT-29 exit criteria
+
+- [x] public `EntryPointDiscovery` service exists
+- [x] public immutable `PluginDiscoveryResult` exists
+- [x] renderer entry-point group is fixed as `pypagekit.renderers`
+- [x] build-planner entry-point group is fixed as `pypagekit.build_planners`
+- [x] component entry-point group is fixed as `pypagekit.components`
+- [x] discovery uses Python standard-library package metadata
+- [x] constructing the discovery service performs no enumeration or plugin loading
+- [x] plugin discovery occurs only through explicit `discover()`
+- [x] entry points load zero-argument provider callables
+- [x] renderer providers must return `RendererExtension`
+- [x] build-planner providers must return `BuildPlannerExtension`
+- [x] component providers must return `ComponentExtension`
+- [x] entry-point names must be valid extension IDs
+- [x] entry-point name must equal returned `descriptor.extension_id`
+- [x] entry-point ordering is deterministic before provider execution
+- [x] target import failures become framework-specific discovery errors
+- [x] provider execution failures become framework-specific discovery errors
+- [x] wrong provider return types fail explicitly
+- [x] discovered extensions feed existing immutable registries
+- [x] existing duplicate extension-ID protection remains active
+- [x] existing duplicate component-contribution protection remains active
+- [x] real dist-info metadata integration is covered
+- [x] discovery performs no network access
+- [x] no import-time discovery exists
+- [x] no process-global mutable plugin registry exists
+- [x] plugin lifecycle/activation/compatibility policy remains deferred to LOT-30
+- [x] package version advances to `0.7.0b1`
+- [ ] GitHub CI qualification is fully green
+
+Next after qualification: **LOT-30 — Plugin Lifecycle & Conformance**.
