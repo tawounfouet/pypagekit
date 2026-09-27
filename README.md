@@ -48,7 +48,8 @@ Implemented so far:
 - Typer + Rich CLI foundations with installed shell and module entry points;
 - safe project scaffolding through `pypagekit new`;
 - local static development serving through `pypagekit serve`;
-- read-only developer diagnostics through `pypagekit doctor` and `pypagekit inspect`.
+- read-only developer diagnostics through `pypagekit doctor` and `pypagekit inspect`;
+- explicit renderer extension contracts and immutable registration through `pypagekit.extensions`.
 
 ## Quick example
 
@@ -1112,3 +1113,69 @@ immutable result models
 
 Neither command modifies files, executes `site.py`, invokes subprocesses, or accesses the
 network.
+
+
+## Renderer extensibility
+
+LOT-27 opens the extensibility line with one concrete extension point rather than automatic plugin
+discovery.
+
+```python
+from pypagekit.extensions import (
+    ExtensionDescriptor,
+    RendererExtension,
+    RendererRegistry,
+)
+
+registry = RendererRegistry(
+    (
+        RendererExtension(
+            ExtensionDescriptor(
+                "acme.renderer.custom",
+                "Custom Renderer",
+                "1.0.0",
+            ),
+            CustomRenderer,
+        ),
+    )
+)
+
+renderer = registry.create("acme.renderer.custom")
+```
+
+The created renderer plugs into the existing build boundary:
+
+```python
+from pypagekit.build import BuildPlanner
+
+plan = BuildPlanner(renderer=renderer).plan(site)
+```
+
+The built-in HTML renderer is also exposed through an explicit registry:
+
+```python
+from pypagekit.extensions import (
+    HTML_RENDERER_EXTENSION_ID,
+    default_renderer_registry,
+)
+
+renderer = default_renderer_registry().create(HTML_RENDERER_EXTENSION_ID)
+```
+
+The architecture is deliberately explicit:
+
+```text
+ExtensionDescriptor
+        ↓
+RendererExtension
+        ↓
+RendererRegistry
+        ↓
+explicit create(id)
+        ↓
+Renderer
+        ↓
+BuildPlanner
+```
+
+LOT-27 does not scan installed packages or load Python entry points. Discovery remains LOT-29.
