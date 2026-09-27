@@ -1,11 +1,11 @@
 """Immutable result models for developer diagnostics."""
 
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 
 
-class DiagnosticStatus(str, Enum):
+class DiagnosticStatus(StrEnum):
     """Severity/status of one diagnostic check."""
 
     PASS = "PASS"
