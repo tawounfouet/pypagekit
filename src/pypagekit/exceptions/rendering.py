@@ -1,4 +1,4 @@
-"""Rendering and HTML serialization exceptions."""
+"""Rendering, serialization, and output-safety exceptions."""
 
 from .domain import PyPageKitError
 
@@ -9,6 +9,14 @@ class RenderingError(PyPageKitError):
 
 class UnsupportedNodeError(RenderingError):
     """Raised when a renderer does not support a domain node type."""
+
+
+class SecurityError(RenderingError):
+    """Base exception for values rejected by render-time safety policy."""
+
+
+class UnsafeUrlError(SecurityError):
+    """Raised when a URL reference violates the renderer safety policy."""
 
 
 class SerializationError(RenderingError):

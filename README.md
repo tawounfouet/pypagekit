@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-07 — HTML Renderer** (`0.2.0a2`).
+Current implementation milestone: **LOT-08 — Security & Escaping** (`0.2.0b1`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -25,7 +25,9 @@ Implemented so far:
 - public `Renderer` protocol;
 - public `HtmlRenderer`;
 - recursive rendering for the complete current domain tree;
-- compact complete HTML5 document output for `Page`.
+- compact complete HTML5 document output for `Page`;
+- render-time URL safety validation for links and images;
+- adversarial XSS coverage for text, attributes, nested composition, and unsafe schemes.
 
 ## Quick example
 
@@ -93,11 +95,31 @@ Image      → img
 Page       → complete HTML5 document
 ```
 
+## Safe-by-default rendering
+
+PyPageKit now validates URL references before they reach HTML attribute serialization.
+
+Allowed link forms include:
+
+```text
+/about
+#section
+?q=python
+https://example.com
+http://example.com
+mailto:hello@example.com
+```
+
+Image sources support relative references plus `http` and `https`.
+
+Active or local-resource schemes such as `javascript:`, `data:`, `vbscript:`, and `file:` are rejected with `UnsafeUrlError`.
+
+Text remains escaped at the HTML boundary and the core exposes no raw-HTML escape hatch.
+
 ## Deliberate boundaries
 
-LOT-07 does not yet introduce:
+LOT-08 does not yet introduce:
 
-- URL scheme allow/deny policy — LOT-08;
 - rich page metadata such as description — LOT-09;
 - generic domain attributes/classes/data/aria hooks — LOT-10;
 - filesystem output — later build/output LOTs.
@@ -135,4 +157,4 @@ python -m build
 1.0.0  Stable
 ```
 
-The immediate next milestone is **LOT-08 — Security & Escaping**.
+The immediate next milestone is **LOT-09 — Page Metadata**.
