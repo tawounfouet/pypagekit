@@ -5,6 +5,7 @@ from .domain import (
     Component,
     Container,
     Content,
+    Fragment,
     Heading,
     Image,
     Layout,
@@ -13,16 +14,21 @@ from .domain import (
     Node,
     Page,
     Paragraph,
+    Slot,
+    SlotBindings,
+    SlottedComponent,
     Text,
+    bind_slots,
 )
 
-__version__ = "0.3.0b1"
+__version__ = "0.3.0b2"
 
 __all__ = [
     "Attributes",
     "Component",
     "Container",
     "Content",
+    "Fragment",
     "Heading",
     "Image",
     "Layout",
@@ -31,6 +37,10 @@ __all__ = [
     "Node",
     "Page",
     "Paragraph",
+    "Slot",
+    "SlotBindings",
+    "SlottedComponent",
     "Text",
     "__version__",
+    "bind_slots",
 ]
