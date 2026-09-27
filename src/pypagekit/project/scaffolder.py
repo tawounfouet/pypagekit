@@ -61,7 +61,14 @@ class ProjectScaffolder:
 
         source_name = project_name
         if source_name is None:
-            source_name = target_root.resolve(strict=False).name
+            if target_root.name:
+                source_name = target_root.name
+            elif target_root == Path("."):
+                source_name = Path.cwd().name
+            else:
+                raise InvalidProjectNameError(
+                    "Project name cannot be derived from the target root."
+                )
         normalized_name = normalize_project_name(source_name)
 
         files = (
@@ -137,10 +144,7 @@ class ProjectScaffolder:
     def _preflight(self, plan: ProjectPlan, *, force: bool) -> None:
         target_root = plan.target_root
 
-        if target_root.is_symlink():
-            raise ProjectSymlinkError(
-                f"Project target root '{target_root}' must not be a symlink."
-            )
+        _validate_target_root_symlinks(target_root)
         if target_root.exists() and not target_root.is_dir():
             raise InvalidProjectTargetError(
                 f"Project target root '{target_root}' must be a directory."
@@ -153,6 +157,18 @@ class ProjectScaffolder:
                 destination,
                 force=force,
             )
+
+
+def _validate_target_root_symlinks(target_root: Path) -> None:
+    cursor = target_root
+    while True:
+        if cursor.is_symlink():
+            raise ProjectSymlinkError(
+                f"Project target path '{cursor}' must not be a symlink."
+            )
+        if cursor == cursor.parent:
+            break
+        cursor = cursor.parent
 
 
 def _destination(target_root: Path, target: PurePosixPath) -> Path:
