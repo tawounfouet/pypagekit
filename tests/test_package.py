@@ -1,6 +1,7 @@
 from pypagekit import (
     Attributes,
     Component,
+    ComponentRef,
     Container,
     Content,
     Fragment,
@@ -18,10 +19,16 @@ from pypagekit import (
     Text,
     __version__,
 )
-from pypagekit.components import Card, ComponentRuntime, Hero, Section
+from pypagekit.components import Card, ComponentRegistry, ComponentRuntime, Hero, Section
 from pypagekit.domain import Action, Media
 from pypagekit.exceptions import (
     ComponentError,
+    ComponentRegistryError,
+    DuplicateComponentRegistrationError,
+    InvalidComponentNameError,
+    InvalidRegisteredComponentError,
+    MissingComponentRegistryError,
+    UnknownComponentError,
     InvalidAttributeError,
     InvalidLayoutError,
     InvalidSlotError,
@@ -40,6 +47,7 @@ def test_package_imports() -> None:
     assert issubclass(Content, Node)
     assert issubclass(Page, Node)
     assert issubclass(Component, Content)
+    assert issubclass(ComponentRef, Content)
     assert issubclass(Layout, Component)
     assert issubclass(LayoutRegion, Content)
     assert issubclass(Fragment, Content)
@@ -56,10 +64,17 @@ def test_package_imports() -> None:
     assert issubclass(Image, Media)
     assert isinstance(Attributes(), Attributes)
     assert isinstance(ComponentRuntime(), ComponentRuntime)
+    assert isinstance(ComponentRegistry(), ComponentRegistry)
     assert issubclass(Section, Component)
     assert issubclass(Card, Component)
     assert issubclass(Hero, Component)
     assert issubclass(ComponentError, Exception)
+    assert issubclass(ComponentRegistryError, ComponentError)
+    assert issubclass(DuplicateComponentRegistrationError, ComponentRegistryError)
+    assert issubclass(InvalidComponentNameError, ComponentRegistryError)
+    assert issubclass(InvalidRegisteredComponentError, ComponentRegistryError)
+    assert issubclass(MissingComponentRegistryError, ComponentRegistryError)
+    assert issubclass(UnknownComponentError, ComponentRegistryError)
     assert issubclass(InvalidLayoutError, Exception)
     assert issubclass(InvalidSlotError, Exception)
     assert issubclass(UnresolvedSlotError, InvalidSlotError)
@@ -74,4 +89,4 @@ def test_package_imports() -> None:
 
 
 def test_current_version() -> None:
-    assert __version__ == "0.3.0b2"
+    assert __version__ == "0.3.0b3"
