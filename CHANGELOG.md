@@ -4,6 +4,28 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.2.0a2]
+
+### Added
+
+- Public `Renderer` protocol.
+- Public `HtmlRenderer` implementation.
+- Explicit domain-to-HTML dispatch for `Text`, `Heading`, `Paragraph`, `Container`, `Link`, `Image`, and `Page`.
+- Recursive ordered rendering for composition trees.
+- Complete compact HTML5 document rendering for `Page`.
+- `UnsupportedNodeError` for domain nodes not supported by the renderer.
+- LOT-07 unit and integration coverage for fragments, nested trees, complete documents, determinism, escaping, and unsupported nodes.
+
+### Design
+
+- `HtmlRenderer.render(node) -> str` is the first public representation contract.
+- Domain objects remain renderer-agnostic and never render themselves.
+- `Container` maps to `div` in the initial HTML renderer.
+- `Page` emits doctype, `html lang`, UTF-8 charset, `title`, and `body`.
+- Richer page metadata such as `description` remains deferred to LOT-09.
+- URL scheme safety remains deferred to LOT-08; LOT-07 still benefits from attribute-context escaping supplied by LOT-06.
+- Rendering performs no filesystem or network I/O.
+
 ## [0.2.0a1]
 
 ### Added

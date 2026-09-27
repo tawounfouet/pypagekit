@@ -4,28 +4,107 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-06 — HTML Serialization** (`0.2.0a1`).
+Current implementation milestone: **LOT-07 — HTML Renderer** (`0.2.0a2`).
 
-The `0.1.x` domain line is feature-complete, and `0.2.x` now begins with a pure HTML serialization boundary.
+PyPageKit can now perform its first complete in-memory transformation:
+
+```text
+Page
+  ↓
+HtmlRenderer
+  ↓
+HTML5 str
+```
 
 Implemented so far:
 
 - typed `src/` package and CI foundations;
-- structured immutable page/content domain;
-- text, composition, action, and media primitives;
-- context-specific HTML text/attribute escaping;
-- deterministic HTML5 ordinary-element serialization;
-- canonical HTML5 void-element serialization;
-- structural validation for tags and attributes;
-- rendering/serialization error hierarchy.
+- immutable structured page/content domain;
+- deterministic HTML5 serialization;
+- context-specific text and attribute escaping;
+- public `Renderer` protocol;
+- public `HtmlRenderer`;
+- recursive rendering for the complete current domain tree;
+- compact complete HTML5 document output for `Page`.
 
-The serializer still does **not** know how to render a `Page`, `Heading`, `Link`, or any other domain object. That mapping begins in LOT-07.
+## Quick example
+
+```python
+from pypagekit import Container, Heading, Image, Link, Page, Paragraph
+from pypagekit.rendering import HtmlRenderer
+
+
+page = Page(
+    title="Home & Docs",
+    lang="en",
+    content=[
+        Container(
+            children=[
+                Heading("Welcome", level=1),
+                Paragraph("Built with structured Python objects."),
+                Link(label="About", href="/about"),
+                Image(src="/assets/logo.png", alt="Project logo"),
+            ]
+        )
+    ],
+)
+
+html = HtmlRenderer().render(page)
+print(html)
+```
+
+The result is a deterministic HTML5 document containing the doctype, language, UTF-8 charset, title, body, and recursively rendered content.
+
+## Rendering architecture
+
+```text
+Domain object
+     ↓
+HtmlRenderer
+     ↓
+escaping
+     ↓
+HTML serializer
+     ↓
+str
+```
+
+The domain remains unaware of HTML:
+
+```python
+Heading("A & B")
+```
+
+is stored exactly as authored. During rendering it becomes:
+
+```html
+<h1>A &amp; B</h1>
+```
+
+## Current HTML mappings
+
+```text
+Text       → escaped text
+Heading    → h1..h6
+Paragraph  → p
+Container  → div
+Link       → a
+Image      → img
+Page       → complete HTML5 document
+```
+
+## Deliberate boundaries
+
+LOT-07 does not yet introduce:
+
+- URL scheme allow/deny policy — LOT-08;
+- rich page metadata such as description — LOT-09;
+- generic domain attributes/classes/data/aria hooks — LOT-10;
+- filesystem output — later build/output LOTs.
 
 ## Requirements
 
 - Python 3.11+
-
-The minimum Python version is provisional during the pre-1.0 roadmap and can be revisited before the compatibility freeze.
 
 ## Local development
 
@@ -33,79 +112,12 @@ The minimum Python version is provisional during the pre-1.0 roadmap and can be 
 python -m venv .venv
 source .venv/bin/activate  # Windows PowerShell: .venv\Scripts\Activate.ps1
 python -m pip install -e ".[dev]"
-```
 
-Run the quality gates:
-
-```bash
 ruff check .
 ruff format --check .
 mypy
 pytest
 python -m build
-```
-
-## Domain example
-
-```python
-from pypagekit import Container, Heading, Image, Link, Page, Paragraph
-
-
-page = Page(
-    title="Home",
-    content=[
-        Container(
-            children=[
-                Heading("Welcome", level=1),
-                Paragraph("PyPageKit models pages as structured Python objects."),
-                Link(label="About", href="/about"),
-                Image(src="/assets/logo.png", alt="Project logo"),
-            ]
-        )
-    ],
-)
-```
-
-## Serialization boundary
-
-LOT-06 introduces the internal transformation:
-
-```text
-semantic string
-      ↓
-escape_text / escape_attribute
-      ↓
-HTML serializer
-      ↓
-HTML fragment string
-```
-
-For example, LOT-07 will be able to map:
-
-```text
-Heading("A & B")
-      ↓
-escape_text("A & B")
-      ↓
-serialize_element("h1", content="A &amp; B")
-      ↓
-<h1>A &amp; B</h1>
-```
-
-The domain continues to store the original value `"A & B"`.
-
-## Architecture
-
-```text
-Domain
-  ↓
-[LOT-07 HtmlRenderer]
-  ↓
-Escaping
-  ↓
-HTML Serializer
-  ↓
-str
 ```
 
 ## Roadmap
@@ -123,4 +135,4 @@ str
 1.0.0  Stable
 ```
 
-The immediate next milestone is **LOT-07 — HTML Renderer**, which connects the domain tree to these serializer primitives.
+The immediate next milestone is **LOT-08 — Security & Escaping**.

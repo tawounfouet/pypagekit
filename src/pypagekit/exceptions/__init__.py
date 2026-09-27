@@ -18,6 +18,7 @@ from .rendering import (
     RenderingError,
     SerializationError,
     UnsupportedAttributeValueError,
+    UnsupportedNodeError,
 )
 
 __all__ = [
@@ -35,5 +36,6 @@ __all__ = [
     "RenderingError",
     "SerializationError",
     "UnsupportedAttributeValueError",
+    "UnsupportedNodeError",
     "ValidationError",
 ]
