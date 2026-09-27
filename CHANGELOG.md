@@ -4,6 +4,28 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.5.0b2]
+
+### Added
+
+- Public `StaticSiteGenerator` end-to-end static-site generation facade.
+- Immutable `StaticSiteGenerationResult` retaining both `BuildPlan` and `FilesystemWriteResult`.
+- Explicit orchestration of `Site + Assets → BuildPlanner → BuildPlan → FilesystemWriter`.
+- Optional dependency injection for planner and writer.
+- Result projections for output root, page files, asset files, and all generated files.
+- LOT-22 unit, integration, and security coverage.
+
+### Design
+
+- `StaticSiteGenerator` is an orchestration layer only.
+- It delegates all route mapping and rendering to `BuildPlanner`.
+- It delegates all filesystem materialization and safety policy to `FilesystemWriter`.
+- Existing build and filesystem exceptions propagate unchanged instead of being hidden behind a generic generation error.
+- Planning always completes before filesystem writing begins.
+- The generated result preserves both planning evidence and write evidence.
+- Completing LOT-22 closes the `0.5.x — Static Build` implementation line.
+
+
 ## [0.5.0b1]
 
 ### Added

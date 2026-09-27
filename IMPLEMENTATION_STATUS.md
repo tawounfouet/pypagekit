@@ -23,7 +23,11 @@
 | LOT-19 | Assets | QUALIFIED | `0.5.0a1` |
 | LOT-20 | Build Pipeline | QUALIFIED | `0.5.0a2` |
 | LOT-21 | Filesystem Output | QUALIFIED | `0.5.0b1` |
-| LOT-22 | Static Site Generation | NOT STARTED | `0.5.0b2` |
+| LOT-22 | Static Site Generation | QUALIFIED | `0.5.0b2` |
+| LOT-23 | CLI Foundations | NOT STARTED | `0.6.0a1` |
+| LOT-24 | Project Scaffolding | NOT STARTED | `0.6.0a2` |
+| LOT-25 | Development Server | NOT STARTED | `0.6.0b1` |
+| LOT-26 | Developer Diagnostics | NOT STARTED | `0.6.0b2` |
 
 ## LOT-07 exit criteria
 
@@ -462,4 +466,34 @@ Next: **LOT-22 — Static Site Generation**.
 - a qualified BuildPlan now materializes into an actual static output tree
 - predictable filesystem failures are rejected during preflight before writes begin
 - symlink and overwrite protections enforce the output-root safety boundary
+- GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
+
+
+## LOT-22 exit criteria
+
+- [x] public `StaticSiteGenerator` exists
+- [x] public immutable `StaticSiteGenerationResult` exists
+- [x] generator accepts canonical `Site`
+- [x] optional `Assets` are forwarded to planning
+- [x] explicit output root is forwarded to filesystem output
+- [x] overwrite policy is forwarded unchanged
+- [x] planner and writer are independently injectable
+- [x] planner remains responsible for rendering and target calculation
+- [x] writer remains responsible for filesystem safety and materialization
+- [x] planning failure prevents writer execution
+- [x] existing build collision protection remains active
+- [x] existing filesystem symlink protection remains active
+- [x] generation result retains the exact `BuildPlan`
+- [x] generation result retains the exact `FilesystemWriteResult`
+- [x] result exposes output root and generated-file projections
+- [x] complete Site + Assets generation works end-to-end
+- [x] no new generic wrapper hides specific lower-level errors
+
+Next: **LOT-23 — CLI Foundations**.
+
+## LOT-22 qualification evidence
+
+- the complete static generation path is now available through one explicit facade
+- orchestration preserves the independently testable planner and writer layers
+- lower-level planning and filesystem security invariants remain intact end-to-end
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
