@@ -30,7 +30,7 @@ class BuildPlanner:
     """Create deterministic in-memory build plans without filesystem I/O."""
 
     def __init__(self, *, renderer: Renderer | None = None) -> None:
-        selected_renderer: Renderer = renderer or HtmlRenderer()
+        selected_renderer: Renderer = renderer if renderer is not None else HtmlRenderer()
         render_method = getattr(selected_renderer, "render", None)
         if not callable(render_method):
             raise TypeError("Build planner renderer must provide a callable render() method.")
