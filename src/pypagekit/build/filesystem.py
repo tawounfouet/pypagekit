@@ -57,8 +57,8 @@ class FilesystemWriter:
             output_root.mkdir(parents=True, exist_ok=True)
 
             page_files: list[Path] = []
-            for entry in plan.pages:
-                destination = _destination(output_root, entry.target)
+            for page_entry in plan.pages:
+                destination = _destination(output_root, page_entry.target)
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 text_mode = "w" if overwrite else "x"
                 with destination.open(
@@ -66,16 +66,16 @@ class FilesystemWriter:
                     encoding="utf-8",
                     newline="",
                 ) as output_file:
-                    output_file.write(entry.content)
+                    output_file.write(page_entry.content)
                 page_files.append(destination)
 
             asset_files: list[Path] = []
-            for entry in plan.assets:
-                destination = _destination(output_root, entry.target)
+            for asset_entry in plan.assets:
+                destination = _destination(output_root, asset_entry.target)
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 binary_mode = "wb" if overwrite else "xb"
                 with (
-                    entry.asset.source.open("rb") as source_file,
+                    asset_entry.asset.source.open("rb") as source_file,
                     destination.open(binary_mode) as output_file,
                 ):
                     shutil.copyfileobj(source_file, output_file)
