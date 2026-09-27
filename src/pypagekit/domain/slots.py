@@ -81,12 +81,17 @@ class Slot(Content):
         if not isinstance(required, bool):
             raise TypeError("Slot required must be a boolean.")
 
-        object.__setattr__(self, "name", name)
-        object.__setattr__(
-            self,
-            "default",
-            _normalize_content(default, context=f"Slot '{name}' default"),
+        normalized_default = _normalize_content(
+            default,
+            context=f"Slot '{name}' default",
         )
+        if required and normalized_default:
+            raise InvalidSlotBindingError(
+                "Required slots cannot define default content."
+            )
+
+        object.__setattr__(self, "name", name)
+        object.__setattr__(self, "default", normalized_default)
         object.__setattr__(self, "required", required)
 
 
