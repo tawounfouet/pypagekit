@@ -1198,8 +1198,7 @@ class CustomPlanner:
         self,
         site: Site,
         assets: Assets | None = None,
-    ) -> BuildPlan:
-        ...
+    ) -> BuildPlan: ...
 ```
 
 It can be registered and injected without subclassing the built-in planner:
