@@ -34,7 +34,7 @@
 | LOT-30 | Plugin Lifecycle & Conformance | QUALIFIED | `0.7.0b2` |
 | LOT-31 | Security Hardening | QUALIFIED | `0.8.0a1` |
 | LOT-32 | Reliability & Failure Hardening | QUALIFIED | `0.8.0a2` |
-| LOT-33 | Performance & Scalability Hardening | NOT STARTED | `0.8.0b1` |
+| LOT-33 | Performance & Scalability Hardening | IN QUALIFICATION | `0.8.0b1` |
 | LOT-34 | Public API Inventory & Stability Classification | NOT STARTED | `0.9.0a1` |
 | LOT-35 | Compatibility, Deprecation & Migration | NOT STARTED | `0.9.0b1` |
 | LOT-36 | 1.0 Contract Freeze | NOT STARTED | `0.9.0rc1` |
@@ -898,3 +898,35 @@ Next after qualification: **LOT-32 — Reliability & Failure Hardening** (`0.8.0
 - [x] GitHub CI qualification is fully green
 
 Next after qualification: **LOT-33 — Performance & Scalability Hardening** (`0.8.0b1`).
+
+
+## LOT-33 exit criteria
+
+- [x] build target collision validation no longer uses pairwise target scanning
+- [x] collision validation scales with total target path depth
+- [x] exact duplicate target detection remains explicit
+- [x] file/directory collision detection remains explicit in both declaration orders
+- [x] deterministic collision error behavior is preserved
+- [x] Site route membership and lookup use immutable logarithmic indexes
+- [x] Assets target membership and lookup use immutable logarithmic indexes
+- [x] ComponentRegistry caches names and performs logarithmic lookup
+- [x] build-planner extension registry caches IDs and performs logarithmic lookup
+- [x] component extension registry caches IDs and contributed names
+- [x] renderer extension registry caches IDs and performs logarithmic lookup
+- [x] public immutable declaration ordering remains unchanged
+- [x] private lookup indexes do not affect public equality/repr semantics
+- [x] asset/output inode conflict detection avoids assets × destinations scans
+- [x] hard-link security behavior remains covered
+- [x] overwrite rollback snapshot avoids full-file backup copy
+- [x] overwrite rollback semantics remain covered
+- [x] component runtime allocates replacement children only after an actual resolution change
+- [x] duplicate entry-point detection is linear after sorting
+- [x] duplicate entry points still fail before provider loading
+- [x] large build-target collection is covered without timing assertions
+- [x] large Site/Assets/registry lookup collections are covered without timing assertions
+- [x] package version advances to `0.8.0b1`
+- [ ] GitHub CI qualification is fully green
+
+After qualification, the `0.8.x — Hardening` line is complete.
+
+Next: **LOT-34 — Public API Inventory & Stability Classification** (`0.9.0a1`).
