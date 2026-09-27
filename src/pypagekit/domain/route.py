@@ -42,17 +42,11 @@ def normalize_route_path(path: str) -> str:
 
     decoded_path = unquote(parsed.path)
     if _CONTROL_RE.search(decoded_path):
-        raise InvalidRoutePathError(
-            "Route path must not encode control characters."
-        )
+        raise InvalidRoutePathError("Route path must not encode control characters.")
     if "\\" in decoded_path:
-        raise InvalidRoutePathError(
-            "Route path must not encode backslash separators."
-        )
+        raise InvalidRoutePathError("Route path must not encode backslash separators.")
     if decoded_path.count("/") != parsed.path.count("/"):
-        raise InvalidRoutePathError(
-            "Route path must not encode slash separators."
-        )
+        raise InvalidRoutePathError("Route path must not encode slash separators.")
 
     decoded_segments = decoded_path.split("/")
     if any(segment in {".", ".."} for segment in decoded_segments):
