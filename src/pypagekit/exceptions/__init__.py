@@ -86,6 +86,10 @@ from .extension import (
     InvalidExtensionDescriptorError,
     InvalidExtensionIdError,
     InvalidRendererExtensionError,
+    InvalidPluginEntryPointError,
+    PluginDiscoveryError,
+    PluginEntryPointLoadError,
+    PluginProviderError,
     UnknownExtensionError,
 )
 from .rendering import (
@@ -157,6 +161,7 @@ __all__ = [
     "InvalidPageTitleError",
     "InvalidRegisteredComponentError",
     "InvalidRendererExtensionError",
+    "InvalidPluginEntryPointError",
     "InvalidRouteError",
     "InvalidRoutePageError",
     "InvalidRoutePathError",
@@ -173,6 +178,9 @@ __all__ = [
     "NavigationRouteMismatchError",
     "OutputPathConflictError",
     "OutputSymlinkError",
+    "PluginDiscoveryError",
+    "PluginEntryPointLoadError",
+    "PluginProviderError",
     "PyPageKitError",
     "RenderingError",
     "SecurityError",
