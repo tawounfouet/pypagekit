@@ -8,6 +8,8 @@ from pypagekit.exceptions import InvalidContainerChildError
 from .attributes import Attributes
 from .base import Content
 
+_EMPTY_ATTRIBUTES = Attributes()
+
 
 @dataclass(frozen=True, slots=True, init=False)
 class Container(Content):
@@ -20,7 +22,7 @@ class Container(Content):
         self,
         children: Iterable[Content] = (),
         *,
-        attributes: Attributes = Attributes(),
+        attributes: Attributes = _EMPTY_ATTRIBUTES,
     ) -> None:
         try:
             normalized_children = tuple(children)
