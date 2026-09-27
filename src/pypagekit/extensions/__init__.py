@@ -17,13 +17,16 @@ from .discovery import (
     EntryPointSource,
     PluginDiscoveryResult,
 )
+from .lifecycle import PluginKind, PluginLifecycle, PluginState, PluginStatus
 from .model import (
+    PYPAGEKIT_EXTENSION_API_VERSION,
     BuildPlannerExtension,
     BuildPlannerFactory,
     ComponentExtension,
     ExtensionDescriptor,
     RendererExtension,
     RendererFactory,
+    validate_extension_api_version,
     validate_extension_id,
 )
 from .registry import BuildPlannerRegistry, ComponentExtensionRegistry, RendererRegistry
@@ -34,6 +37,7 @@ __all__ = [
     "BUILTIN_COMPONENTS_EXTENSION_ID",
     "COMPONENT_ENTRY_POINT_GROUP",
     "HTML_RENDERER_EXTENSION_ID",
+    "PYPAGEKIT_EXTENSION_API_VERSION",
     "RENDERER_ENTRY_POINT_GROUP",
     "BuildPlannerExtension",
     "BuildPlannerFactory",
@@ -45,11 +49,16 @@ __all__ = [
     "EntryPointSource",
     "ExtensionDescriptor",
     "PluginDiscoveryResult",
+    "PluginKind",
+    "PluginLifecycle",
+    "PluginState",
+    "PluginStatus",
     "RendererExtension",
     "RendererFactory",
     "RendererRegistry",
     "default_build_planner_registry",
     "default_component_extension_registry",
     "default_renderer_registry",
+    "validate_extension_api_version",
     "validate_extension_id",
 ]
