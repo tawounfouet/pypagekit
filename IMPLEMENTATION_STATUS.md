@@ -13,7 +13,7 @@
 | LOT-09 | Page Metadata | QUALIFIED | `0.2.0b2` |
 | LOT-10 | Attributes & Styling Hooks | QUALIFIED | `0.2.0b3` |
 | LOT-11 | Component Model | QUALIFIED | `0.3.0a1` |
-| LOT-12 | Layout Model | NOT STARTED | `0.3.0a2` |
+| LOT-12 | Layout Model | QUALIFIED | `0.3.0a2` |
 | LOT-13 | Reusable Components | NOT STARTED | `0.3.0b1` |
 | LOT-14 | Slots & Composition | NOT STARTED | `0.3.0b2` |
 | LOT-15 | Component Registry | NOT STARTED | `0.3.0b3` |
@@ -153,4 +153,32 @@ Next: **LOT-12 — Layout Model**.
 - component composition remains domain-first and renderer-independent
 - explicit runtime isolates composition resolution from HTML serialization
 - integration tests cover `Component → Content → HtmlRenderer`
+- GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
+
+
+## LOT-12 exit criteria
+
+- [x] public abstract `Layout` derives from `Component`
+- [x] public immutable `LayoutRegion` derives from `Content`
+- [x] regions preserve declaration order
+- [x] region names use validated lowercase kebab-case
+- [x] region names are unique within a layout
+- [x] region children normalize to immutable tuples
+- [x] regions accept controlled `Attributes`
+- [x] components nested inside regions resolve recursively
+- [x] runtime preserves unchanged region identity
+- [x] runtime recreates regions only when descendant resolution changes
+- [x] renderer chooses a neutral representation with `data-layout-region`
+- [x] intrinsic region marker cannot be spoofed through generic data hooks
+- [x] no CSS/grid/breakpoint semantics are introduced
+- [x] no dynamic slot API is introduced prematurely
+- [x] security tests cover region names and attribute values
+
+Next: **LOT-13 — Reusable Components**.
+
+## LOT-12 qualification evidence
+
+- layout semantics remain domain-first and renderer-independent
+- regions compose through the existing component runtime
+- rendering stays neutral and deterministic
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
