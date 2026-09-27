@@ -35,7 +35,7 @@
 | LOT-31 | Security Hardening | QUALIFIED | `0.8.0a1` |
 | LOT-32 | Reliability & Failure Hardening | QUALIFIED | `0.8.0a2` |
 | LOT-33 | Performance & Scalability Hardening | QUALIFIED | `0.8.0b1` |
-| LOT-34 | Public API Inventory & Stability Classification | NOT STARTED | `0.9.0a1` |
+| LOT-34 | Public API Inventory & Stability Classification | IN QUALIFICATION | `0.9.0a1` |
 | LOT-35 | Compatibility, Deprecation & Migration | NOT STARTED | `0.9.0b1` |
 | LOT-36 | 1.0 Contract Freeze | NOT STARTED | `0.9.0rc1` |
 | LOT-37 | 1.0 Release Qualification | NOT STARTED | `1.0.0` |
@@ -930,3 +930,38 @@ Next after qualification: **LOT-33 — Performance & Scalability Hardening** (`0
 After qualification, the `0.8.x — Hardening` line is complete.
 
 Next: **LOT-34 — Public API Inventory & Stability Classification** (`0.9.0a1`).
+
+
+## LOT-34 exit criteria
+
+- [x] canonical human-readable public API document exists
+- [x] machine-readable public API inventory exists
+- [x] stable-candidate classification is defined
+- [x] provisional-public classification is defined
+- [x] operational-contract classification is defined
+- [x] internal classification is defined
+- [x] root `pypagekit` facade is inventoried exactly
+- [x] `pypagekit.domain` facade is inventoried exactly
+- [x] `pypagekit.components` facade is inventoried exactly
+- [x] `pypagekit.rendering` facade is inventoried exactly
+- [x] `pypagekit.build` facade is inventoried exactly
+- [x] `pypagekit.project` facade is inventoried exactly
+- [x] `pypagekit.development` facade is inventoried exactly
+- [x] `pypagekit.diagnostics` facade is inventoried exactly
+- [x] `pypagekit.extensions` facade is inventoried exactly
+- [x] `pypagekit.exceptions` facade is inventoried exactly
+- [x] Python-level CLI facade is classified provisional-public
+- [x] shell CLI command names are inventoried
+- [x] shell CLI exit semantics are inventoried
+- [x] Python plugin entry-point group names are inventoried
+- [x] built-in extension IDs are inventoried
+- [x] extension compatibility version is inventoried
+- [x] PEP 561 typing marker is inventoried
+- [x] minimum supported Python version is inventoried
+- [x] deep-import/internal-module policy is explicit
+- [x] CI verifies facade `__all__` values against the inventory
+- [x] CI verifies operational constants against runtime/package metadata
+- [x] package version advances to `0.9.0a1`
+- [ ] GitHub CI qualification is fully green
+
+Next after qualification: **LOT-35 — Compatibility, Deprecation & Migration** (`0.9.0b1`).
