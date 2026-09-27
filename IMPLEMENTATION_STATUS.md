@@ -24,7 +24,7 @@
 | LOT-20 | Build Pipeline | QUALIFIED | `0.5.0a2` |
 | LOT-21 | Filesystem Output | QUALIFIED | `0.5.0b1` |
 | LOT-22 | Static Site Generation | QUALIFIED | `0.5.0b2` |
-| LOT-23 | CLI Foundations | NOT STARTED | `0.6.0a1` |
+| LOT-23 | CLI Foundations | QUALIFIED | `0.6.0a1` |
 | LOT-24 | Project Scaffolding | NOT STARTED | `0.6.0a2` |
 | LOT-25 | Development Server | NOT STARTED | `0.6.0b1` |
 | LOT-26 | Developer Diagnostics | NOT STARTED | `0.6.0b2` |
@@ -497,3 +497,36 @@ Next: **LOT-23 — CLI Foundations**.
 - orchestration preserves the independently testable planner and writer layers
 - lower-level planning and filesystem security invariants remain intact end-to-end
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
+
+
+## LOT-23 exit criteria
+
+- [x] Typer is an explicit runtime dependency
+- [x] Rich is an explicit runtime dependency
+- [x] installed `pypagekit` console entry point exists
+- [x] `python -m pypagekit` entry point exists
+- [x] root Typer application is isolated under `pypagekit.cli`
+- [x] centralized Rich stdout and stderr consoles exist
+- [x] external values are not implicitly interpreted as Rich markup by the shared consoles
+- [x] stable CLI exit-code constants define 0 / 1 / 2
+- [x] `pypagekit --help` succeeds
+- [x] `pypagekit -h` succeeds
+- [x] bare invocation presents help successfully
+- [x] `pypagekit --version` reports the canonical package version
+- [x] unknown option returns usage exit code 2
+- [x] unknown command returns usage exit code 2
+- [x] unimplemented workflow commands are not advertised prematurely
+- [x] command registration boundary exists for later LOTs
+- [x] core domain/components/rendering/build packages do not import Typer or Rich
+- [x] importing `pypagekit` does not load Typer or Rich
+- [x] CliRunner coverage validates the root CLI contract
+- [x] installed-wheel smoke validates console and module entry points
+
+Next: **LOT-24 — Project Scaffolding**.
+
+## LOT-23 qualification evidence
+
+- the CLI boundary is installed and independently testable
+- Typer and Rich remain isolated from the framework core
+- shell and module entry points expose the same package version
+- GitHub CI is the authoritative Ruff, formatting, mypy, pytest, package, and CLI-smoke gate
