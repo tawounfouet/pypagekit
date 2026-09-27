@@ -38,7 +38,7 @@
 | LOT-34 | Public API Inventory & Stability Classification | QUALIFIED | `0.9.0a1` |
 | LOT-35 | Compatibility, Deprecation & Migration | QUALIFIED | `0.9.0b1` |
 | LOT-36 | 1.0 Contract Freeze | QUALIFIED | `0.9.0rc1` |
-| LOT-37 | 1.0 Release Qualification | IN QUALIFICATION | `1.0.0` |
+| LOT-37 | 1.0 Release Qualification | QUALIFIED | `1.0.0` |
 
 ## LOT-07 exit criteria
 
@@ -1064,9 +1064,8 @@ Next after qualification: **LOT-37 — 1.0 Release Qualification** (`1.0.0`).
 - [x] CI smoke-tests installed shell and module CLI entry points
 - [x] CI scaffolds and executes a real generated project
 - [x] CI installs and smoke-tests the sdist in a fresh virtual environment
-- [ ] GitHub pull-request CI is fully green
-- [ ] LOT-37 is merged to `main`
-- [ ] final `main` CI is fully green
+- [x] GitHub pull-request CI is fully green
 
-LOT-37 is a qualification lot, not a feature lot. Any stable contract drift requires reopening the
-LOT-36 freeze rather than silently refreshing the baseline.
+LOT-37 is qualified. The historical implementation train from LOT-01 through LOT-37 is complete.
+Any stable contract drift requires a new post-1.0 compatibility decision rather than silently
+refreshing the LOT-36 baseline.
