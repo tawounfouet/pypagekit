@@ -120,6 +120,24 @@ def _default_value(value: Any, canonical_paths: dict[int, str]) -> Any:
         return {"required": True}
     if value is None or isinstance(value, (bool, int, float, str)):
         return {"required": False, "value": value}
+    if type(value).__module__ == "dataclasses" and repr(value) == "<factory>":
+        return {"required": False, "value": "<factory>"}
+    if dataclasses.is_dataclass(value) and not isinstance(value, type):
+        public_type = canonical_paths.get(id(type(value)))
+        if public_type is not None:
+            state: dict[str, Any] = {}
+            for field in dataclasses.fields(value):
+                if field.name.startswith("_"):
+                    continue
+                field_value = _default_value(getattr(value, field.name), canonical_paths)
+                state[field.name] = field_value["value"]
+            return {
+                "required": False,
+                "value": {
+                    "dataclass": public_type,
+                    "state": state,
+                },
+            }
     if isinstance(value, enum.Enum):
         public_path = canonical_paths.get(id(type(value)))
         if public_path is not None:
@@ -212,6 +230,9 @@ def _dataclass_fields(
     result: list[dict[str, Any]] = []
 
     for field in dataclasses.fields(cls):
+        if field.name.startswith("_"):
+            continue
+
         item: dict[str, Any] = {
             "name": field.name,
             "type": _type_name(field.type, canonical_paths),
@@ -233,6 +254,22 @@ def _dataclass_fields(
         result.append(item)
 
     return result
+
+
+def _public_class_bases(
+    cls: type[Any],
+    canonical_paths: dict[int, str],
+) -> list[str]:
+    bases: list[str] = []
+    for base in cls.__bases__:
+        public_path = canonical_paths.get(id(base))
+        if public_path is not None:
+            bases.append(public_path)
+        elif base is object:
+            bases.append("object")
+        elif base.__module__ in {"builtins", "typing", "enum"}:
+            bases.append(f"{base.__module__}.{base.__qualname__}")
+    return bases
 
 
 def _public_exception_bases(
@@ -271,15 +308,22 @@ def _class_descriptor(
 
     descriptor: dict[str, Any] = {
         "kind": "protocol" if getattr(cls, "_is_protocol", False) else "class",
+        "bases": _public_class_bases(cls, canonical_paths),
     }
+    if inspect.isabstract(cls):
+        descriptor["abstract"] = True
 
     signature = _signature(cls, canonical_paths)
     if signature is not None:
         descriptor["signature"] = signature
 
     if dataclasses.is_dataclass(cls):
+        params = cls.__dataclass_params__
         descriptor["dataclass"] = {
-            "frozen": cls.__dataclass_params__.frozen,
+            "eq": params.eq,
+            "frozen": params.frozen,
+            "order": params.order,
+            "unsafe_hash": params.unsafe_hash,
             "fields": _dataclass_fields(cls, canonical_paths),
         }
 
@@ -367,7 +411,6 @@ def build_snapshot() -> dict[str, Any]:
             }
         elif classification == "provisional_public":
             provisional_facades[module_name] = {
-                "exports": exports,
                 "frozen": False,
             }
 
