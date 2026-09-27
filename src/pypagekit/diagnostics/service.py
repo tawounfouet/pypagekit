@@ -79,9 +79,7 @@ class ProjectInspector:
                 f"Inspection root '{project_root}' must not be a symlink."
             )
         if not project_root.exists():
-            raise InvalidInspectionRootError(
-                f"Inspection root '{project_root}' does not exist."
-            )
+            raise InvalidInspectionRootError(f"Inspection root '{project_root}' does not exist.")
         if not project_root.is_dir():
             raise InvalidInspectionRootError(
                 f"Inspection root '{project_root}' must be a directory."
