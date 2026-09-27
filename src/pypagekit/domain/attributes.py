@@ -55,6 +55,9 @@ class Attributes:
 
 
 def _normalize_classes(classes: Iterable[str]) -> tuple[str, ...]:
+    if isinstance(classes, str):
+        raise TypeError("Attribute classes must be an iterable of class-token strings.")
+
     try:
         normalized = tuple(classes)
     except TypeError as exc:
