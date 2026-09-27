@@ -28,8 +28,8 @@ from pypagekit.exceptions import (
     RenderingError,
     SecurityError,
     SerializationError,
-    UnsafeUrlError,
     UnresolvedSlotError,
+    UnsafeUrlError,
     UnsupportedNodeError,
 )
 from pypagekit.rendering import HtmlRenderer, Renderer
