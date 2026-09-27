@@ -34,7 +34,7 @@ def test_project_name_normalization_rejects_empty_semantics() -> None:
 
 def test_requirement_tracks_current_cli_release_line() -> None:
     assert pypagekit_requirement().startswith(f"pypagekit>={__version__},")
-    assert pypagekit_requirement().endswith("<0.8")
+    assert pypagekit_requirement().endswith("<0.9")
 
 
 def test_plan_is_deterministic_and_performs_no_write(tmp_path: Path) -> None:
