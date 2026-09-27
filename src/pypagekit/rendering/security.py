@@ -1,7 +1,6 @@
 """Security policy for render-time URL references."""
 
 import re
-from collections.abc import AbstractSet
 
 from pypagekit.exceptions import UnsafeUrlError
 
@@ -33,7 +32,7 @@ def validate_image_src(value: str) -> str:
 def _validate_url_reference(
     value: str,
     *,
-    allowed_schemes: AbstractSet[str],
+    allowed_schemes: frozenset[str],
     context: str,
 ) -> str:
     if not isinstance(value, str):
@@ -48,7 +47,7 @@ def _validate_url_reference(
         return value
 
     prefix = candidate[:colon_index]
-    normalized_prefix = _remove_ascii_whitespace_and_controls(prefix).lower()
+    normalized_prefix = _remove_ascii_whitespace(prefix).lower()
 
     if not normalized_prefix:
         return value
@@ -62,13 +61,9 @@ def _validate_url_reference(
     return value
 
 
-def _remove_ascii_whitespace_and_controls(value: str) -> str:
+def _remove_ascii_whitespace(value: str) -> str:
     return "".join(character for character in value if ord(character) > 0x20)
 
 
 def _contains_forbidden_control(value: str) -> bool:
-    return any(
-        ord(character) == 0x7F
-        or (ord(character) < 0x20 and character not in {"\t", "\n", "\r"})
-        for character in value
-    )
+    return any(ord(character) < 0x20 or ord(character) == 0x7F for character in value)
