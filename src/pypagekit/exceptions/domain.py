@@ -121,7 +121,6 @@ class InvalidRoutePageError(InvalidRouteError):
     """Raised when a route target is not a Page."""
 
 
-
 class InvalidNavigationError(ValidationError):
     """Base exception for invalid navigation structure."""
 
