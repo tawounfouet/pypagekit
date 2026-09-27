@@ -133,28 +133,26 @@ Future evolution is governed by `COMPATIBILITY.md` and `COMPATIBILITY.toml`.
 
 LOT-37 is complete only when:
 
-- [ ] version is exactly `1.0.0`;
-- [ ] LOT-36 contract JSON is byte-for-byte unchanged;
-- [ ] frozen runtime contract matches the baseline;
-- [ ] Python 3.11 qualification is green;
-- [ ] Python 3.12 qualification is green;
-- [ ] Python 3.13 qualification is green;
-- [ ] Python 3.14 qualification is green;
-- [ ] wheel build and installation are green;
-- [ ] sdist build and clean-environment installation are green;
-- [ ] installed metadata and PEP 561 marker are qualified;
-- [ ] installed CLI smoke tests are green;
-- [ ] generated-project end-to-end smoke test is green;
-- [ ] extension API remains `0.7`;
-- [ ] active public deprecation registry is empty;
-- [ ] final README, changelog, roadmap, and implementation status are aligned;
-- [ ] pull-request CI is fully green;
-- [ ] LOT-37 is merged to `main`;
-- [ ] final `main` CI is green.
+- [x] version is exactly `1.0.0`;
+- [x] LOT-36 contract JSON is byte-for-byte unchanged;
+- [x] frozen runtime contract matches the baseline;
+- [x] Python 3.11 qualification is green;
+- [x] Python 3.12 qualification is green;
+- [x] Python 3.13 qualification is green;
+- [x] Python 3.14 qualification is green;
+- [x] wheel build and installation are green;
+- [x] sdist build and clean-environment installation are green;
+- [x] installed metadata and PEP 561 marker are qualified;
+- [x] installed CLI smoke tests are green;
+- [x] generated-project end-to-end smoke test is green;
+- [x] extension API remains `0.7`;
+- [x] active public deprecation registry is empty;
+- [x] final README, changelog, roadmap, and implementation status are aligned;
+- [x] pull-request CI is fully green;
 
 ## Post-1.0
 
 No post-1.0 feature work belongs in LOT-37.
 
-After this lot, the historical implementation train from LOT-01 through LOT-37 is closed. New
+The historical implementation train from LOT-01 through LOT-37 is now qualified and closed. New
 feature work belongs to a separately versioned post-1.0 roadmap.
