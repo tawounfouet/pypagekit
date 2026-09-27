@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-23 — CLI Foundations** (`0.6.0a1`).
+Current implementation milestone: **LOT-24 — Project Scaffolding** (`0.6.0a2`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -45,7 +45,8 @@ Implemented so far:
 - deterministic in-memory build planning for pages and assets;
 - safe filesystem materialization of qualified build plans;
 - end-to-end static-site generation through a thin orchestration facade;
-- Typer + Rich CLI foundations with installed shell and module entry points.
+- Typer + Rich CLI foundations with installed shell and module entry points;
+- safe project scaffolding through `pypagekit new`.
 
 ## Quick example
 
@@ -178,7 +179,7 @@ python -m build
 1.0.0  Stable
 ```
 
-The current release line is **`0.6.x — CLI & Developer Workflow`**. The next milestone is **LOT-24 — Project Scaffolding**.
+The current release line is **`0.6.x — CLI & Developer Workflow`**. The next milestone is **LOT-25 — Development Server**.
 
 
 ## Controlled attributes
@@ -926,3 +927,69 @@ LOT-26  pypagekit inspect / doctor
 ```
 
 The CLI layer remains optional from the core's architectural perspective: importing `pypagekit` does not import Typer or Rich, and domain/components/rendering/build packages are forbidden from depending on them.
+
+
+## Project scaffolding
+
+LOT-24 adds the first workflow command:
+
+```bash
+pypagekit new my-site
+```
+
+It creates a minimal executable project:
+
+```text
+my-site/
+├── .gitignore
+├── README.md
+├── pyproject.toml
+└── site.py
+```
+
+The generated project can immediately be executed:
+
+```bash
+cd my-site
+python site.py
+```
+
+which produces:
+
+```text
+dist/
+└── index.html
+```
+
+The CLI remains a thin adapter:
+
+```text
+pypagekit new
+      ↓
+Typer command
+      ↓
+ProjectScaffolder
+      ↓
+ProjectPlan
+      ↓
+filesystem materialization
+```
+
+Existing scaffold-managed files are protected by default. Replacement must be explicit:
+
+```bash
+pypagekit new my-site --force
+```
+
+`--force` never permits replacing or traversing symlinks. Unplanned files in an existing target directory are preserved.
+
+The underlying service is also directly usable from Python:
+
+```python
+from pathlib import Path
+from pypagekit.project import ProjectScaffolder
+
+result = ProjectScaffolder().scaffold(Path("my-site"))
+```
+
+LOT-24 deliberately does not add project loading or a CLI build command. The generated `site.py` uses the already-qualified Python generation API directly.
