@@ -17,8 +17,8 @@ Before `1.0.0`, the project must distinguish:
 - operational contracts such as CLI commands and entry-point group names;
 - implementation modules that happen to be importable but are not compatibility promises.
 
-LOT-34 creates that boundary. It does **not** yet freeze every signature forever. LOT-35 defines
-compatibility, deprecation, and migration rules; LOT-36 performs the final 1.0 contract freeze.
+LOT-34 creates that boundary. It does **not** yet freeze every signature forever. LOT-35 now
+defines compatibility, deprecation, and migration rules; LOT-36 performs the final 1.0 contract freeze.
 
 ## Stability classes
 
@@ -362,7 +362,8 @@ From `0.9.0a1` onward:
 4. CI verifies that runtime `__all__` values match the inventory;
 5. undocumented deep imports remain outside the compatibility promise.
 
-LOT-35 will define how compatible changes, deprecations, removals, and migrations work.
+LOT-35 defines those rules in `COMPATIBILITY.md`, `COMPATIBILITY.toml`, and
+`MIGRATION_0_9_TO_1_0.md`.
 
 LOT-36 will then convert the accepted stable candidates into the final 1.0 contract.
 
