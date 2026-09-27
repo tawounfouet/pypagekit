@@ -18,9 +18,7 @@ from pypagekit.development import (
 
 @contextmanager
 def running_server(root: Path) -> Iterator[DevelopmentServerSession]:
-    session = DevelopmentServer().create(
-        DevelopmentServerConfig(root, port=0)
-    )
+    session = DevelopmentServer().create(DevelopmentServerConfig(root, port=0))
     thread = Thread(target=session.serve_forever, daemon=True)
     thread.start()
     try:
@@ -164,9 +162,7 @@ def test_bound_info_reports_ephemeral_port(tmp_path: Path) -> None:
 def test_bind_conflict_raises_framework_error(tmp_path: Path) -> None:
     root = tmp_path / "dist"
     root.mkdir()
-    first = DevelopmentServer().create(
-        DevelopmentServerConfig(root, port=0)
-    )
+    first = DevelopmentServer().create(DevelopmentServerConfig(root, port=0))
 
     try:
         with pytest.raises(DevelopmentServerBindError):
