@@ -122,7 +122,6 @@ def test_default_registry_exposes_html_renderer() -> None:
     assert registry.create(HTML_RENDERER_EXTENSION_ID).render(Text("<b>")) == "&lt;b&gt;"
 
 
-
 def test_renderer_factory_failure_is_wrapped_with_extension_context() -> None:
     def broken_factory() -> PlainRenderer:
         raise RuntimeError("boom")
