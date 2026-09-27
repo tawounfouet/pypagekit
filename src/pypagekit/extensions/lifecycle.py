@@ -136,9 +136,7 @@ class PluginLifecycle:
         """Return active plugin IDs."""
 
         return tuple(
-            status.extension_id
-            for status in self.statuses
-            if status.state is PluginState.ACTIVE
+            status.extension_id for status in self.statuses if status.state is PluginState.ACTIVE
         )
 
     @property
@@ -146,9 +144,7 @@ class PluginLifecycle:
         """Return rejected plugin IDs."""
 
         return tuple(
-            status.extension_id
-            for status in self.statuses
-            if status.state is PluginState.REJECTED
+            status.extension_id for status in self.statuses if status.state is PluginState.REJECTED
         )
 
     @property
@@ -156,8 +152,7 @@ class PluginLifecycle:
         """Return whether qualification completed without rejected plugins."""
 
         return bool(self.statuses) and all(
-            status.state in {PluginState.QUALIFIED, PluginState.ACTIVE}
-            for status in self.statuses
+            status.state in {PluginState.QUALIFIED, PluginState.ACTIVE} for status in self.statuses
         )
 
     @property
@@ -310,9 +305,7 @@ class PluginLifecycle:
                 if status is None:
                     raise UnknownPluginError(f"Unknown plugin extension: '{extension_id}'.")
                 if status.state is not PluginState.ACTIVE:
-                    raise PluginActivationError(
-                        f"Plugin extension '{extension_id}' is not active."
-                    )
+                    raise PluginActivationError(f"Plugin extension '{extension_id}' is not active.")
 
         statuses = tuple(
             PluginStatus(
@@ -354,9 +347,7 @@ class PluginLifecycle:
                     f"Plugin extension '{extension_id}' was rejected during qualification."
                 )
             if status.state not in {PluginState.QUALIFIED, PluginState.ACTIVE}:
-                raise PluginActivationError(
-                    f"Plugin extension '{extension_id}' is not qualified."
-                )
+                raise PluginActivationError(f"Plugin extension '{extension_id}' is not qualified.")
         return targets
 
 
