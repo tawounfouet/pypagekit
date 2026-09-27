@@ -98,7 +98,6 @@ class ComponentRegistry:
         return component
 
 
-
 def _component_index(names: tuple[str, ...], name: str) -> int | None:
     low = 0
     high = len(names)
