@@ -19,7 +19,6 @@ class ComponentResolutionDepthError(ComponentError):
     """Raised when component composition exceeds the runtime depth guard."""
 
 
-
 class ComponentRegistryError(ComponentError):
     """Base exception for explicit component registry failures."""
 
