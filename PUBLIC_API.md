@@ -17,17 +17,15 @@ Before `1.0.0`, the project must distinguish:
 - operational contracts such as CLI commands and entry-point group names;
 - implementation modules that happen to be importable but are not compatibility promises.
 
-LOT-34 creates that boundary. It does **not** yet freeze every signature forever. LOT-35 now
-defines compatibility, deprecation, and migration rules; LOT-36 performs the final 1.0 contract freeze.
+LOT-34 created that boundary, LOT-35 defined compatibility rules, and LOT-36 has now frozen the exact 1.0 contract in `API_CONTRACT_1_0.json`.
 
 ## Stability classes
 
-### `stable_candidate`
+### `stable`
 
-An explicitly public Python surface intended to enter the PyPageKit 1.0 compatibility contract.
+A frozen public Python surface covered by the PyPageKit 1.0 compatibility contract.
 
-During the remaining `0.9.x` cycle, a breaking change to a stable candidate must be deliberate,
-documented, and evaluated through the compatibility rules introduced by LOT-35.
+At `0.9.0rc1`, the accepted LOT-34 candidates have been promoted to this class and are enforced by the exact 1.0 contract baseline.
 
 Examples:
 
@@ -102,7 +100,7 @@ from pypagekit.rendering.security import validate_link_href
 The second group may continue to work, but PyPageKit reserves the right to reorganize those
 implementation modules without treating the reorganization itself as a public API break.
 
-## Stable-candidate Python facades
+## Frozen stable Python facades
 
 ### `pypagekit`
 
@@ -203,7 +201,7 @@ route_output_target
 
 Public project-scaffolding application service and its project-specific exceptions.
 
-The entire explicit `pypagekit.project.__all__` surface is a stable candidate.
+The entire explicit `pypagekit.project.__all__` surface is a stable API.
 
 ### `pypagekit.development`
 
@@ -240,13 +238,11 @@ The extension compatibility line remains:
 PYPAGEKIT_EXTENSION_API_VERSION = "0.7"
 ```
 
-That identifier is deliberately independent from the package version. LOT-36 will decide whether
-the 1.0 contract freeze retains `0.7` or promotes the extension compatibility identifier with an
-explicit migration rule.
+That identifier is deliberately independent from the package version. LOT-36 retains `0.7` for the 1.0 package because no plugin-contract change is required.
 
 ### `pypagekit.exceptions`
 
-The explicit package-wide exception facade is a stable candidate.
+The explicit package-wide exception facade is a stable API.
 
 For 1.0 compatibility, callers should catch exceptions imported from this facade rather than from
 implementation exception modules such as `pypagekit.exceptions.build`.
@@ -325,7 +321,7 @@ minimum Python = 3.11
 mypy strict validation in repository CI
 ```
 
-Public type aliases, protocols, annotations, and constructor/method signatures of stable-candidate
+Public type aliases, protocols, annotations, and constructor/method signatures of stable
 exports are candidates for the 1.0 typing contract.
 
 LOT-36 will freeze the final signature baseline.
@@ -356,7 +352,7 @@ LOT-34 freezes the **inventory and classification process**, not the final 1.0 s
 
 From `0.9.0a1` onward:
 
-1. a new stable-candidate facade export must be added to `PUBLIC_API.toml`;
+1. a new stable facade export must be added to `PUBLIC_API.toml`;
 2. removal or demotion of an inventoried surface must be explicit;
 3. CLI or extension metadata changes must update the operational inventory;
 4. CI verifies that runtime `__all__` values match the inventory;
@@ -365,7 +361,7 @@ From `0.9.0a1` onward:
 LOT-35 defines those rules in `COMPATIBILITY.md`, `COMPATIBILITY.toml`, and
 `MIGRATION_0_9_TO_1_0.md`.
 
-LOT-36 will then convert the accepted stable candidates into the final 1.0 contract.
+LOT-36 has converted the accepted stable APIs into the final 1.0 contract. The exact baseline is documented in `API_CONTRACT_1_0.md` and stored in `API_CONTRACT_1_0.json`.
 
 ## Release-train position
 

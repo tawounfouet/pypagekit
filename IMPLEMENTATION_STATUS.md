@@ -37,7 +37,7 @@
 | LOT-33 | Performance & Scalability Hardening | QUALIFIED | `0.8.0b1` |
 | LOT-34 | Public API Inventory & Stability Classification | QUALIFIED | `0.9.0a1` |
 | LOT-35 | Compatibility, Deprecation & Migration | QUALIFIED | `0.9.0b1` |
-| LOT-36 | 1.0 Contract Freeze | NOT STARTED | `0.9.0rc1` |
+| LOT-36 | 1.0 Contract Freeze | QUALIFIED | `0.9.0rc1` |
 | LOT-37 | 1.0 Release Qualification | NOT STARTED | `1.0.0` |
 
 ## LOT-07 exit criteria
@@ -999,3 +999,43 @@ Next after qualification: **LOT-35 — Compatibility, Deprecation & Migration** 
 - [x] GitHub CI qualification is fully green
 
 Next after qualification: **LOT-36 — 1.0 Contract Freeze** (`0.9.0rc1`).
+
+
+## LOT-36 exit criteria
+
+- [x] package version advances to `0.9.0rc1`
+- [x] accepted stable-candidate facades are promoted to `stable`
+- [x] exact machine-readable 1.0 baseline exists
+- [x] human-readable 1.0 contract document exists
+- [x] stable facade export names are frozen
+- [x] public function signatures are frozen
+- [x] public constructor signatures are frozen
+- [x] public class and protocol members are frozen
+- [x] public class inheritance relationships are frozen
+- [x] public dataclass fields and semantic configuration are frozen
+- [x] private dataclass fields are excluded from the public baseline
+- [x] public exception hierarchy is frozen
+- [x] enum member names and values are frozen
+- [x] public type aliases are frozen
+- [x] public constants are frozen
+- [x] shell CLI invocation forms are frozen
+- [x] shell CLI command names are frozen
+- [x] CLI root options are frozen
+- [x] CLI exit-code semantics are frozen
+- [x] Python/Typer CLI facade remains explicitly provisional
+- [x] extension entry-point groups are frozen
+- [x] built-in extension IDs are frozen
+- [x] extension API `0.7` is deliberately retained
+- [x] PEP 561 typing marker is frozen
+- [x] minimum Python 3.11 is frozen
+- [x] active deprecation set is empty at freeze
+- [x] contract snapshot ignores physical internal module layout
+- [x] version symbol is not pinned to release-candidate value
+- [x] standard-library runtime representation differences are normalized
+- [x] exact contract baseline passes Python 3.11
+- [x] exact contract baseline passes Python 3.12
+- [x] exact contract baseline passes Python 3.13
+- [x] exact contract baseline passes Python 3.14
+- [x] GitHub CI qualification is fully green on the final documentation head
+
+Next after qualification: **LOT-37 — 1.0 Release Qualification** (`1.0.0`).
