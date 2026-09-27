@@ -4,13 +4,13 @@ from __future__ import annotations
 
 import dataclasses
 import enum
-from collections.abc import Callable as AbcCallable
 import importlib
 import inspect
 import json
 import tomllib
 import types
 import typing
+from collections.abc import Callable as AbcCallable
 from pathlib import Path
 from typing import Any, get_args, get_origin
 
@@ -87,8 +87,11 @@ def _type_name(value: Any, canonical_paths: dict[int, str]) -> str:
         if origin in {typing.Union, types.UnionType}:
             return " | ".join(_type_name(argument, canonical_paths) for argument in arguments)
 
-        if origin in {typing.Callable, AbcCallable}:
-            if len(arguments) == 2 and isinstance(arguments[0], list):
+        if (
+            origin in {typing.Callable, AbcCallable}
+            and len(arguments) == 2
+            and isinstance(arguments[0], list)
+        ):
                 parameters = ", ".join(
                     _type_name(argument, canonical_paths) for argument in arguments[0]
                 )
