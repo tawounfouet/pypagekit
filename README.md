@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-36 — 1.0 Contract Freeze** (`0.9.0rc1`). The exact 1.0 public contract is frozen in `API_CONTRACT_1_0.json`.
+Current qualified milestone: **LOT-36 — 1.0 Contract Freeze** (`0.9.0rc1`). The exact 1.0 public contract is frozen in `API_CONTRACT_1_0.json`. Next: **LOT-37 — 1.0 Release Qualification**.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
