@@ -11,7 +11,13 @@ from pypagekit import (
     __version__,
 )
 from pypagekit.domain import Action, Media
-from pypagekit.exceptions import RenderingError, SerializationError, UnsupportedNodeError
+from pypagekit.exceptions import (
+    RenderingError,
+    SecurityError,
+    SerializationError,
+    UnsafeUrlError,
+    UnsupportedNodeError,
+)
 from pypagekit.rendering import HtmlRenderer, Renderer
 
 
@@ -28,6 +34,8 @@ def test_package_imports() -> None:
     assert issubclass(Media, Content)
     assert issubclass(Image, Media)
     assert issubclass(SerializationError, RenderingError)
+    assert issubclass(SecurityError, RenderingError)
+    assert issubclass(UnsafeUrlError, SecurityError)
     assert issubclass(UnsupportedNodeError, RenderingError)
 
     renderer: Renderer = HtmlRenderer()
@@ -35,4 +43,4 @@ def test_package_imports() -> None:
 
 
 def test_current_version() -> None:
-    assert __version__ == "0.2.0a2"
+    assert __version__ == "0.2.0b1"
