@@ -12,6 +12,7 @@ from pypagekit.domain import (
 )
 from pypagekit.exceptions import UnsupportedNodeError
 
+from .attributes import html_attributes
 from .escaping import escape_text
 from .security import validate_image_src, validate_link_href
 from .serializer import serialize_doctype, serialize_element, serialize_void_element
@@ -31,30 +32,39 @@ class HtmlRenderer:
             return serialize_element(
                 f"h{node.level}",
                 content=escape_text(node.text),
+                attributes=html_attributes(node.attributes),
             )
         if isinstance(node, Paragraph):
             return serialize_element(
                 "p",
                 content=escape_text(node.text),
+                attributes=html_attributes(node.attributes),
             )
         if isinstance(node, Container):
             return serialize_element(
                 "div",
                 content=self._render_children(node.children),
+                attributes=html_attributes(node.attributes),
             )
         if isinstance(node, Link):
             return serialize_element(
                 "a",
                 content=escape_text(node.label),
-                attributes={"href": validate_link_href(node.href)},
+                attributes=html_attributes(
+                    node.attributes,
+                    intrinsic={"href": validate_link_href(node.href)},
+                ),
             )
         if isinstance(node, Image):
             return serialize_void_element(
                 "img",
-                attributes={
-                    "src": validate_image_src(node.src),
-                    "alt": node.alt,
-                },
+                attributes=html_attributes(
+                    node.attributes,
+                    intrinsic={
+                        "src": validate_image_src(node.src),
+                        "alt": node.alt,
+                    },
+                ),
             )
 
         raise UnsupportedNodeError(

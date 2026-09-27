@@ -1,9 +1,10 @@
 """Media content primitives for the PyPageKit domain."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from pypagekit.exceptions import InvalidImageSourceError
 
+from .attributes import Attributes
 from .base import Content
 
 
@@ -19,6 +20,7 @@ class Image(Media):
 
     src: str
     alt: str
+    attributes: Attributes = field(default_factory=Attributes, kw_only=True)
 
     def __post_init__(self) -> None:
         if not isinstance(self.src, str):
@@ -27,3 +29,5 @@ class Image(Media):
             raise InvalidImageSourceError("Image src must not be empty.")
         if not isinstance(self.alt, str):
             raise TypeError("Image alt must be a string.")
+        if not isinstance(self.attributes, Attributes):
+            raise TypeError("Image attributes must be an Attributes object.")

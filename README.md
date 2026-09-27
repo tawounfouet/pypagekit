@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-09 — Page Metadata** (`0.2.0b2`).
+Current implementation milestone: **LOT-10 — Attributes & Styling Hooks** (`0.2.0b3`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -33,7 +33,7 @@ Implemented so far:
 ## Quick example
 
 ```python
-from pypagekit import Container, Heading, Image, Link, Page, Paragraph
+from pypagekit import Attributes, Container, Heading, Image, Link, Page, Paragraph
 from pypagekit.rendering import HtmlRenderer
 
 
@@ -44,7 +44,11 @@ page = Page(
     content=[
         Container(
             children=[
-                Heading("Welcome", level=1),
+                Heading(
+                    "Welcome",
+                    level=1,
+                    attributes=Attributes(id="hero-title", classes=["display"]),
+                ),
                 Paragraph("Built with structured Python objects."),
                 Link(label="About", href="/about"),
                 Image(src="/assets/logo.png", alt="Project logo"),
@@ -122,7 +126,6 @@ Text remains escaped at the HTML boundary and the core exposes no raw-HTML escap
 
 LOT-08 does not yet introduce:
 
-- generic domain attributes/classes/data/aria hooks — LOT-10;
 - filesystem output — later build/output LOTs.
 
 ## Requirements
@@ -158,4 +161,23 @@ python -m build
 1.0.0  Stable
 ```
 
-The immediate next milestone is **LOT-10 — Attributes & Styling Hooks**.
+The next release line begins with **LOT-11 — Component Model** (`0.3.x`).
+
+
+## Controlled attributes
+
+HTML-backed content may use a typed `Attributes` value object:
+
+```python
+attributes = Attributes(
+    id="hero",
+    classes=["section", "wide"],
+    title="Hero section",
+    data={"testid": "hero"},
+    aria={"label": "Hero"},
+)
+```
+
+This renders only the controlled hooks `id`, `class`, `title`, `data-*`, and `aria-*`. Inline style and event-handler keywords are intentionally not part of the API.
+
+With LOT-10 complete, the `0.2.x` rendering line is feature-complete and the next major layer is reusable components.

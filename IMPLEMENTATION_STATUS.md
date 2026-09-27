@@ -11,7 +11,7 @@
 | LOT-07 | HTML Renderer | QUALIFIED | `0.2.0a2` |
 | LOT-08 | Security & Escaping | QUALIFIED | `0.2.0b1` |
 | LOT-09 | Page Metadata | QUALIFIED | `0.2.0b2` |
-| LOT-10 | Attributes & Styling Hooks | NOT STARTED | `0.2.0b3` |
+| LOT-10 | Attributes & Styling Hooks | QUALIFIED | `0.2.0b3` |
 
 ## LOT-07 exit criteria
 
@@ -92,4 +92,31 @@ Next: **LOT-10 — Attributes & Styling Hooks**.
 - existing `Page` metadata fields are now fully represented in HTML
 - deterministic head assembly is covered by integration tests
 - security corpus covers description attribute breakout attempts
+- GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
+
+
+## LOT-10 exit criteria
+
+- [x] public immutable `Attributes` value object exists
+- [x] `id`, class tokens, and `title` are supported
+- [x] `data-*` hooks are generated from validated suffixes
+- [x] `aria-*` hooks are generated from validated suffixes
+- [x] classes preserve declaration order
+- [x] data/ARIA mappings normalize deterministically
+- [x] `Heading`, `Paragraph`, `Container`, `Link`, and `Image` accept attributes
+- [x] `Text` remains attribute-free
+- [x] intrinsic `href`, `src`, and `alt` remain controlled by their domain objects
+- [x] arbitrary event-handler and style keywords are not supported
+- [x] author values are escaped at serialization time
+- [x] existing output is unchanged when attributes are omitted
+- [x] rendering remains deterministic
+- [x] adversarial tests cover attribute breakout attempts
+
+Next: **LOT-11 — Component Model**.
+
+## LOT-10 qualification evidence
+
+- controlled domain attribute surface added without `dict[str, Any]`
+- renderer maps domain hooks to serializer attributes through an internal adapter
+- security corpus covers id/class/title/data/aria injection attempts
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
