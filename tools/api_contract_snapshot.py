@@ -68,6 +68,12 @@ def _canonical_paths(
     return result
 
 
+def _normalized_module_name(module_name: str) -> str:
+    if module_name == "pathlib._local":
+        return "pathlib"
+    return module_name
+
+
 def _type_name(value: Any, canonical_paths: dict[int, str]) -> str:
     if value is inspect.Signature.empty:
         return ""
@@ -109,7 +115,8 @@ def _type_name(value: Any, canonical_paths: dict[int, str]) -> str:
     if isinstance(value, type):
         if value.__module__ == "builtins":
             return value.__qualname__
-        return f"{value.__module__}.{value.__qualname__}"
+        module_name = _normalized_module_name(value.__module__)
+        return f"{module_name}.{value.__qualname__}"
 
     rendered = repr(value)
     return rendered.replace("typing.", "typing.")
@@ -152,9 +159,10 @@ def _default_value(value: Any, canonical_paths: dict[int, str]) -> Any:
     if public_path is not None:
         return {"required": False, "value": public_path}
 
+    module_name = _normalized_module_name(type(value).__module__)
     return {
         "required": False,
-        "value": f"<{type(value).__module__}.{type(value).__qualname__}>",
+        "value": f"<{module_name}.{type(value).__qualname__}>",
     }
 
 
