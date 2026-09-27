@@ -126,10 +126,7 @@ def test_component_extension_flows_through_existing_component_runtime() -> None:
     components = ComponentExtensionRegistry((_component_extension(),)).component_registry()
     renderer = HtmlRenderer(component_runtime=ComponentRuntime(registry=components))
 
-    assert (
-        renderer.render(ComponentRef("message", {"text": "<Hello>"}))
-        == "<p>&lt;Hello&gt;</p>"
-    )
+    assert renderer.render(ComponentRef("message", {"text": "<Hello>"})) == "<p>&lt;Hello&gt;</p>"
 
 
 def test_component_extension_registry_rejects_duplicate_component_names() -> None:
