@@ -29,7 +29,7 @@
 | LOT-25 | Development Server | QUALIFIED | `0.6.0b1` |
 | LOT-26 | Developer Diagnostics | QUALIFIED | `0.6.0b2` |
 | LOT-27 | Extension Contracts & Renderer Registry | QUALIFIED | `0.7.0a1` |
-| LOT-28 | Build & Component Extension Points | NOT STARTED | `0.7.0a2` |
+| LOT-28 | Build & Component Extension Points | IN QUALIFICATION | `0.7.0a2` |
 | LOT-29 | Plugin Discovery & Entry Points | NOT STARTED | `0.7.0b1` |
 | LOT-30 | Plugin Lifecycle & Conformance | NOT STARTED | `0.7.0b2` |
 | LOT-31 | Security Hardening | NOT STARTED | `0.8.0a1` |
@@ -738,3 +738,33 @@ have been exercised directly.
 - [x] GitHub CI qualification is fully green
 
 Next after qualification: **LOT-28 — Build & Component Extension Points**.
+
+
+## LOT-28 exit criteria
+
+- [x] public `BuildPlannerProtocol` exists
+- [x] `BuildPlanner` satisfies the structural planner contract
+- [x] `StaticSiteGenerator` accepts structural planners without mandatory subclassing
+- [x] invalid planner objects fail explicitly before generation
+- [x] immutable `BuildPlannerExtension` exists
+- [x] immutable `BuildPlannerRegistry` exists
+- [x] build planner registration is deterministic and persistent
+- [x] invalid build planner factory results fail explicitly
+- [x] built-in build planner is exposed through an explicit default registry
+- [x] immutable `ComponentExtension` exists
+- [x] component contribution names reuse existing component-name validation
+- [x] immutable `ComponentExtensionRegistry` exists
+- [x] component extension ordering is deterministic
+- [x] duplicate component names across extension bundles fail explicitly
+- [x] component extensions materialize the existing `ComponentRegistry`
+- [x] contributed components resolve through the existing `ComponentRuntime`
+- [x] contributed component rendering preserves existing escaping/security behavior
+- [x] built-in reusable components are exposed as an explicit extension bundle
+- [x] no arbitrary mutable BuildPlan callback/hook is introduced
+- [x] no process-global mutable extension registry exists
+- [x] no package scanning, dynamic import-string loading, or entry-point discovery exists yet
+- [x] extensions remain independent from Typer and Rich
+- [x] package version advances to `0.7.0a2`
+- [ ] GitHub CI qualification is fully green
+
+Next after qualification: **LOT-29 — Plugin Discovery & Entry Points**.
