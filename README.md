@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-21 — Filesystem Output** (`0.5.0b1`).
+Current implementation milestone: **LOT-22 — Static Site Generation** (`0.5.0b2`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -43,7 +43,8 @@ Implemented so far:
 - a canonical Site aggregate with deterministic Sitemap projection;
 - declarative static assets with validated publish targets and no filesystem I/O;
 - deterministic in-memory build planning for pages and assets;
-- safe filesystem materialization of qualified build plans.
+- safe filesystem materialization of qualified build plans;
+- end-to-end static-site generation through a thin orchestration facade.
 
 ## Quick example
 
@@ -168,15 +169,15 @@ python -m build
 0.2.x  Rendering               ✅ feature-complete
 0.3.x  Components              ✅ feature-complete
 0.4.x  Routing & Site           ✅ feature-complete
-0.5.x  Static Build              ← current
-0.6.x  CLI & Developer Workflow
+0.5.x  Static Build              ✅ feature-complete
+0.6.x  CLI & Developer Workflow   ← next
 0.7.x  Extensibility
 0.8.x  Hardening
 0.9.x  API Freeze
 1.0.0  Stable
 ```
 
-The current release line is **`0.5.x — Static Build`**. The next milestone is **LOT-22 — Static Site Generation**.
+The `0.5.x — Static Build` line is now feature-complete. The next milestone is **LOT-23 — CLI Foundations** (`0.6.x`).
 
 
 ## Controlled attributes
@@ -800,3 +801,86 @@ result.files
 ```
 
 LOT-22 will provide the first end-to-end static-site generation facade that plans and writes a `Site` in one controlled workflow.
+
+
+## Static site generation
+
+LOT-22 provides the high-level facade that joins the existing build layers:
+
+```python
+from pathlib import Path
+
+from pypagekit.build import StaticSiteGenerator
+
+
+result = StaticSiteGenerator().generate(
+    site,
+    Path("dist"),
+    assets=assets,
+)
+```
+
+The architecture remains layered:
+
+```text
+Site + Assets
+      ↓
+StaticSiteGenerator
+      ↓
+BuildPlanner
+      ↓
+BuildPlan
+      ↓
+FilesystemWriter
+      ↓
+StaticSiteGenerationResult
+      ↓
+dist/
+```
+
+The generator does not duplicate planner or writer behavior. It simply coordinates them.
+
+The result retains both forms of evidence:
+
+```python
+result.plan
+result.write_result
+
+result.output_root
+result.page_files
+result.asset_files
+result.files
+```
+
+Overwrite behavior remains explicit:
+
+```python
+StaticSiteGenerator().generate(
+    site,
+    Path("dist"),
+    assets=assets,
+    overwrite=True,
+)
+```
+
+Build collisions, unsafe targets, invalid asset sources, existing-output policy, and symlink protections continue to raise their existing specific exceptions.
+
+With LOT-22 complete, PyPageKit now supports the full programmatic static-site lifecycle:
+
+```text
+Python objects
+      ↓
+Page / Component
+      ↓
+Route / Site
+      ↓
+Assets
+      ↓
+BuildPlan
+      ↓
+Filesystem output
+      ↓
+Static site
+```
+
+The next release line, `0.6.x`, adds developer workflow and CLI surfaces on top of this stable programmatic pipeline.
