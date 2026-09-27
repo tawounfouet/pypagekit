@@ -36,7 +36,7 @@
 | LOT-32 | Reliability & Failure Hardening | QUALIFIED | `0.8.0a2` |
 | LOT-33 | Performance & Scalability Hardening | QUALIFIED | `0.8.0b1` |
 | LOT-34 | Public API Inventory & Stability Classification | QUALIFIED | `0.9.0a1` |
-| LOT-35 | Compatibility, Deprecation & Migration | IN QUALIFICATION | `0.9.0b1` |
+| LOT-35 | Compatibility, Deprecation & Migration | QUALIFIED | `0.9.0b1` |
 | LOT-36 | 1.0 Contract Freeze | NOT STARTED | `0.9.0rc1` |
 | LOT-37 | 1.0 Release Qualification | NOT STARTED | `1.0.0` |
 
@@ -996,6 +996,6 @@ Next after qualification: **LOT-35 — Compatibility, Deprecation & Migration** 
 - [x] migration guide enables deprecation warnings in CI
 - [x] migration guide covers plugin authors
 - [x] package version advances to `0.9.0b1`
-- [ ] GitHub CI qualification is fully green
+- [x] GitHub CI qualification is fully green
 
 Next after qualification: **LOT-36 — 1.0 Contract Freeze** (`0.9.0rc1`).
