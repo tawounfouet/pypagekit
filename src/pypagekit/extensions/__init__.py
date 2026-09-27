@@ -10,8 +10,8 @@ from .model import (
 from .registry import RendererRegistry
 
 __all__ = [
-    "ExtensionDescriptor",
     "HTML_RENDERER_EXTENSION_ID",
+    "ExtensionDescriptor",
     "RendererExtension",
     "RendererFactory",
     "RendererRegistry",
