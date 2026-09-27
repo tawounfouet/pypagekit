@@ -5,10 +5,12 @@ import pytest
 from pypagekit import Asset, Assets, Page, Paragraph, Route, Site
 from pypagekit.build import BuildPlanner, route_output_target
 from pypagekit.exceptions import (
+    BuildRenderError,
     BuildTargetCollisionError,
     InvalidBuildContentError,
     InvalidBuildInputError,
     InvalidBuildTargetError,
+    UnsafeUrlError,
 )
 
 
@@ -143,3 +145,32 @@ def test_build_planner_rejects_invalid_site_input() -> None:
 def test_build_planner_rejects_invalid_assets_input() -> None:
     with pytest.raises(InvalidBuildInputError, match="Assets"):
         BuildPlanner().plan(Site(), [])  # type: ignore[arg-type]
+
+
+
+class UnexpectedFailureRenderer:
+    def render(self, node: object) -> str:
+        del node
+        raise RuntimeError("renderer exploded")
+
+
+def test_build_planner_wraps_unexpected_renderer_failure_with_route_context() -> None:
+    planner = BuildPlanner(renderer=UnexpectedFailureRenderer())  # type: ignore[arg-type]
+
+    with pytest.raises(BuildRenderError, match="/docs") as exc_info:
+        planner.plan(Site([Route("/docs", Page("Docs"))]))
+
+    assert isinstance(exc_info.value.__cause__, RuntimeError)
+
+
+class FrameworkFailureRenderer:
+    def render(self, node: object) -> str:
+        del node
+        raise UnsafeUrlError("unsafe")
+
+
+def test_build_planner_preserves_known_pypagekit_renderer_errors() -> None:
+    planner = BuildPlanner(renderer=FrameworkFailureRenderer())  # type: ignore[arg-type]
+
+    with pytest.raises(UnsafeUrlError, match="unsafe"):
+        planner.plan(Site([Route("/", Page("Home"))]))
