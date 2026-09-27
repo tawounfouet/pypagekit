@@ -163,7 +163,7 @@ def test_build_planner_factory_failure_is_wrapped_with_extension_context() -> No
 
     registry = BuildPlannerRegistry((_build_extension(factory=broken_factory),))
 
-    with pytest.raises(ExtensionFactoryError, match="acme.build.empty") as exc_info:
+    with pytest.raises(ExtensionFactoryError, match=r"acme\.build\.empty") as exc_info:
         registry.create("acme.build.empty")
 
     assert isinstance(exc_info.value.__cause__, RuntimeError)
