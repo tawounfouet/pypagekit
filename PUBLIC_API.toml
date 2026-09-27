@@ -1,0 +1,360 @@
+schema_version = 1
+package_version = "0.9.0a1"
+
+[classifications]
+stable_candidate = "Explicit public Python surface intended for the 1.0 compatibility contract."
+provisional_public = "Explicitly public today, but still eligible for refinement during the 0.9 freeze cycle."
+operational_contract = "User-visible non-import contract such as CLI commands, exit semantics, or plugin metadata names."
+internal = "Importable implementation detail with no compatibility promise."
+
+[[modules]]
+name = "pypagekit"
+classification = "stable_candidate"
+exports = [
+  "Asset",
+  "Assets",
+  "Attributes",
+  "Component",
+  "ComponentRef",
+  "Container",
+  "Content",
+  "Fragment",
+  "Heading",
+  "Image",
+  "Layout",
+  "LayoutRegion",
+  "Link",
+  "Navigation",
+  "NavigationItem",
+  "Node",
+  "Page",
+  "Paragraph",
+  "Route",
+  "Site",
+  "Sitemap",
+  "SitemapEntry",
+  "Slot",
+  "SlotBindings",
+  "SlottedComponent",
+  "Text",
+  "__version__",
+  "bind_slots",
+]
+
+[[modules]]
+name = "pypagekit.domain"
+classification = "stable_candidate"
+exports = [
+  "Action",
+  "Asset",
+  "Assets",
+  "Attributes",
+  "Component",
+  "ComponentRef",
+  "Container",
+  "Content",
+  "Fragment",
+  "Heading",
+  "Image",
+  "Layout",
+  "LayoutRegion",
+  "Link",
+  "Media",
+  "Navigation",
+  "NavigationItem",
+  "Node",
+  "Page",
+  "Paragraph",
+  "Route",
+  "Site",
+  "Sitemap",
+  "SitemapEntry",
+  "Slot",
+  "SlotBindings",
+  "SlottedComponent",
+  "Text",
+  "bind_slots",
+  "normalize_route_path",
+  "validate_asset_target",
+]
+
+[[modules]]
+name = "pypagekit.components"
+classification = "stable_candidate"
+exports = [
+  "Card",
+  "ComponentFactory",
+  "ComponentRegistry",
+  "ComponentRuntime",
+  "Hero",
+  "Section",
+]
+
+[[modules]]
+name = "pypagekit.rendering"
+classification = "stable_candidate"
+exports = [
+  "HtmlRenderer",
+  "Renderer",
+]
+
+[[modules]]
+name = "pypagekit.build"
+classification = "stable_candidate"
+exports = [
+  "AssetBuildEntry",
+  "BuildPlan",
+  "BuildPlanner",
+  "BuildPlannerProtocol",
+  "FilesystemWriteResult",
+  "FilesystemWriter",
+  "PageBuildEntry",
+  "StaticSiteGenerationResult",
+  "StaticSiteGenerator",
+  "route_output_target",
+]
+
+[[modules]]
+name = "pypagekit.project"
+classification = "stable_candidate"
+exports = [
+  "ExistingProjectFileError",
+  "InvalidProjectNameError",
+  "InvalidProjectTargetError",
+  "ProjectError",
+  "ProjectFile",
+  "ProjectPathConflictError",
+  "ProjectPlan",
+  "ProjectScaffoldResult",
+  "ProjectScaffoldRollbackError",
+  "ProjectScaffoldWriteError",
+  "ProjectScaffolder",
+  "ProjectScaffoldingError",
+  "ProjectSymlinkError",
+  "normalize_project_name",
+  "pypagekit_requirement",
+]
+
+[[modules]]
+name = "pypagekit.development"
+classification = "stable_candidate"
+exports = [
+  "DevelopmentServer",
+  "DevelopmentServerBindError",
+  "DevelopmentServerConfig",
+  "DevelopmentServerError",
+  "DevelopmentServerInfo",
+  "DevelopmentServerSession",
+  "InvalidDevelopmentHostError",
+  "InvalidDevelopmentPortError",
+  "InvalidDevelopmentRootError",
+]
+
+[[modules]]
+name = "pypagekit.diagnostics"
+classification = "stable_candidate"
+exports = [
+  "DeveloperDiagnostics",
+  "DiagnosticCheck",
+  "DiagnosticReport",
+  "DiagnosticStatus",
+  "DiagnosticsError",
+  "InvalidInspectionRootError",
+  "ProjectInspection",
+  "ProjectInspector",
+]
+
+[[modules]]
+name = "pypagekit.extensions"
+classification = "stable_candidate"
+exports = [
+  "BUILD_PLANNER_ENTRY_POINT_GROUP",
+  "BUILD_PLANNER_EXTENSION_ID",
+  "BUILTIN_COMPONENTS_EXTENSION_ID",
+  "COMPONENT_ENTRY_POINT_GROUP",
+  "HTML_RENDERER_EXTENSION_ID",
+  "PYPAGEKIT_EXTENSION_API_VERSION",
+  "RENDERER_ENTRY_POINT_GROUP",
+  "BuildPlannerExtension",
+  "BuildPlannerFactory",
+  "BuildPlannerRegistry",
+  "ComponentExtension",
+  "ComponentExtensionRegistry",
+  "EntryPointDiscovery",
+  "EntryPointReference",
+  "EntryPointSource",
+  "ExtensionDescriptor",
+  "PluginDiscoveryResult",
+  "PluginKind",
+  "PluginLifecycle",
+  "PluginState",
+  "PluginStatus",
+  "RendererExtension",
+  "RendererFactory",
+  "RendererRegistry",
+  "default_build_planner_registry",
+  "default_component_extension_registry",
+  "default_renderer_registry",
+  "validate_extension_api_version",
+  "validate_extension_id",
+]
+
+[[modules]]
+name = "pypagekit.exceptions"
+classification = "stable_candidate"
+exports = [
+  "AssetSourceOutputConflictError",
+  "BuildError",
+  "BuildRenderError",
+  "BuildTargetCollisionError",
+  "ComponentCycleError",
+  "ComponentError",
+  "ComponentRegistryError",
+  "ComponentResolutionDepthError",
+  "DomainError",
+  "DuplicateAssetTargetError",
+  "DuplicateComponentContributionError",
+  "DuplicateComponentRegistrationError",
+  "DuplicateExtensionRegistrationError",
+  "DuplicateLayoutRegionError",
+  "DuplicateNavigationRouteError",
+  "DuplicateSiteRouteError",
+  "DuplicateSlotError",
+  "ExistingOutputError",
+  "ExtensionError",
+  "ExtensionFactoryError",
+  "FilesystemOutputError",
+  "FilesystemRollbackError",
+  "FilesystemWriteError",
+  "InvalidAriaAttributeNameError",
+  "InvalidAssetError",
+  "InvalidAssetSourceError",
+  "InvalidAssetSourceForOutputError",
+  "InvalidAssetTargetError",
+  "InvalidAttributeError",
+  "InvalidBuildContentError",
+  "InvalidBuildInputError",
+  "InvalidBuildPlanError",
+  "InvalidBuildPlannerExtensionError",
+  "InvalidBuildTargetError",
+  "InvalidClassTokenError",
+  "InvalidComponentNameError",
+  "InvalidComponentPropertyError",
+  "InvalidComponentResultError",
+  "InvalidContainerChildError",
+  "InvalidDataAttributeNameError",
+  "InvalidExtensionDescriptorError",
+  "InvalidExtensionIdError",
+  "InvalidHeadingLevelError",
+  "InvalidHtmlAttributeNameError",
+  "InvalidHtmlTagError",
+  "InvalidImageSourceError",
+  "InvalidLayoutError",
+  "InvalidLayoutRegionChildError",
+  "InvalidLayoutRegionNameError",
+  "InvalidLayoutRegionResultError",
+  "InvalidLinkHrefError",
+  "InvalidNavigationChildError",
+  "InvalidNavigationError",
+  "InvalidNavigationLabelError",
+  "InvalidNavigationRouteError",
+  "InvalidOutputRootError",
+  "InvalidPageContentError",
+  "InvalidPageLanguageError",
+  "InvalidPageTitleError",
+  "InvalidPluginEntryPointError",
+  "InvalidPluginLifecycleTransitionError",
+  "InvalidRegisteredComponentError",
+  "InvalidRendererExtensionError",
+  "InvalidRouteError",
+  "InvalidRoutePageError",
+  "InvalidRoutePathError",
+  "InvalidSiteError",
+  "InvalidSiteNavigationError",
+  "InvalidSiteRouteError",
+  "InvalidSlotBindingError",
+  "InvalidSlotChildError",
+  "InvalidSlotError",
+  "InvalidSlotNameError",
+  "MissingComponentRegistryError",
+  "MissingRequiredSlotError",
+  "NavigationCycleError",
+  "NavigationRouteMismatchError",
+  "OutputPathConflictError",
+  "OutputSymlinkError",
+  "PluginActivationError",
+  "PluginDiscoveryError",
+  "PluginEntryPointLoadError",
+  "PluginLifecycleError",
+  "PluginProviderError",
+  "PyPageKitError",
+  "RenderingError",
+  "SecurityError",
+  "SerializationError",
+  "UnknownAssetTargetError",
+  "UnknownComponentError",
+  "UnknownExtensionError",
+  "UnknownNavigationRouteError",
+  "UnknownPluginError",
+  "UnknownSiteRouteError",
+  "UnknownSlotBindingError",
+  "UnresolvedSlotError",
+  "UnsafeUrlError",
+  "UnsupportedAttributeValueError",
+  "UnsupportedNodeError",
+  "ValidationError",
+]
+
+[[modules]]
+name = "pypagekit.cli"
+classification = "provisional_public"
+exports = [
+  "app",
+  "main",
+]
+
+[cli]
+classification = "operational_contract"
+console_script = "pypagekit"
+module_entry = "python -m pypagekit"
+commands = [
+  "doctor",
+  "inspect",
+  "new",
+  "serve",
+]
+root_options = [
+  "--help",
+  "--version",
+]
+success_exit_code = 0
+execution_error_exit_code = 1
+usage_error_exit_code = 2
+
+[extensions]
+classification = "operational_contract"
+api_version = "0.7"
+renderer_entry_point_group = "pypagekit.renderers"
+build_planner_entry_point_group = "pypagekit.build_planners"
+component_entry_point_group = "pypagekit.components"
+builtin_renderer_id = "pypagekit.renderer.html"
+builtin_build_planner_id = "pypagekit.build.planner"
+builtin_components_id = "pypagekit.components.builtin"
+
+[typing]
+classification = "operational_contract"
+py_typed = true
+minimum_python = "3.11"
+
+[internal_policy]
+classification = "internal"
+rule = "Any pypagekit module or symbol not listed above as a public facade/export or operational contract is internal unless a later compatibility document explicitly promotes it."
+examples = [
+  "pypagekit._filesystem_transaction",
+  "pypagekit.build.model",
+  "pypagekit.components.registry",
+  "pypagekit.domain.route",
+  "pypagekit.extensions.registry",
+  "pypagekit.rendering.serializer",
+  "pypagekit.cli.commands",
+]
