@@ -122,9 +122,7 @@ class ComponentExtensionRegistry:
                 seen_ids.add(extension_id)
                 collected.append(extension)
 
-            normalized = tuple(
-                sorted(collected, key=lambda item: item.descriptor.extension_id)
-            )
+            normalized = tuple(sorted(collected, key=lambda item: item.descriptor.extension_id))
             component_owners: dict[str, str] = {}
             for extension in normalized:
                 extension_id = extension.descriptor.extension_id
@@ -149,9 +147,7 @@ class ComponentExtensionRegistry:
     def component_names(self) -> tuple[str, ...]:
         """Return all contributed component names in deterministic order."""
 
-        return tuple(
-            sorted(name for extension in self.entries for name, _ in extension.components)
-        )
+        return tuple(sorted(name for extension in self.entries for name, _ in extension.components))
 
     def contains(self, extension_id: str) -> bool:
         """Return whether a component extension is registered."""
@@ -186,9 +182,7 @@ class ComponentExtensionRegistry:
         """Materialize all contributions as the existing ComponentRegistry."""
 
         values = {
-            name: factory
-            for extension in self.entries
-            for name, factory in extension.components
+            name: factory for extension in self.entries for name, factory in extension.components
         }
         return ComponentRegistry(values)
 
@@ -207,9 +201,7 @@ class RendererRegistry:
             seen: set[str] = set()
             for extension in extensions:
                 if not isinstance(extension, RendererExtension):
-                    raise TypeError(
-                        "Renderer registry entries must be RendererExtension objects."
-                    )
+                    raise TypeError("Renderer registry entries must be RendererExtension objects.")
                 extension_id = extension.descriptor.extension_id
                 if extension_id in seen:
                     raise DuplicateExtensionRegistrationError(
