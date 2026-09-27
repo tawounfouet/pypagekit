@@ -27,9 +27,7 @@ class PageLayout(Layout):
     content: Content
 
     def regions(self) -> tuple[LayoutRegion, ...]:
-        return (
-            LayoutRegion("main", [self.content]),
-        )
+        return (LayoutRegion("main", [self.content]),)
 
 
 def test_section_renders_through_existing_renderer_pipeline() -> None:
@@ -41,8 +39,7 @@ def test_section_renders_through_existing_renderer_pipeline() -> None:
     )
 
     assert HtmlRenderer().render(section) == (
-        '<div id="overview"><h2 class="section-title">Overview</h2>'
-        "<p>Body</p></div>"
+        '<div id="overview"><h2 class="section-title">Overview</h2><p>Body</p></div>'
     )
 
 
@@ -77,9 +74,7 @@ def test_reusable_component_can_contain_custom_component() -> None:
         title="Status",
     )
 
-    assert HtmlRenderer().render(card) == (
-        "<div><h3>Status</h3><p>New</p></div>"
-    )
+    assert HtmlRenderer().render(card) == ("<div><h3>Status</h3><p>New</p></div>")
 
 
 def test_reusable_components_can_be_nested() -> None:
