@@ -38,7 +38,7 @@
 | LOT-34 | Public API Inventory & Stability Classification | QUALIFIED | `0.9.0a1` |
 | LOT-35 | Compatibility, Deprecation & Migration | QUALIFIED | `0.9.0b1` |
 | LOT-36 | 1.0 Contract Freeze | QUALIFIED | `0.9.0rc1` |
-| LOT-37 | 1.0 Release Qualification | NOT STARTED | `1.0.0` |
+| LOT-37 | 1.0 Release Qualification | IN QUALIFICATION | `1.0.0` |
 
 ## LOT-07 exit criteria
 
@@ -1039,3 +1039,34 @@ Next after qualification: **LOT-36 — 1.0 Contract Freeze** (`0.9.0rc1`).
 - [x] GitHub CI qualification is fully green on the final documentation head
 
 Next after qualification: **LOT-37 — 1.0 Release Qualification** (`1.0.0`).
+
+
+## LOT-37 exit criteria
+
+- [x] package version advances to `1.0.0`
+- [x] distribution classifier advances to Production/Stable
+- [x] public API, compatibility, and deprecation metadata track `1.0.0`
+- [x] generated project requirement advances to `pypagekit>=1.0.0,<1.1`
+- [x] exact LOT-36 contract file identity is pinned by Git blob SHA
+- [x] runtime-to-baseline exact contract gate remains active
+- [x] extension compatibility API remains `0.7`
+- [x] Python/Typer CLI facade remains provisional
+- [x] active public deprecation registry remains empty
+- [x] release qualification document exists
+- [x] CI qualifies Python 3.11
+- [x] CI qualifies Python 3.12
+- [x] CI qualifies Python 3.13
+- [x] CI qualifies Python 3.14
+- [x] CI builds sdist and wheel
+- [x] CI installs and validates wheel metadata
+- [x] CI validates installed PEP 561 `py.typed`
+- [x] CI runs `pip check`
+- [x] CI smoke-tests installed shell and module CLI entry points
+- [x] CI scaffolds and executes a real generated project
+- [x] CI installs and smoke-tests the sdist in a fresh virtual environment
+- [ ] GitHub pull-request CI is fully green
+- [ ] LOT-37 is merged to `main`
+- [ ] final `main` CI is fully green
+
+LOT-37 is a qualification lot, not a feature lot. Any stable contract drift requires reopening the
+LOT-36 freeze rather than silently refreshing the baseline.
