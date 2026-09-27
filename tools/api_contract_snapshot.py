@@ -92,11 +92,11 @@ def _type_name(value: Any, canonical_paths: dict[int, str]) -> str:
             and len(arguments) == 2
             and isinstance(arguments[0], list)
         ):
-                parameters = ", ".join(
-                    _type_name(argument, canonical_paths) for argument in arguments[0]
-                )
-                result = _type_name(arguments[1], canonical_paths)
-                return f"Callable[[{parameters}], {result}]"
+            parameters = ", ".join(
+                _type_name(argument, canonical_paths) for argument in arguments[0]
+            )
+            result = _type_name(arguments[1], canonical_paths)
+            return f"Callable[[{parameters}], {result}]"
 
         origin_name = _type_name(origin, canonical_paths)
         if arguments:
@@ -388,12 +388,15 @@ def build_snapshot() -> dict[str, Any]:
 def render_snapshot() -> str:
     """Return canonical formatted JSON for the current runtime contract."""
 
-    return json.dumps(
-        build_snapshot(),
-        indent=2,
-        sort_keys=True,
-        ensure_ascii=False,
-    ) + "\n"
+    return (
+        json.dumps(
+            build_snapshot(),
+            indent=2,
+            sort_keys=True,
+            ensure_ascii=False,
+        )
+        + "\n"
+    )
 
 
 def main() -> None:
