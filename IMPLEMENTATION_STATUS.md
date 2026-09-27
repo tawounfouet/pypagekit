@@ -35,7 +35,7 @@
 | LOT-31 | Security Hardening | QUALIFIED | `0.8.0a1` |
 | LOT-32 | Reliability & Failure Hardening | QUALIFIED | `0.8.0a2` |
 | LOT-33 | Performance & Scalability Hardening | QUALIFIED | `0.8.0b1` |
-| LOT-34 | Public API Inventory & Stability Classification | IN QUALIFICATION | `0.9.0a1` |
+| LOT-34 | Public API Inventory & Stability Classification | QUALIFIED | `0.9.0a1` |
 | LOT-35 | Compatibility, Deprecation & Migration | NOT STARTED | `0.9.0b1` |
 | LOT-36 | 1.0 Contract Freeze | NOT STARTED | `0.9.0rc1` |
 | LOT-37 | 1.0 Release Qualification | NOT STARTED | `1.0.0` |
@@ -962,6 +962,6 @@ Next: **LOT-34 — Public API Inventory & Stability Classification** (`0.9.0a1`)
 - [x] CI verifies facade `__all__` values against the inventory
 - [x] CI verifies operational constants against runtime/package metadata
 - [x] package version advances to `0.9.0a1`
-- [ ] GitHub CI qualification is fully green
+- [x] GitHub CI qualification is fully green
 
 Next after qualification: **LOT-35 — Compatibility, Deprecation & Migration** (`0.9.0b1`).
