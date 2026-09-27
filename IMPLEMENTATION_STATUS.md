@@ -4,30 +4,31 @@
 |---|---|---|---|
 | LOT-01 | Project Foundations | QUALIFIED | `0.1.0a1` |
 | LOT-02 | Core Domain Foundations | QUALIFIED | `0.1.0a2` |
-| LOT-03 | Text Content | NOT STARTED | `0.1.0a3` |
+| LOT-03 | Text Content | QUALIFIED | `0.1.0a3` |
 | LOT-04 | Composition Tree | NOT STARTED | `0.1.0a4` |
 | LOT-05 | Actions & Media | NOT STARTED | `0.1.0b1` |
 
-## LOT-02 exit criteria
+## LOT-03 exit criteria
 
-- [x] `Node` base type exists
-- [x] `Content` derives from `Node`
-- [x] immutable `Page` root object exists
-- [x] page title is normalized and non-empty
-- [x] page language is normalized and non-empty
-- [x] page content order is preserved
-- [x] page content is normalized to an immutable tuple
-- [x] non-`Content` objects are rejected
-- [x] domain exception hierarchy exists
-- [x] package-root exports expose `Node`, `Content`, and `Page`
+- [x] `Text` derives from `Content`
+- [x] `Heading` derives from `Content`
+- [x] `Paragraph` derives from `Content`
+- [x] text values are preserved as raw semantic strings
+- [x] Unicode is preserved
+- [x] text content objects are immutable
+- [x] heading defaults to level 1
+- [x] heading levels 1 through 6 are accepted
+- [x] heading levels outside 1 through 6 are rejected explicitly
+- [x] booleans and non-integer heading levels are rejected
+- [x] package-root exports expose `Text`, `Heading`, and `Paragraph`
+- [x] no rendering or HTML escaping concern leaks into the domain layer
 - [x] unit tests cover valid and invalid states
 
-Next: **LOT-03 — Text Content**.
+Next: **LOT-04 — Composition Tree**.
 
-## LOT-02 qualification evidence
+## LOT-03 qualification evidence
 
-- `pytest`: 21 passed
+- `pytest`: 53 passed
 - Python bytecode compilation: passed
-- wheel build with `pip wheel --no-build-isolation`: passed
-- isolated wheel import/install smoke test: passed
-- Ruff/mypy remain enforced by CI; the current execution environment does not provide those binaries and has no package-network access.
+- package import smoke test: `0.1.0a3`
+- Ruff/mypy remain enforced by CI; they are not installed in the current execution environment.
