@@ -18,7 +18,6 @@ from pypagekit.extensions import (
     ComponentExtensionRegistry,
     ExtensionDescriptor,
     PluginDiscoveryResult,
-    PluginKind,
     PluginLifecycle,
     PluginState,
     RendererExtension,
@@ -121,7 +120,7 @@ def test_extension_api_version_requires_major_minor_form() -> None:
 
     assert descriptor.api_version == PYPAGEKIT_EXTENSION_API_VERSION
 
-    with pytest.raises(InvalidExtensionDescriptorError, match="major.*minor"):
+    with pytest.raises(InvalidExtensionDescriptorError, match=r"major.*minor"):
         _descriptor("acme.renderer.invalid", api_version="0.7.0")
 
 
