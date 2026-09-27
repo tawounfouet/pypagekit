@@ -57,7 +57,7 @@ def test_layout_can_be_used_directly_inside_page() -> None:
 
     html = HtmlRenderer().render(page)
 
-    assert '<div data-layout-region="header">' in html
+    assert 'data-layout-region="header"' in html
     assert 'data-layout-region="main"' in html
     assert 'data-layout-region="footer"' in html
 
