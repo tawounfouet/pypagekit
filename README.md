@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-17 — Navigation Model** (`0.4.0a2`).
+Current implementation milestone: **LOT-18 — Sitemap & Site Model** (`0.4.0b1`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -39,7 +39,8 @@ Implemented so far:
 - named slot composition with wrapperless multi-node injection;
 - explicit immutable component registry and symbolic component references;
 - canonical logical routes that bind URL paths to pages;
-- immutable hierarchical navigation that references those routes directly.
+- immutable hierarchical navigation that references those routes directly;
+- a canonical Site aggregate with deterministic Sitemap projection.
 
 ## Quick example
 
@@ -163,8 +164,8 @@ python -m build
 0.1.x  Domain                  ✅ feature-complete
 0.2.x  Rendering               ✅ feature-complete
 0.3.x  Components              ✅ feature-complete
-0.4.x  Routing & Site           ← current
-0.5.x  Static Build
+0.4.x  Routing & Site           ✅ feature-complete
+0.5.x  Static Build              ← next
 0.6.x  CLI & Developer Workflow
 0.7.x  Extensibility
 0.8.x  Hardening
@@ -172,7 +173,7 @@ python -m build
 1.0.0  Stable
 ```
 
-The current release line is **`0.4.x — Routing & Site`**. The next milestone is **LOT-18 — Sitemap & Site Model**.
+The `0.4.x — Routing & Site` line is now feature-complete. The next milestone is **LOT-19 — Assets** (`0.5.x`).
 
 
 ## Controlled attributes
@@ -545,3 +546,66 @@ navigation.route_paths
 ```
 
 Labels remain semantic strings. Navigation does not render HTML and does not decide which item is active. Site-wide consistency between routes, navigation, and sitemap belongs to LOT-18.
+
+
+## Site and sitemap
+
+LOT-18 introduces the aggregate that owns canonical site routes:
+
+```python
+from pypagekit import (
+    Navigation,
+    NavigationItem,
+    Page,
+    Route,
+    Site,
+)
+
+
+home = Route("/", Page("Home"))
+docs = Route("/docs", Page("Docs"))
+hidden = Route("/hidden", Page("Hidden"))
+
+navigation = Navigation(
+    [
+        NavigationItem("Home", home),
+        NavigationItem("Docs", docs),
+    ]
+)
+
+site = Site(
+    [home, docs, hidden],
+    navigation=navigation,
+)
+```
+
+The site is now the consistency boundary:
+
+```text
+Site
+├── Routes      ← canonical route objects
+├── Navigation  ← references site routes
+└── Sitemap     ← derived from all site routes
+```
+
+Navigation may intentionally omit routes while the sitemap still covers them:
+
+```python
+site.paths
+# ("/", "/docs", "/hidden")
+
+site.navigation.route_paths
+# ("/", "/docs")
+
+site.sitemap.paths
+# ("/", "/docs", "/hidden")
+```
+
+Logical lookup stays independent from filesystem output:
+
+```python
+site.route("/docs/") is docs
+# True
+```
+
+`Sitemap` is currently a pure domain projection. XML serialization, build paths, and file output remain later build concerns.
