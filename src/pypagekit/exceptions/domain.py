@@ -77,7 +77,6 @@ class DuplicateLayoutRegionError(InvalidLayoutError):
     """Raised when a layout declares the same region name more than once."""
 
 
-
 class InvalidSlotError(ValidationError):
     """Base exception for invalid slot composition."""
 
@@ -104,7 +103,6 @@ class UnknownSlotBindingError(InvalidSlotError):
 
 class DuplicateSlotError(InvalidSlotError):
     """Raised when a template declares the same slot name more than once."""
-
 
 
 class UnresolvedSlotError(InvalidSlotError):
