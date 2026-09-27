@@ -4,6 +4,28 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.3.0a1]
+
+### Added
+
+- Public abstract `Component(Content)` model with `compose() -> Content`.
+- Public `ComponentRuntime` for explicit component resolution.
+- Recursive resolution of components returned directly or nested inside containers.
+- Runtime validation that `compose()` returns `Content`.
+- Identity-based component cycle detection.
+- Configurable component-resolution depth guard for recursively generated components.
+- Transparent `HtmlRenderer` integration through the component runtime.
+- LOT-11 tests for composition, nesting, immutability boundaries, cycles, depth protection, escaping, and URL security.
+
+### Design
+
+- Components compose domain structure; they do not render HTML.
+- The renderer resolves a component to ordinary content before applying the existing rendering pipeline.
+- `Component` remains a `Content`, so it can already appear anywhere `Page` or `Container` accepts content.
+- The runtime recreates a container only when one of its descendants actually resolves to different content.
+- Layouts, reusable component catalogues, slots, and registries remain outside LOT-11.
+
+
 ## [0.2.0b3]
 
 ### Added

@@ -1,6 +1,8 @@
 """HTML renderer for the PyPageKit domain."""
 
+from pypagekit.components import ComponentRuntime
 from pypagekit.domain import (
+    Component,
     Container,
     Heading,
     Image,
@@ -21,11 +23,20 @@ from .serializer import serialize_doctype, serialize_element, serialize_void_ele
 class HtmlRenderer:
     """Render PyPageKit domain nodes into deterministic HTML5 strings."""
 
+    def __init__(
+        self,
+        *,
+        component_runtime: ComponentRuntime | None = None,
+    ) -> None:
+        self._component_runtime = component_runtime or ComponentRuntime()
+
     def render(self, node: Node) -> str:
         """Render a supported domain node to HTML."""
 
         if isinstance(node, Page):
             return self._render_page(node)
+        if isinstance(node, Component):
+            return self.render(self._component_runtime.resolve(node))
         if isinstance(node, Text):
             return escape_text(node.value)
         if isinstance(node, Heading):
