@@ -1314,7 +1314,9 @@ group:
 ```python
 def provide_renderer() -> RendererExtension: ...
 
+
 def provide_build_planner() -> BuildPlannerExtension: ...
+
 
 def provide_components() -> ComponentExtension: ...
 ```
