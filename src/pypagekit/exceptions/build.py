@@ -23,7 +23,6 @@ class InvalidBuildContentError(BuildError):
     """Raised when a renderer does not produce string page content."""
 
 
-
 class FilesystemOutputError(BuildError):
     """Base exception for filesystem materialization failures."""
 
