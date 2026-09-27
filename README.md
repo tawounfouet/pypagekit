@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current qualified milestone: **LOT-27 — Extension Contracts & Renderer Registry** (`0.7.0a1`). Next: **LOT-28 — Build & Component Extension Points**.
+Current implementation milestone: **LOT-28 — Build & Component Extension Points** (`0.7.0a2`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -49,7 +49,8 @@ Implemented so far:
 - safe project scaffolding through `pypagekit new`;
 - local static development serving through `pypagekit serve`;
 - read-only developer diagnostics through `pypagekit doctor` and `pypagekit inspect`;
-- explicit renderer extension contracts and immutable registration through `pypagekit.extensions`.
+- explicit renderer extension contracts and immutable registration through `pypagekit.extensions`;
+- structural build-planner extensions and component-extension bundles.
 
 ## Quick example
 
@@ -1179,3 +1180,102 @@ BuildPlanner
 ```
 
 LOT-27 does not scan installed packages or load Python entry points. Discovery remains LOT-29.
+
+
+## Build and component extensibility
+
+LOT-28 extends the explicit extension model without introducing arbitrary mutable hooks.
+
+A third-party build planner only needs to satisfy the structural build contract:
+
+```python
+from pypagekit import Assets, Site
+from pypagekit.build import BuildPlan
+
+class CustomPlanner:
+    def plan(
+        self,
+        site: Site,
+        assets: Assets | None = None,
+    ) -> BuildPlan:
+        ...
+```
+
+It can be registered and injected without subclassing the built-in planner:
+
+```python
+from pypagekit.extensions import (
+    BuildPlannerExtension,
+    BuildPlannerRegistry,
+    ExtensionDescriptor,
+)
+
+registry = BuildPlannerRegistry(
+    (
+        BuildPlannerExtension(
+            ExtensionDescriptor(
+                "acme.build.custom",
+                "Custom Planner",
+                "1.0.0",
+            ),
+            CustomPlanner,
+        ),
+    )
+)
+
+planner = registry.create("acme.build.custom")
+```
+
+Component extensions contribute ordinary component factories and materialize the existing
+`ComponentRegistry`:
+
+```python
+from pypagekit.extensions import (
+    ComponentExtension,
+    ComponentExtensionRegistry,
+    ExtensionDescriptor,
+)
+
+extensions = ComponentExtensionRegistry(
+    (
+        ComponentExtension(
+            ExtensionDescriptor(
+                "acme.components.ui",
+                "ACME UI Components",
+                "1.0.0",
+            ),
+            {
+                "notice": Notice,
+                "hero": Hero,
+            },
+        ),
+    )
+)
+
+component_registry = extensions.component_registry()
+```
+
+The important boundaries remain:
+
+```text
+BuildPlannerExtension
+        ↓
+BuildPlannerRegistry
+        ↓
+BuildPlannerProtocol
+        ↓
+StaticSiteGenerator
+
+ComponentExtension
+        ↓
+ComponentExtensionRegistry
+        ↓
+ComponentRegistry
+        ↓
+ComponentRuntime
+        ↓
+Renderer
+```
+
+LOT-28 still performs no installed-package scanning, no entry-point loading, and no import-time
+discovery. Those concerns remain reserved for LOT-29.
