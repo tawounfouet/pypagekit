@@ -4,15 +4,19 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-10 — Attributes & Styling Hooks** (`0.2.0b3`).
+Current implementation milestone: **LOT-11 — Component Model** (`0.3.0a1`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
 ```text
-Page
-  ↓
+Page / Component
+      ↓
+ComponentRuntime
+      ↓
+Resolved Content Tree
+      ↓
 HtmlRenderer
-  ↓
+      ↓
 HTML5 str
 ```
 
@@ -28,7 +32,8 @@ Implemented so far:
 - compact complete HTML5 document output for `Page`;
 - render-time URL safety validation for links and images;
 - adversarial XSS coverage for text, attributes, nested composition, and unsafe schemes;
-- deterministic page metadata rendering for title, language, charset, and description.
+- deterministic page metadata rendering for title, language, charset, and description;
+- reusable component abstraction with explicit runtime resolution.
 
 ## Quick example
 
@@ -161,7 +166,7 @@ python -m build
 1.0.0  Stable
 ```
 
-The next release line begins with **LOT-11 — Component Model** (`0.3.x`).
+The current release line is **`0.3.x — Components`**. The next milestone is **LOT-12 — Layout Model**.
 
 
 ## Controlled attributes
@@ -181,3 +186,53 @@ attributes = Attributes(
 This renders only the controlled hooks `id`, `class`, `title`, `data-*`, and `aria-*`. Inline style and event-handler keywords are intentionally not part of the API.
 
 With LOT-10 complete, the `0.2.x` rendering line is feature-complete and the next major layer is reusable components.
+
+
+## Components
+
+Components compose ordinary PyPageKit content without producing HTML directly:
+
+```python
+from dataclasses import dataclass
+
+from pypagekit import Component, Container, Content, Heading, Paragraph
+
+
+@dataclass(frozen=True, slots=True)
+class Hero(Component):
+    title: str
+    body: str
+
+    def compose(self) -> Content:
+        return Container(
+            [
+                Heading(self.title),
+                Paragraph(self.body),
+            ]
+        )
+```
+
+They can be placed directly inside a page:
+
+```python
+page = Page(
+    title="Components",
+    content=[Hero("Welcome", "Hello")],
+)
+```
+
+Rendering follows:
+
+```text
+Component
+   ↓ compose()
+Content Tree
+   ↓
+ComponentRuntime
+   ↓
+HtmlRenderer
+   ↓
+HTML
+```
+
+`ComponentRuntime` validates composition results, resolves nested components, detects active-object cycles, and enforces a configurable nesting-depth guard.
