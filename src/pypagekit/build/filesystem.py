@@ -60,14 +60,25 @@ class FilesystemWriter:
             for entry in plan.pages:
                 destination = _destination(output_root, entry.target)
                 destination.parent.mkdir(parents=True, exist_ok=True)
-                destination.write_text(entry.content, encoding="utf-8")
+                text_mode = "w" if overwrite else "x"
+                with destination.open(
+                    text_mode,
+                    encoding="utf-8",
+                    newline="",
+                ) as output_file:
+                    output_file.write(entry.content)
                 page_files.append(destination)
 
             asset_files: list[Path] = []
             for entry in plan.assets:
                 destination = _destination(output_root, entry.target)
                 destination.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(entry.asset.source, destination)
+                binary_mode = "wb" if overwrite else "xb"
+                with (
+                    entry.asset.source.open("rb") as source_file,
+                    destination.open(binary_mode) as output_file,
+                ):
+                    shutil.copyfileobj(source_file, output_file)
                 asset_files.append(destination)
         except OSError as exc:
             raise FilesystemWriteError(
