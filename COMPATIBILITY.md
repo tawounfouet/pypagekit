@@ -14,7 +14,7 @@ Public API inventory: [`PUBLIC_API.toml`](PUBLIC_API.toml)
 PyPageKit applies compatibility guarantees to the public surfaces classified by LOT-34:
 
 ```text
-stable_candidate
+stable
 provisional_public
 operational_contract
 internal
@@ -41,7 +41,7 @@ from pypagekit.extensions.registry import RendererRegistry
 
 ## Compatible changes
 
-For a stable candidate, the following are normally backward-compatible:
+For a stable API, the following are normally backward-compatible:
 
 - adding a new public symbol;
 - adding a keyword-only optional parameter with a backward-compatible default;
@@ -87,7 +87,7 @@ LOT-34 inventory must be:
 4. covered by migration guidance;
 5. represented by a compatibility alias and warning when practical.
 
-LOT-36 will convert the accepted stable candidates into the frozen 1.0 contract.
+LOT-36 has converted the accepted stable APIs into the frozen 1.0 contract.
 
 ## Post-1.0 semantic-versioning policy
 
@@ -227,7 +227,7 @@ Adding a new command or optional flag is compatible.
 Removing/renaming an existing command or changing an existing exit-code meaning is breaking after
 the 1.0 freeze.
 
-The Python Typer object under `pypagekit.cli` remains provisional until LOT-36.
+The Python Typer object under `pypagekit.cli` remains explicitly provisional for 1.0; only the shell CLI operational contract is frozen.
 
 ## Extension and plugin compatibility
 
@@ -240,7 +240,7 @@ PYPAGEKIT_EXTENSION_API_VERSION = "0.7"
 The package version and extension API version are separate:
 
 ```text
-package release       0.9.0b1
+package release       0.9.0rc1
 extension API line    0.7
 ```
 
@@ -304,7 +304,7 @@ Security is not used as a generic exemption from compatibility discipline.
 
 ## Current deprecation state
 
-As of `0.9.0b1`:
+As of `0.9.0rc1`:
 
 ```text
 active public deprecations = 0
@@ -318,9 +318,8 @@ LOT-35 answers:
 
 > How may the public contract evolve?
 
-LOT-36 will answer:
+LOT-36 answers:
 
 > What exact contract is frozen for 1.0?
 
-At `0.9.0rc1`, the final accepted public inventory, signatures, operational contracts, and
-extension contracts will be captured as the 1.0 baseline.
+At `0.9.0rc1`, the final accepted public inventory, signatures, operational contracts, and extension contracts are captured in `API_CONTRACT_1_0.json`.
