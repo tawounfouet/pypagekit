@@ -4,6 +4,33 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.8.0a2]
+
+### Added
+
+- Internal rollback transaction shared by build output and project scaffolding.
+- Restoration of overwritten managed files after materialization failure.
+- Removal of newly created managed files and directories after materialization failure.
+- Explicit `FilesystemRollbackError` when filesystem restoration itself fails.
+- Explicit `ProjectScaffoldRollbackError` for failed project restoration.
+- `BuildRenderError` with route context for unexpected renderer exceptions.
+- Preservation of known PyPageKit renderer exceptions without re-wrapping.
+- `InvalidBuildPlanError` when a structural third-party planner violates its return contract.
+- `ExtensionFactoryError` for renderer/build-planner factory failures with cause chaining.
+- Failure-injection tests for partial writes, overwrites, asset copy interruption, rollback failure, scaffold rollback, renderer failures, invalid planners, and extension factories.
+
+### Design
+
+- Filesystem rollback is scoped to exceptions observed during the active Python operation.
+- Unplanned existing files are outside the transaction and remain untouched.
+- Overwritten managed files are snapshotted before mutation.
+- Newly created managed files and transaction-created directories are removed during rollback.
+- Rollback failure is surfaced separately because output consistency can no longer be guaranteed.
+- Known framework exceptions preserve their public type.
+- Unexpected third-party failures gain framework context while preserving the original exception as the cause.
+- No automatic retry policy, crash journal, process supervisor, or background recovery mechanism is introduced.
+- The package advances to `0.8.0a2`.
+
 ## [0.8.0a1]
 
 ### Security
