@@ -26,9 +26,7 @@ def test_runtime_resolves_component_ref_nested_in_container() -> None:
     registry = ComponentRegistry({"message": Message})
     container = Container([ComponentRef("message", {"text": "Hello"})])
 
-    assert ComponentRuntime(registry=registry).resolve(container) == Container(
-        [Paragraph("Hello")]
-    )
+    assert ComponentRuntime(registry=registry).resolve(container) == Container([Paragraph("Hello")])
 
 
 def test_runtime_requires_registry_for_component_ref() -> None:
