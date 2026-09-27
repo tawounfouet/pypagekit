@@ -120,3 +120,8 @@ def test_attributes_are_immutable() -> None:
 def test_arbitrary_style_keyword_is_not_supported() -> None:
     with pytest.raises(TypeError):
         Attributes(style="color:red")  # type: ignore[call-arg]
+
+
+def test_bare_string_classes_are_rejected() -> None:
+    with pytest.raises(TypeError, match="iterable of class-token strings"):
+        Attributes(classes="hero")
