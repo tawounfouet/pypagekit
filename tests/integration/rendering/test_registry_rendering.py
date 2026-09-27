@@ -55,6 +55,7 @@ def test_registry_can_hold_multiple_component_factories() -> None:
     )
     renderer = HtmlRenderer(component_runtime=ComponentRuntime(registry=registry))
 
-    assert renderer.render(
-        ComponentRef("call-to-action", {"label": "Docs", "href": "/docs"})
-    ) == '<a href="/docs">Docs</a>'
+    assert (
+        renderer.render(ComponentRef("call-to-action", {"label": "Docs", "href": "/docs"}))
+        == '<a href="/docs">Docs</a>'
+    )
