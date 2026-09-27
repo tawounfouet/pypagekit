@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 
 from pypagekit import Text
-from pypagekit.extensions import EntryPointDiscovery
+from pypagekit.extensions import EntryPointDiscovery, PluginLifecycle
 
 
 def test_installed_entry_point_is_loaded_only_on_explicit_discovery(
@@ -27,6 +27,7 @@ def provide_renderer():
             "acme.renderer.metadata",
             "Metadata Renderer",
             "1.0.0",
+            api_version="0.7",
         ),
         MetadataRenderer,
     )
@@ -62,5 +63,13 @@ acme.renderer.metadata = acme_pypagekit_metadata_plugin:provide_renderer
     result = discovery.discover()
 
     assert module_name in sys.modules
-    renderer = result.renderers.create("acme.renderer.metadata")
+    lifecycle = PluginLifecycle.from_discovery(result).qualify()
+
+    assert lifecycle.is_conformant
+    assert lifecycle.active_ids == ()
+
+    active = lifecycle.activate()
+    renderer = active.active_plugins.renderers.create("acme.renderer.metadata")
+
+    assert active.active_ids == ("acme.renderer.metadata",)
     assert renderer.render(Text("hello")) == "metadata:Text"

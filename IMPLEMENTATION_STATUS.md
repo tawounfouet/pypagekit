@@ -31,7 +31,7 @@
 | LOT-27 | Extension Contracts & Renderer Registry | QUALIFIED | `0.7.0a1` |
 | LOT-28 | Build & Component Extension Points | QUALIFIED | `0.7.0a2` |
 | LOT-29 | Plugin Discovery & Entry Points | QUALIFIED | `0.7.0b1` |
-| LOT-30 | Plugin Lifecycle & Conformance | NOT STARTED | `0.7.0b2` |
+| LOT-30 | Plugin Lifecycle & Conformance | QUALIFIED | `0.7.0b2` |
 | LOT-31 | Security Hardening | NOT STARTED | `0.8.0a1` |
 | LOT-32 | Reliability & Failure Hardening | NOT STARTED | `0.8.0a2` |
 | LOT-33 | Performance & Scalability Hardening | NOT STARTED | `0.8.0b1` |
@@ -802,3 +802,40 @@ Next after qualification: **LOT-29 — Plugin Discovery & Entry Points**.
 - [x] GitHub CI qualification is fully green
 
 Next after qualification: **LOT-30 — Plugin Lifecycle & Conformance**.
+
+
+## LOT-30 exit criteria
+
+- [x] public extension API compatibility identifier exists
+- [x] extension descriptors can declare a major.minor PyPageKit extension API version
+- [x] built-in extensions declare the current extension API
+- [x] public immutable `PluginLifecycle` exists
+- [x] public plugin kinds are explicit
+- [x] public lifecycle states are explicit
+- [x] initial lifecycle state is `DISCOVERED`
+- [x] lifecycle transitions return new immutable values
+- [x] qualification is an explicit operation
+- [x] missing API compatibility declarations are rejected
+- [x] incompatible extension API declarations are rejected
+- [x] global extension-ID collisions across plugin kinds are rejected
+- [x] renderer factory conformance is checked during qualification
+- [x] build-planner factory conformance is checked during qualification
+- [x] component bundles reuse existing structural registry validation
+- [x] qualification failures isolate the invalid contribution
+- [x] rejected plugins are excluded from qualified registries
+- [x] activation requires prior qualification
+- [x] rejected plugins cannot be activated
+- [x] activation may target all or a selected subset of qualified plugins
+- [x] active registries contain only active contributions
+- [x] deactivation is explicit and immutable
+- [x] deactivation does not unload modules or run third-party callbacks
+- [x] no third-party activation/deactivation callback contract exists
+- [x] no process-global mutable plugin registry exists
+- [x] no hidden discovery or activation exists
+- [x] installed entry-point plugin is covered end-to-end through activation
+- [x] package version advances to `0.7.0b2`
+- [x] GitHub CI qualification is fully green
+
+After qualification, the `0.7.x — Extensibility` line is complete.
+
+Next: **LOT-31 — Security Hardening** (`0.8.0a1`).

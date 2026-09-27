@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current qualified milestone: **LOT-29 — Plugin Discovery & Entry Points** (`0.7.0b1`). Next: **LOT-30 — Plugin Lifecycle & Conformance**.
+Current qualified milestone: **LOT-30 — Plugin Lifecycle & Conformance** (`0.7.0b2`). The **0.7.x — Extensibility** line is complete. Next: **LOT-31 — Security Hardening**.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -51,7 +51,8 @@ Implemented so far:
 - read-only developer diagnostics through `pypagekit doctor` and `pypagekit inspect`;
 - explicit renderer extension contracts and immutable registration through `pypagekit.extensions`;
 - structural build-planner extensions and component-extension bundles;
-- explicit installed-plugin discovery through Python entry points.
+- explicit installed-plugin discovery through Python entry points;
+- explicit plugin compatibility, qualification, activation, and deactivation lifecycle.
 
 ## Quick example
 
@@ -1360,3 +1361,167 @@ access and does not mutate process-global extension state.
 
 LOT-29 intentionally does not add plugin activation/deactivation state, dependency ordering,
 compatibility negotiation, or lifecycle callbacks. Those concerns belong to LOT-30.
+
+
+## Plugin lifecycle and conformance
+
+LOT-30 separates **discovery** from **usability**.
+
+A discovered plugin contribution is not automatically active:
+
+```text
+DISCOVERED
+    ↓ qualify()
+┌───────────────┐
+│               │
+QUALIFIED    REJECTED
+    ↓ activate()
+  ACTIVE
+    ↓ deactivate()
+QUALIFIED
+```
+
+The transitions are immutable. Every lifecycle operation returns a new `PluginLifecycle`; the
+previous value is unchanged.
+
+### Extension API compatibility
+
+Plugin extensions may declare the PyPageKit extension API they target:
+
+```python
+from pypagekit.extensions import (
+    PYPAGEKIT_EXTENSION_API_VERSION,
+    ExtensionDescriptor,
+    RendererExtension,
+)
+
+
+def provide_renderer() -> RendererExtension:
+    return RendererExtension(
+        ExtensionDescriptor(
+            "acme.renderer.custom",
+            "ACME Renderer",
+            "1.0.0",
+            api_version=PYPAGEKIT_EXTENSION_API_VERSION,
+        ),
+        CustomRenderer,
+    )
+```
+
+For the `0.7.x` extensibility line, the public extension API identifier is:
+
+```text
+0.7
+```
+
+This identifier is intentionally separate from the package version `0.7.0b2`. Plugin
+compatibility therefore targets a stable extension-contract line instead of a specific package
+build.
+
+A missing compatibility declaration or a different API line causes qualification to mark that
+contribution as `REJECTED`.
+
+### Qualification
+
+Discovery remains explicit and unchanged:
+
+```python
+from pypagekit.extensions import EntryPointDiscovery, PluginLifecycle
+
+discovered = EntryPointDiscovery().discover()
+lifecycle = PluginLifecycle.from_discovery(discovered)
+qualified = lifecycle.qualify()
+```
+
+Qualification validates:
+
+```text
+stable extension identity
+        ↓
+global ID uniqueness across plugin kinds
+        ↓
+declared PyPageKit extension API
+        ↓
+API compatibility
+        ↓
+renderer/build-planner factory conformance
+        ↓
+component contribution structural conformance
+        ↓
+QUALIFIED or REJECTED
+```
+
+Renderer and build-planner factories are instantiated during explicit qualification so their
+existing runtime contracts can be verified. Component factories are not invoked because component
+construction may legitimately require author-supplied properties; their registry structure remains
+the conformance boundary.
+
+Qualification is fault-isolating: one invalid contribution becomes `REJECTED` rather than
+silently becoming usable.
+
+### Activation
+
+Only qualified plugins may become active:
+
+```python
+active = qualified.activate()
+
+renderer = active.active_plugins.renderers.create("acme.renderer.custom")
+```
+
+Activation can also be selective:
+
+```python
+active = qualified.activate(
+    (
+        "acme.renderer.custom",
+        "acme.components.ui",
+    )
+)
+```
+
+Only `active.active_plugins` should be treated as the usable plugin surface. The original discovery
+result remains available for inspection, and `qualified.qualified_plugins` exposes every
+contribution that passed conformance.
+
+Deactivation is equally explicit:
+
+```python
+next_state = active.deactivate(("acme.renderer.custom",))
+```
+
+No plugin-defined activation or deactivation callback is executed. Activation is a PyPageKit
+registry-selection operation, not an arbitrary side-effect lifecycle.
+
+### Lifecycle invariants
+
+```text
+import pypagekit
+        → no discovery
+        → no plugin import
+        → no qualification
+        → no activation
+
+EntryPointDiscovery()
+        → no discovery
+
+.discover()
+        → imports providers explicitly
+        → DISCOVERED
+
+PluginLifecycle.from_discovery(...)
+        → no factory conformance execution
+        → DISCOVERED
+
+.qualify()
+        → explicit conformance
+        → QUALIFIED / REJECTED
+
+.activate()
+        → explicit registry selection
+        → ACTIVE
+```
+
+There is still no process-global mutable plugin registry, no hidden activation, no network lookup,
+and no dependency-resolution engine. The `0.7.x` line now provides the complete explicit
+extensibility chain from contract definition through controlled discovery and activation.

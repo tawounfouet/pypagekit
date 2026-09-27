@@ -76,6 +76,7 @@ from pypagekit.exceptions import (
     InvalidNavigationError,
     InvalidOutputRootError,
     InvalidPluginEntryPointError,
+    InvalidPluginLifecycleTransitionError,
     InvalidRegisteredComponentError,
     InvalidRendererExtensionError,
     InvalidRouteError,
@@ -84,14 +85,17 @@ from pypagekit.exceptions import (
     MissingComponentRegistryError,
     OutputPathConflictError,
     OutputSymlinkError,
+    PluginActivationError,
     PluginDiscoveryError,
     PluginEntryPointLoadError,
+    PluginLifecycleError,
     PluginProviderError,
     RenderingError,
     SecurityError,
     SerializationError,
     UnknownComponentError,
     UnknownExtensionError,
+    UnknownPluginError,
     UnresolvedSlotError,
     UnsafeUrlError,
     UnsupportedNodeError,
@@ -102,6 +106,7 @@ from pypagekit.extensions import (
     BUILTIN_COMPONENTS_EXTENSION_ID,
     COMPONENT_ENTRY_POINT_GROUP,
     HTML_RENDERER_EXTENSION_ID,
+    PYPAGEKIT_EXTENSION_API_VERSION,
     RENDERER_ENTRY_POINT_GROUP,
     BuildPlannerExtension,
     BuildPlannerRegistry,
@@ -110,6 +115,10 @@ from pypagekit.extensions import (
     EntryPointDiscovery,
     ExtensionDescriptor,
     PluginDiscoveryResult,
+    PluginKind,
+    PluginLifecycle,
+    PluginState,
+    PluginStatus,
     RendererExtension,
     RendererRegistry,
     default_build_planner_registry,
@@ -209,6 +218,19 @@ def test_package_imports() -> None:
     assert RENDERER_ENTRY_POINT_GROUP == "pypagekit.renderers"
     discovery_result = EntryPointDiscovery(source=lambda group: ()).discover()
     assert isinstance(discovery_result, PluginDiscoveryResult)
+    lifecycle = PluginLifecycle.from_discovery(discovery_result).qualify().activate()
+    assert isinstance(lifecycle, PluginLifecycle)
+    assert PYPAGEKIT_EXTENSION_API_VERSION == "0.7"
+    assert PluginKind.RENDERER.value == "renderer"
+    assert PluginState.ACTIVE.value == "active"
+    assert isinstance(
+        PluginStatus(
+            "acme.renderer.demo",
+            PluginKind.RENDERER,
+            PluginState.DISCOVERED,
+        ),
+        PluginStatus,
+    )
     assert issubclass(Section, Component)
     assert issubclass(Card, Component)
     assert issubclass(Hero, Component)
@@ -237,8 +259,12 @@ def test_package_imports() -> None:
     assert issubclass(InvalidRendererExtensionError, ExtensionError)
     assert issubclass(PluginDiscoveryError, ExtensionError)
     assert issubclass(InvalidPluginEntryPointError, PluginDiscoveryError)
+    assert issubclass(InvalidPluginLifecycleTransitionError, PluginLifecycleError)
+    assert issubclass(PluginActivationError, PluginLifecycleError)
     assert issubclass(PluginEntryPointLoadError, PluginDiscoveryError)
+    assert issubclass(PluginLifecycleError, ExtensionError)
     assert issubclass(PluginProviderError, PluginDiscoveryError)
+    assert issubclass(UnknownPluginError, PluginActivationError)
     assert issubclass(UnknownExtensionError, ExtensionError)
     assert issubclass(InvalidComponentNameError, ComponentRegistryError)
     assert issubclass(InvalidRegisteredComponentError, ComponentRegistryError)
@@ -261,4 +287,4 @@ def test_package_imports() -> None:
 
 
 def test_current_version() -> None:
-    assert __version__ == "0.7.0b1"
+    assert __version__ == "0.7.0b2"

@@ -4,6 +4,37 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.7.0b2]
+
+### Added
+
+- Public extension API compatibility identifier `PYPAGEKIT_EXTENSION_API_VERSION = "0.7"`.
+- Optional `ExtensionDescriptor.api_version` compatibility metadata.
+- Public `PluginKind`, `PluginState`, `PluginStatus`, and immutable `PluginLifecycle`.
+- Explicit lifecycle states: `DISCOVERED`, `QUALIFIED`, `REJECTED`, and `ACTIVE`.
+- Explicit qualification through `PluginLifecycle.qualify()`.
+- Explicit activation and deactivation through immutable lifecycle transitions.
+- Global extension-ID collision detection across renderer, build-planner, and component plugin kinds.
+- Compatibility rejection for missing or incompatible extension API declarations.
+- Renderer and build-planner factory conformance checks during explicit qualification.
+- Structural component-bundle conformance without speculative component instantiation.
+- Active-only registry projection through `PluginLifecycle.active_plugins`.
+- Qualified registry projection through `PluginLifecycle.qualified_plugins`.
+- End-to-end installed-plugin coverage for discovery → qualification → activation → renderer usage.
+
+### Design
+
+- Discovery and qualification remain separate operations.
+- A discovered contribution is never automatically active.
+- Qualification failures isolate a contribution as `REJECTED` rather than enabling it.
+- Lifecycle transitions are immutable and deterministic.
+- Plugin activation selects contributions into explicit registries; no third-party lifecycle callback runs.
+- Deactivation removes contributions from active registries without unloading Python modules.
+- The extension API version is a major.minor contract line, independent from the package release version.
+- No process-global mutable registry exists.
+- No network lookup, dependency solver, import-time discovery, or hidden activation is introduced.
+- Completing LOT-30 closes the `0.7.x — Extensibility` implementation line.
+
 ## [0.7.0b1]
 
 ### Added

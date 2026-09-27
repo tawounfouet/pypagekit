@@ -51,6 +51,22 @@ class PluginProviderError(PluginDiscoveryError):
     """Raised when an entry point provider fails while creating an extension."""
 
 
+class PluginLifecycleError(ExtensionError):
+    """Base exception for explicit plugin lifecycle failures."""
+
+
+class InvalidPluginLifecycleTransitionError(PluginLifecycleError):
+    """Raised when a lifecycle operation is requested from an invalid state."""
+
+
+class PluginActivationError(PluginLifecycleError):
+    """Raised when a plugin cannot be activated or deactivated."""
+
+
+class UnknownPluginError(PluginActivationError):
+    """Raised when a lifecycle operation references an unknown plugin ID."""
+
+
 __all__ = [
     "DuplicateComponentContributionError",
     "DuplicateExtensionRegistrationError",
@@ -59,9 +75,13 @@ __all__ = [
     "InvalidExtensionDescriptorError",
     "InvalidExtensionIdError",
     "InvalidPluginEntryPointError",
+    "InvalidPluginLifecycleTransitionError",
     "InvalidRendererExtensionError",
+    "PluginActivationError",
     "PluginDiscoveryError",
     "PluginEntryPointLoadError",
+    "PluginLifecycleError",
     "PluginProviderError",
     "UnknownExtensionError",
+    "UnknownPluginError",
 ]
