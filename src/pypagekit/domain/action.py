@@ -1,9 +1,10 @@
 """Action content primitives for the PyPageKit domain."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from pypagekit.exceptions import InvalidLinkHrefError
 
+from .attributes import Attributes
 from .base import Content
 
 
@@ -19,6 +20,7 @@ class Link(Action):
 
     label: str
     href: str
+    attributes: Attributes = field(default_factory=Attributes, kw_only=True)
 
     def __post_init__(self) -> None:
         if not isinstance(self.label, str):
@@ -27,3 +29,5 @@ class Link(Action):
             raise TypeError("Link href must be a string.")
         if not self.href.strip():
             raise InvalidLinkHrefError("Link href must not be empty.")
+        if not isinstance(self.attributes, Attributes):
+            raise TypeError("Link attributes must be an Attributes object.")
