@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-30 — Plugin Lifecycle & Conformance** (`0.7.0b2`).
+Current qualified milestone: **LOT-30 — Plugin Lifecycle & Conformance** (`0.7.0b2`). The **0.7.x — Extensibility** line is complete. Next: **LOT-31 — Security Hardening**.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
