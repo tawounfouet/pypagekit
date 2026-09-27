@@ -113,21 +113,13 @@ def test_hero_composes_title_body_and_action_in_order() -> None:
 
 
 def test_hero_body_and_action_are_optional() -> None:
-    assert Hero("Welcome").compose() == Container(
-        [Heading("Welcome", level=1)]
-    )
+    assert Hero("Welcome").compose() == Container([Heading("Welcome", level=1)])
 
 
 def test_heading_levels_are_configurable() -> None:
-    assert Section("Title", heading_level=4).compose() == Container(
-        [Heading("Title", level=4)]
-    )
-    assert Card(title="Card", heading_level=5).compose() == Container(
-        [Heading("Card", level=5)]
-    )
-    assert Hero("Hero", heading_level=2).compose() == Container(
-        [Heading("Hero", level=2)]
-    )
+    assert Section("Title", heading_level=4).compose() == Container([Heading("Title", level=4)])
+    assert Card(title="Card", heading_level=5).compose() == Container([Heading("Card", level=5)])
+    assert Hero("Hero", heading_level=2).compose() == Container([Heading("Hero", level=2)])
 
 
 @pytest.mark.parametrize(
