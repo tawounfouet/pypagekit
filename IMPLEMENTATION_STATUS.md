@@ -17,6 +17,9 @@
 | LOT-13 | Reusable Components | QUALIFIED | `0.3.0b1` |
 | LOT-14 | Slots & Composition | QUALIFIED | `0.3.0b2` |
 | LOT-15 | Component Registry | QUALIFIED | `0.3.0b3` |
+| LOT-16 | Route Model | QUALIFIED | `0.4.0a1` |
+| LOT-17 | Navigation Model | NOT STARTED | `0.4.0a2` |
+| LOT-18 | Sitemap & Site Model | NOT STARTED | `0.4.0b1` |
 
 ## LOT-07 exit criteria
 
@@ -272,4 +275,32 @@ Next: **LOT-16 — Route Model**.
 - registry resolution is explicit, local, and deterministic
 - symbolic references enter the existing component/runtime/rendering pipeline
 - security tests cover malicious text, URLs, and registry names
+- GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
+
+
+## LOT-16 exit criteria
+
+- [x] public immutable `Route` exists
+- [x] route associates a canonical logical path with exactly one `Page`
+- [x] root route `/` is explicitly representable
+- [x] non-root trailing slash canonicalizes deterministically
+- [x] route segments are available without filesystem interpretation
+- [x] route paths must be absolute internal URL paths
+- [x] external and protocol-relative URLs fail explicitly
+- [x] queries and fragments fail explicitly
+- [x] duplicate slash segments fail explicitly
+- [x] literal and encoded traversal segments fail explicitly
+- [x] encoded slash/backslash/control ambiguity fails explicitly
+- [x] malformed percent escapes fail explicitly
+- [x] route target must be a `Page`
+- [x] route validation performs no filesystem or rendering work
+- [x] duplicate-route detection remains deferred to the future `Site` aggregate
+
+Next: **LOT-17 — Navigation Model**.
+
+## LOT-16 qualification evidence
+
+- route identity is independent from page rendering and future build output
+- validation covers canonicalization plus URL/path-confusion cases
+- security corpus covers externalization, traversal, encoded separators, and fragment/query confusion
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
