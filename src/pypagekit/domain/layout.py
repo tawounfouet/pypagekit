@@ -17,6 +17,7 @@ from .attributes import Attributes
 from .base import Content
 from .component import Component
 from .container import Container
+from .slots import SlotBindings, bind_slots
 
 _REGION_NAME_RE = re.compile(r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$")
 _EMPTY_ATTRIBUTES = Attributes()
@@ -75,6 +76,11 @@ class Layout(Component, ABC):
     def regions(self) -> Iterable[LayoutRegion]:
         """Return the ordered regions represented by this layout."""
 
+    def slot_bindings(self) -> SlotBindings:
+        """Return optional bindings for slots declared inside layout regions."""
+
+        return SlotBindings()
+
     @final
     def compose(self) -> Content:
         """Compose validated layout regions into an ordinary content tree."""
@@ -97,4 +103,11 @@ class Layout(Component, ABC):
         if len(names) != len(set(names)):
             raise DuplicateLayoutRegionError("Layout region names must be unique within a layout.")
 
-        return Container(normalized_regions)
+        bindings = self.slot_bindings()
+        if not isinstance(bindings, SlotBindings):
+            raise TypeError("Layout slot_bindings() must return a SlotBindings object.")
+
+        return bind_slots(
+            Container(normalized_regions),
+            bindings,
+        )
