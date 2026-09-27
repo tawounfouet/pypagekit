@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import pytest
 
 from pypagekit import (
-    Content,
+    Container,
     Fragment,
     Layout,
     LayoutRegion,
@@ -45,11 +45,12 @@ def test_layout_can_bind_slots_inside_regions() -> None:
 
     composed = layout.compose()
 
-    assert composed.children[0] == LayoutRegion(  # type: ignore[attr-defined]
+    assert isinstance(composed, Container)
+    assert composed.children[0] == LayoutRegion(
         "header",
         [Fragment([Paragraph("Default header")])],
     )
-    assert composed.children[1] == LayoutRegion(  # type: ignore[attr-defined]
+    assert composed.children[1] == LayoutRegion(
         "main",
         [Fragment([Paragraph("Body")])],
     )
