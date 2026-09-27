@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current qualified milestone: **LOT-30 — Plugin Lifecycle & Conformance** (`0.7.0b2`). The **0.7.x — Extensibility** line is complete. Next: **LOT-31 — Security Hardening**.
+Current implementation milestone: **LOT-31 — Security Hardening** (`0.8.0a1`). The **0.7.x — Extensibility** line is complete.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -1414,7 +1414,7 @@ For the `0.7.x` extensibility line, the public extension API identifier is:
 0.7
 ```
 
-This identifier is intentionally separate from the package version `0.7.0b2`. Plugin
+This identifier is intentionally separate from the package version `0.8.0a1`. Plugin
 compatibility therefore targets a stable extension-contract line instead of a specific package
 build.
 
@@ -1525,3 +1525,86 @@ PluginLifecycle.from_discovery(...)
 There is still no process-global mutable plugin registry, no hidden activation, no network lookup,
 and no dependency-resolution engine. The `0.7.x` line now provides the complete explicit
 extensibility chain from contract definition through controlled discovery and activation.
+
+
+## Security hardening
+
+LOT-31 hardens existing trust boundaries without introducing a new authoring model.
+
+### Filesystem output
+
+Build output now rejects symlinks anywhere in the declared output-root path, including ancestors that
+exist before the output root itself:
+
+```text
+/tmp/projects -> /outside
+/tmp/projects/site/dist
+     ↑
+     rejected before creation
+```
+
+Overwrite mode also rejects existing files with more than one hard link. This prevents a path
+inside `dist/` from being used as an alias for an inode outside the output tree.
+
+Asset preflight additionally compares existing sources and destinations by filesystem identity,
+not only by resolved pathname. A hard-linked asset source/output alias therefore fails before any
+file is opened for writing.
+
+The same hard-link protection applies to `pypagekit new --force`: generated project files never
+overwrite a multiply-linked inode.
+
+### URL references
+
+Renderer URL validation now rejects:
+
+- malformed percent escapes;
+- percent-encoded ASCII control characters;
+- percent-encoded unsafe schemes such as `javascript%3A...`;
+- encoded scheme obfuscation that would become unsafe after ASCII percent decoding.
+
+The validator still returns the original semantic value after approval; it does not rewrite URLs.
+
+### Development server
+
+The local static server now rejects malformed percent escapes and the DEL control character in
+request paths. It also emits defensive response headers:
+
+```text
+Cache-Control: no-store
+Content-Security-Policy: default-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'
+Referrer-Policy: no-referrer
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+```
+
+Directory listings and symlink traversal remain disabled.
+
+### Plugin discovery
+
+Duplicate entry-point names in one PyPageKit plugin group are detected before any target is loaded.
+This avoids executing multiple third-party providers before discovering that the registry identity
+is ambiguous.
+
+The security model remains explicit:
+
+```text
+metadata enumeration
+        ↓
+duplicate-name validation
+        ↓
+entry-point identity validation
+        ↓
+load provider
+        ↓
+provider execution
+        ↓
+extension registry
+        ↓
+qualification
+        ↓
+activation
+```
+
+LOT-31 does not claim sandboxing of third-party Python code. Calling explicit plugin discovery or
+qualification may execute trusted installed plugin code by design; the hardening goal is to reduce
+avoidable execution and preserve clear trust boundaries.
