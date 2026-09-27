@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-15 — Component Registry** (`0.3.0b3`).
+Current implementation milestone: **LOT-16 — Route Model** (`0.4.0a1`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -37,7 +37,8 @@ Implemented so far:
 - named structural layouts and regions without CSS assumptions;
 - built-in reusable components composed entirely from the existing domain primitives;
 - named slot composition with wrapperless multi-node injection;
-- explicit immutable component registry and symbolic component references.
+- explicit immutable component registry and symbolic component references;
+- canonical logical routes that bind URL paths to pages.
 
 ## Quick example
 
@@ -160,8 +161,8 @@ python -m build
 ```text
 0.1.x  Domain                  ✅ feature-complete
 0.2.x  Rendering               ✅ feature-complete
-0.3.x  Components              ← current
-0.4.x  Routing & Site
+0.3.x  Components              ✅ feature-complete
+0.4.x  Routing & Site           ← current
 0.5.x  Static Build
 0.6.x  CLI & Developer Workflow
 0.7.x  Extensibility
@@ -170,7 +171,7 @@ python -m build
 1.0.0  Stable
 ```
 
-The `0.3.x — Components` line is now feature-complete. The next milestone is **LOT-16 — Route Model** (`0.4.x`).
+The current release line is **`0.4.x — Routing & Site`**. The next milestone is **LOT-17 — Navigation Model**.
 
 
 ## Controlled attributes
@@ -455,3 +456,43 @@ HtmlRenderer
 ```
 
 With LOT-15 complete, the component layer is closed and the roadmap moves to routing and site composition.
+
+
+## Logical routes
+
+LOT-16 separates a page from its logical site location:
+
+```python
+from pypagekit import Page, Paragraph, Route
+
+
+about_page = Page(
+    title="About",
+    content=[Paragraph("About this project.")],
+)
+
+route = Route("/about", about_page)
+```
+
+The key boundary is:
+
+```text
+Page
+  ≠
+Route
+  ≠
+Filesystem output path
+```
+
+Routes are canonical logical URL paths. For example:
+
+```python
+Route("/", page).path          # "/"
+Route("/about/", page).path    # "/about"
+Route("/docs/api", page).segments
+# ("docs", "api")
+```
+
+A route cannot contain a query string, fragment, external URL, protocol-relative URL, empty internal segment, traversal segment, backslash separator, or ambiguous encoded separator.
+
+LOT-16 deliberately does not map routes to `index.html` files yet. Physical output planning belongs to the later build pipeline.
