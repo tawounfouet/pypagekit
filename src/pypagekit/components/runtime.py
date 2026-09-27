@@ -2,6 +2,7 @@
 
 from pypagekit.domain import (
     Component,
+    ComponentRef,
     Container,
     Content,
     Fragment,
@@ -12,20 +13,38 @@ from pypagekit.exceptions import (
     ComponentCycleError,
     ComponentResolutionDepthError,
     InvalidComponentResultError,
+    MissingComponentRegistryError,
     UnresolvedSlotError,
 )
+
+from .registry import ComponentRegistry
 
 
 class ComponentRuntime:
     """Resolve components into ordinary content trees before rendering."""
 
-    def __init__(self, *, max_depth: int = 100) -> None:
+    def __init__(
+        self,
+        *,
+        max_depth: int = 100,
+        registry: ComponentRegistry | None = None,
+    ) -> None:
         if not isinstance(max_depth, int) or isinstance(max_depth, bool):
             raise TypeError("Component runtime max_depth must be an integer.")
         if max_depth < 1:
             raise ValueError("Component runtime max_depth must be at least 1.")
 
+        if registry is not None and not isinstance(registry, ComponentRegistry):
+            raise TypeError("Component runtime registry must be a ComponentRegistry or None.")
+
         self._max_depth = max_depth
+        self._registry = registry
+
+    @property
+    def registry(self) -> ComponentRegistry | None:
+        """Explicit registry used for symbolic ComponentRef resolution."""
+
+        return self._registry
 
     @property
     def max_depth(self) -> int:
@@ -52,6 +71,17 @@ class ComponentRuntime:
         active_component_ids: set[int],
         component_depth: int,
     ) -> Content:
+        if isinstance(content, ComponentRef):
+            if self._registry is None:
+                raise MissingComponentRegistryError(
+                    f"ComponentRef '{content.name}' requires an explicit ComponentRegistry."
+                )
+            return self._resolve_component(
+                self._registry.instantiate(content),
+                active_component_ids=active_component_ids,
+                component_depth=component_depth,
+            )
+
         if isinstance(content, Component):
             return self._resolve_component(
                 content,
