@@ -36,6 +36,8 @@ from pypagekit.build import (
     FilesystemWriter,
     FilesystemWriteResult,
     PageBuildEntry,
+    StaticSiteGenerationResult,
+    StaticSiteGenerator,
     route_output_target,
 )
 from pypagekit.components import Card, ComponentRegistry, ComponentRuntime, Hero, Section
@@ -87,9 +89,12 @@ def test_package_imports() -> None:
     assert isinstance(BuildPlan(), BuildPlan)
     assert isinstance(BuildPlanner(), BuildPlanner)
     assert isinstance(FilesystemWriter(), FilesystemWriter)
+    assert isinstance(StaticSiteGenerator(), StaticSiteGenerator)
+    write_result = FilesystemWriteResult(Path("dist"), (), ())
+    assert isinstance(write_result, FilesystemWriteResult)
     assert isinstance(
-        FilesystemWriteResult(Path("dist"), (), ()),
-        FilesystemWriteResult,
+        StaticSiteGenerationResult(BuildPlan(), write_result),
+        StaticSiteGenerationResult,
     )
     assert isinstance(AssetBuildEntry(asset), AssetBuildEntry)
     assert issubclass(Content, Node)
@@ -163,4 +168,4 @@ def test_package_imports() -> None:
 
 
 def test_current_version() -> None:
-    assert __version__ == "0.5.0b1"
+    assert __version__ == "0.5.0b2"
