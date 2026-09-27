@@ -137,9 +137,7 @@ def test_server_creation_does_not_change_process_cwd(tmp_path: Path) -> None:
     root.mkdir()
     before = Path.cwd()
 
-    session = DevelopmentServer().create(
-        DevelopmentServerConfig(root, port=0)
-    )
+    session = DevelopmentServer().create(DevelopmentServerConfig(root, port=0))
     session.close()
 
     assert Path.cwd() == before
@@ -149,9 +147,7 @@ def test_bound_info_reports_ephemeral_port(tmp_path: Path) -> None:
     root = tmp_path / "dist"
     root.mkdir()
 
-    session = DevelopmentServer().create(
-        DevelopmentServerConfig(root, port=0)
-    )
+    session = DevelopmentServer().create(DevelopmentServerConfig(root, port=0))
     try:
         assert session.info.port > 0
         assert session.info.host
