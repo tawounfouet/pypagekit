@@ -32,6 +32,7 @@ from .domain import (
     MissingRequiredSlotError,
     PyPageKitError,
     UnknownSlotBindingError,
+    UnresolvedSlotError,
     ValidationError,
 )
 from .rendering import (
@@ -80,6 +81,7 @@ __all__ = [
     "SecurityError",
     "SerializationError",
     "UnknownSlotBindingError",
+    "UnresolvedSlotError",
     "UnsafeUrlError",
     "UnsupportedAttributeValueError",
     "UnsupportedNodeError",
