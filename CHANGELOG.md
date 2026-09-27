@@ -4,6 +4,24 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.1.0b1]
+
+### Added
+
+- `Action` and `Media` semantic base types in the domain namespace.
+- Immutable `Link` action content primitive.
+- Immutable `Image` media content primitive.
+- Structural validation for empty link destinations and image sources.
+- `InvalidLinkHrefError` and `InvalidImageSourceError`.
+- LOT-05 tests covering composition, immutability, Unicode, destination/source forms, and decorative images.
+
+### Design
+
+- `Link.label`, `Link.href`, `Image.src`, and `Image.alt` preserve authored strings exactly.
+- Empty link labels remain representable.
+- Empty image `alt` values are explicitly valid for decorative images.
+- URL scheme safety is intentionally deferred to the rendering/security boundary in LOT-08 rather than embedded in the domain model.
+
 ## [0.1.0a4]
 
 ### Added
