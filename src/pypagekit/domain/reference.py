@@ -18,9 +18,7 @@ def validate_component_name(name: str) -> None:
     if not isinstance(name, str):
         raise TypeError("Component name must be a string.")
     if not _COMPONENT_NAME_RE.fullmatch(name):
-        raise InvalidComponentNameError(
-            "Component names must use lowercase kebab-case."
-        )
+        raise InvalidComponentNameError("Component names must use lowercase kebab-case.")
 
 
 @dataclass(frozen=True, slots=True, init=False)
