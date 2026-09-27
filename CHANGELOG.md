@@ -4,6 +4,30 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.7.0a2]
+
+### Added
+
+- Public structural `BuildPlannerProtocol`.
+- `StaticSiteGenerator` support for structural planners without mandatory `BuildPlanner` inheritance.
+- Immutable `BuildPlannerExtension` and `BuildPlannerRegistry`.
+- Immutable `ComponentExtension` and `ComponentExtensionRegistry`.
+- Deterministic component contribution aggregation into the existing `ComponentRegistry`.
+- Explicit duplicate-component contribution detection across extensions.
+- Built-in build-planner registration under `pypagekit.build.planner`.
+- Built-in reusable-component bundle under `pypagekit.components.builtin`.
+- Integration coverage proving third-party planners and component bundles enter existing runtime paths.
+
+### Design
+
+- LOT-28 extends existing dependency-injection boundaries rather than adding arbitrary build hooks.
+- Build planner extensions produce objects satisfying `BuildPlannerProtocol`.
+- Component extensions do not bypass `ComponentRegistry` or `ComponentRuntime`.
+- Component-name collisions across extension bundles fail explicitly.
+- No process-global mutable extension state exists.
+- No installed-package scanning or Python entry-point discovery is introduced.
+- Plugin discovery remains LOT-29.
+
 ## [0.7.0a1]
 
 ### Added

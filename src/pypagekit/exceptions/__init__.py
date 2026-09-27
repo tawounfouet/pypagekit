@@ -79,8 +79,10 @@ from .domain import (
     ValidationError,
 )
 from .extension import (
+    DuplicateComponentContributionError,
     DuplicateExtensionRegistrationError,
     ExtensionError,
+    InvalidBuildPlannerExtensionError,
     InvalidExtensionDescriptorError,
     InvalidExtensionIdError,
     InvalidRendererExtensionError,
@@ -107,6 +109,7 @@ __all__ = [
     "ComponentResolutionDepthError",
     "DomainError",
     "DuplicateAssetTargetError",
+    "DuplicateComponentContributionError",
     "DuplicateComponentRegistrationError",
     "DuplicateExtensionRegistrationError",
     "DuplicateLayoutRegionError",
@@ -125,6 +128,7 @@ __all__ = [
     "InvalidAttributeError",
     "InvalidBuildContentError",
     "InvalidBuildInputError",
+    "InvalidBuildPlannerExtensionError",
     "InvalidBuildTargetError",
     "InvalidClassTokenError",
     "InvalidComponentNameError",

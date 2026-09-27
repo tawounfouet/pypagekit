@@ -33,6 +33,7 @@ from pypagekit.build import (
     AssetBuildEntry,
     BuildPlan,
     BuildPlanner,
+    BuildPlannerProtocol,
     FilesystemWriter,
     FilesystemWriteResult,
     PageBuildEntry,
@@ -54,6 +55,7 @@ from pypagekit.exceptions import (
     ComponentError,
     ComponentRegistryError,
     DuplicateAssetTargetError,
+    DuplicateComponentContributionError,
     DuplicateComponentRegistrationError,
     DuplicateExtensionRegistrationError,
     ExistingOutputError,
@@ -65,6 +67,7 @@ from pypagekit.exceptions import (
     InvalidAttributeError,
     InvalidBuildContentError,
     InvalidBuildInputError,
+    InvalidBuildPlannerExtensionError,
     InvalidBuildTargetError,
     InvalidComponentNameError,
     InvalidExtensionDescriptorError,
@@ -90,10 +93,18 @@ from pypagekit.exceptions import (
     UnsupportedNodeError,
 )
 from pypagekit.extensions import (
+    BUILD_PLANNER_EXTENSION_ID,
+    BUILTIN_COMPONENTS_EXTENSION_ID,
     HTML_RENDERER_EXTENSION_ID,
+    BuildPlannerExtension,
+    BuildPlannerRegistry,
+    ComponentExtension,
+    ComponentExtensionRegistry,
     ExtensionDescriptor,
     RendererExtension,
     RendererRegistry,
+    default_build_planner_registry,
+    default_component_extension_registry,
     default_renderer_registry,
 )
 from pypagekit.project import ProjectFile, ProjectPlan, ProjectScaffolder
@@ -106,7 +117,8 @@ def test_package_imports() -> None:
     assert isinstance(asset, Asset)
     assert isinstance(Assets([asset]), Assets)
     assert isinstance(BuildPlan(), BuildPlan)
-    assert isinstance(BuildPlanner(), BuildPlanner)
+    planner: BuildPlannerProtocol = BuildPlanner()
+    assert isinstance(planner, BuildPlanner)
     assert isinstance(FilesystemWriter(), FilesystemWriter)
     assert isinstance(StaticSiteGenerator(), StaticSiteGenerator)
     project_file = ProjectFile(PurePosixPath("site.py"), "print('hello')\n")
@@ -168,16 +180,33 @@ def test_package_imports() -> None:
     extension = RendererExtension(descriptor, HtmlRenderer)
     assert isinstance(RendererRegistry((extension,)), RendererRegistry)
     assert default_renderer_registry().ids == (HTML_RENDERER_EXTENSION_ID,)
+    build_extension = BuildPlannerExtension(
+        ExtensionDescriptor("acme.build.demo", "Demo Planner", "1.0.0"),
+        BuildPlanner,
+    )
+    assert isinstance(BuildPlannerRegistry((build_extension,)), BuildPlannerRegistry)
+    assert default_build_planner_registry().ids == (BUILD_PLANNER_EXTENSION_ID,)
+    component_extension = ComponentExtension(
+        ExtensionDescriptor("acme.components.demo", "Demo Components", "1.0.0"),
+        {"section": Section},
+    )
+    assert isinstance(
+        ComponentExtensionRegistry((component_extension,)),
+        ComponentExtensionRegistry,
+    )
+    assert default_component_extension_registry().ids == (BUILTIN_COMPONENTS_EXTENSION_ID,)
     assert issubclass(Section, Component)
     assert issubclass(Card, Component)
     assert issubclass(Hero, Component)
     assert issubclass(DuplicateAssetTargetError, InvalidAssetError)
+    assert issubclass(DuplicateComponentContributionError, ExtensionError)
     assert issubclass(AssetSourceOutputConflictError, FilesystemOutputError)
     assert issubclass(BuildTargetCollisionError, BuildError)
     assert issubclass(ExistingOutputError, FilesystemOutputError)
     assert issubclass(FilesystemOutputError, BuildError)
     assert issubclass(FilesystemWriteError, FilesystemOutputError)
     assert issubclass(InvalidBuildContentError, BuildError)
+    assert issubclass(InvalidBuildPlannerExtensionError, ExtensionError)
     assert issubclass(InvalidBuildInputError, BuildError)
     assert issubclass(InvalidAssetSourceForOutputError, FilesystemOutputError)
     assert issubclass(InvalidBuildTargetError, BuildError)
@@ -214,4 +243,4 @@ def test_package_imports() -> None:
 
 
 def test_current_version() -> None:
-    assert __version__ == "0.7.0a1"
+    assert __version__ == "0.7.0a2"
