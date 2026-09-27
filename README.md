@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-25 — Development Server** (`0.6.0b1`).
+Current implementation milestone: **LOT-26 — Developer Diagnostics** (`0.6.0b2`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -47,7 +47,8 @@ Implemented so far:
 - end-to-end static-site generation through a thin orchestration facade;
 - Typer + Rich CLI foundations with installed shell and module entry points;
 - safe project scaffolding through `pypagekit new`;
-- local static development serving through `pypagekit serve`.
+- local static development serving through `pypagekit serve`;
+- read-only developer diagnostics through `pypagekit doctor` and `pypagekit inspect`.
 
 ## Quick example
 
@@ -180,7 +181,7 @@ python -m build
 1.0.0  Stable
 ```
 
-The current release line is **`0.6.x — CLI & Developer Workflow`**. The next milestone is **LOT-26 — Developer Diagnostics**.
+The current release line is **`0.6.x — CLI & Developer Workflow`**, with LOT-26 implementing developer diagnostics.
 
 
 ## Controlled attributes
@@ -1065,3 +1066,49 @@ process cwd mutation       none
 ```
 
 This server is a development convenience, not a production HTTP server. Watch mode and hot reload remain outside LOT-25.
+
+
+## Developer diagnostics
+
+LOT-26 adds two deliberately distinct read-only workflows:
+
+```bash
+pypagekit doctor
+pypagekit inspect
+```
+
+`doctor` answers whether the current local project environment is usable:
+
+```text
+Python / PyPageKit
+        ↓
+Project root
+        ↓
+pyproject.toml / site.py
+        ↓
+dist/ / dist/index.html
+        ↓
+DiagnosticReport
+```
+
+Missing generated output is reported as a warning because a project may simply not have been
+built yet. Missing project definition files and malformed project metadata are failures.
+
+`inspect` answers a different question: what can PyPageKit observe about this project without
+executing project code? It reports the project root/name, Python and PyPageKit versions, and the
+presence of the standard project/output files.
+
+The service boundary remains independent from the CLI:
+
+```text
+Typer / Rich
+    ↓
+doctor / inspect adapters
+    ↓
+pypagekit.diagnostics
+    ↓
+immutable result models
+```
+
+Neither command modifies files, executes `site.py`, invokes subprocesses, or accesses the
+network.
