@@ -181,7 +181,7 @@ python -m build
 1.0.0  Stable
 ```
 
-The current release line is **`0.6.x — CLI & Developer Workflow`**, with LOT-26 implementing developer diagnostics.
+The **`0.6.x — CLI & Developer Workflow`** line is now feature-complete through LOT-26.
 
 
 ## Controlled attributes
