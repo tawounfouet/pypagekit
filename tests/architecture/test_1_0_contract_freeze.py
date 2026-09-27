@@ -25,12 +25,16 @@ def test_contract_snapshot_is_canonical_json() -> None:
     content = CONTRACT_PATH.read_text(encoding="utf-8")
     parsed = json.loads(content)
 
-    assert content == json.dumps(
-        parsed,
-        indent=2,
-        sort_keys=True,
-        ensure_ascii=False,
-    ) + "\n"
+    assert (
+        content
+        == json.dumps(
+            parsed,
+            indent=2,
+            sort_keys=True,
+            ensure_ascii=False,
+        )
+        + "\n"
+    )
 
 
 def test_contract_snapshot_targets_1_0() -> None:
