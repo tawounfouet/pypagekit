@@ -28,6 +28,17 @@
 | LOT-24 | Project Scaffolding | QUALIFIED | `0.6.0a2` |
 | LOT-25 | Development Server | QUALIFIED | `0.6.0b1` |
 | LOT-26 | Developer Diagnostics | QUALIFIED | `0.6.0b2` |
+| LOT-27 | Extension Contracts & Renderer Registry | QUALIFIED | `0.7.0a1` |
+| LOT-28 | Build & Component Extension Points | NOT STARTED | `0.7.0a2` |
+| LOT-29 | Plugin Discovery & Entry Points | NOT STARTED | `0.7.0b1` |
+| LOT-30 | Plugin Lifecycle & Conformance | NOT STARTED | `0.7.0b2` |
+| LOT-31 | Security Hardening | NOT STARTED | `0.8.0a1` |
+| LOT-32 | Reliability & Failure Hardening | NOT STARTED | `0.8.0a2` |
+| LOT-33 | Performance & Scalability Hardening | NOT STARTED | `0.8.0b1` |
+| LOT-34 | Public API Inventory & Stability Classification | NOT STARTED | `0.9.0a1` |
+| LOT-35 | Compatibility, Deprecation & Migration | NOT STARTED | `0.9.0b1` |
+| LOT-36 | 1.0 Contract Freeze | NOT STARTED | `0.9.0rc1` |
+| LOT-37 | 1.0 Release Qualification | NOT STARTED | `1.0.0` |
 
 ## LOT-07 exit criteria
 
@@ -652,3 +663,78 @@ Next: **0.7.x — Extensibility**.
 - tests prove inspection does not execute site.py
 - architecture tests enforce the Typer/Rich dependency boundary for diagnostics
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, package, and CLI-smoke gate
+
+
+## Frozen remaining roadmap — LOT-27 to LOT-37
+
+The remaining pre-1.0 roadmap is intentionally split into explicit implementation lots:
+
+```text
+0.7.x — Extensibility
+LOT-27  Extension Contracts & Renderer Registry       0.7.0a1
+LOT-28  Build & Component Extension Points            0.7.0a2
+LOT-29  Plugin Discovery & Entry Points               0.7.0b1
+LOT-30  Plugin Lifecycle & Conformance                0.7.0b2
+
+0.8.x — Hardening
+LOT-31  Security Hardening                            0.8.0a1
+LOT-32  Reliability & Failure Hardening               0.8.0a2
+LOT-33  Performance & Scalability Hardening           0.8.0b1
+
+0.9.x — API Freeze
+LOT-34  Public API Inventory & Stability Classification  0.9.0a1
+LOT-35  Compatibility, Deprecation & Migration           0.9.0b1
+LOT-36  1.0 Contract Freeze                              0.9.0rc1
+
+1.0.0 — Stable
+LOT-37  1.0 Release Qualification                    1.0.0
+```
+
+Roadmap rule:
+
+```text
+explicit extension contracts
+        ↓
+explicit extension points
+        ↓
+controlled discovery
+        ↓
+plugin conformance
+        ↓
+hardening
+        ↓
+public API classification
+        ↓
+compatibility / deprecation
+        ↓
+contract freeze
+        ↓
+1.0 qualification
+```
+
+No automatic plugin discovery is introduced before the explicit registries and extension contracts
+have been exercised directly.
+
+
+## LOT-27 exit criteria
+
+- [x] public `pypagekit.extensions` package exists
+- [x] immutable `ExtensionDescriptor` exists
+- [x] extension IDs use a stable portable namespaced format
+- [x] immutable `RendererExtension` contribution model exists
+- [x] immutable `RendererRegistry` exists
+- [x] registry ordering is deterministic
+- [x] registration is persistent rather than mutating
+- [x] duplicate extension IDs fail explicitly
+- [x] unknown extension IDs fail explicitly
+- [x] renderer factory output is validated before use
+- [x] built-in HtmlRenderer is available through an explicit default registry
+- [x] registered renderers integrate through existing BuildPlanner dependency injection
+- [x] extensions package remains independent from Typer and Rich
+- [x] no process-global mutable extension registry exists
+- [x] no package discovery or dynamic import-string loading exists
+- [x] no Python entry-point discovery exists yet
+- [x] package version advances to `0.7.0a1`
+- [x] GitHub CI qualification is fully green
+
+Next after qualification: **LOT-28 — Build & Component Extension Points**.

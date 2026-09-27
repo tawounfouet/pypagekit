@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-26 — Developer Diagnostics** (`0.6.0b2`).
+Current qualified milestone: **LOT-27 — Extension Contracts & Renderer Registry** (`0.7.0a1`). Next: **LOT-28 — Build & Component Extension Points**.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -48,7 +48,8 @@ Implemented so far:
 - Typer + Rich CLI foundations with installed shell and module entry points;
 - safe project scaffolding through `pypagekit new`;
 - local static development serving through `pypagekit serve`;
-- read-only developer diagnostics through `pypagekit doctor` and `pypagekit inspect`.
+- read-only developer diagnostics through `pypagekit doctor` and `pypagekit inspect`;
+- explicit renderer extension contracts and immutable registration through `pypagekit.extensions`.
 
 ## Quick example
 
@@ -174,14 +175,14 @@ python -m build
 0.3.x  Components              ✅ feature-complete
 0.4.x  Routing & Site           ✅ feature-complete
 0.5.x  Static Build              ✅ feature-complete
-0.6.x  CLI & Developer Workflow   ← current
-0.7.x  Extensibility
+0.6.x  CLI & Developer Workflow   ✅ feature-complete
+0.7.x  Extensibility               ← current
 0.8.x  Hardening
 0.9.x  API Freeze
 1.0.0  Stable
 ```
 
-The **`0.6.x — CLI & Developer Workflow`** line is now feature-complete through LOT-26.
+The **`0.6.x — CLI & Developer Workflow`** line is feature-complete. LOT-27 opens the `0.7.x — Extensibility` line.
 
 
 ## Controlled attributes
@@ -1112,3 +1113,69 @@ immutable result models
 
 Neither command modifies files, executes `site.py`, invokes subprocesses, or accesses the
 network.
+
+
+## Renderer extensibility
+
+LOT-27 opens the extensibility line with one concrete extension point rather than automatic plugin
+discovery.
+
+```python
+from pypagekit.extensions import (
+    ExtensionDescriptor,
+    RendererExtension,
+    RendererRegistry,
+)
+
+registry = RendererRegistry(
+    (
+        RendererExtension(
+            ExtensionDescriptor(
+                "acme.renderer.custom",
+                "Custom Renderer",
+                "1.0.0",
+            ),
+            CustomRenderer,
+        ),
+    )
+)
+
+renderer = registry.create("acme.renderer.custom")
+```
+
+The created renderer plugs into the existing build boundary:
+
+```python
+from pypagekit.build import BuildPlanner
+
+plan = BuildPlanner(renderer=renderer).plan(site)
+```
+
+The built-in HTML renderer is also exposed through an explicit registry:
+
+```python
+from pypagekit.extensions import (
+    HTML_RENDERER_EXTENSION_ID,
+    default_renderer_registry,
+)
+
+renderer = default_renderer_registry().create(HTML_RENDERER_EXTENSION_ID)
+```
+
+The architecture is deliberately explicit:
+
+```text
+ExtensionDescriptor
+        ↓
+RendererExtension
+        ↓
+RendererRegistry
+        ↓
+explicit create(id)
+        ↓
+Renderer
+        ↓
+BuildPlanner
+```
+
+LOT-27 does not scan installed packages or load Python entry points. Discovery remains LOT-29.

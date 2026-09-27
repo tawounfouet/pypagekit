@@ -55,7 +55,9 @@ from pypagekit.exceptions import (
     ComponentRegistryError,
     DuplicateAssetTargetError,
     DuplicateComponentRegistrationError,
+    DuplicateExtensionRegistrationError,
     ExistingOutputError,
+    ExtensionError,
     FilesystemOutputError,
     FilesystemWriteError,
     InvalidAssetError,
@@ -65,10 +67,13 @@ from pypagekit.exceptions import (
     InvalidBuildInputError,
     InvalidBuildTargetError,
     InvalidComponentNameError,
+    InvalidExtensionDescriptorError,
+    InvalidExtensionIdError,
     InvalidLayoutError,
     InvalidNavigationError,
     InvalidOutputRootError,
     InvalidRegisteredComponentError,
+    InvalidRendererExtensionError,
     InvalidRouteError,
     InvalidSiteError,
     InvalidSlotError,
@@ -79,9 +84,17 @@ from pypagekit.exceptions import (
     SecurityError,
     SerializationError,
     UnknownComponentError,
+    UnknownExtensionError,
     UnresolvedSlotError,
     UnsafeUrlError,
     UnsupportedNodeError,
+)
+from pypagekit.extensions import (
+    HTML_RENDERER_EXTENSION_ID,
+    ExtensionDescriptor,
+    RendererExtension,
+    RendererRegistry,
+    default_renderer_registry,
 )
 from pypagekit.project import ProjectFile, ProjectPlan, ProjectScaffolder
 from pypagekit.rendering import HtmlRenderer, Renderer
@@ -151,6 +164,10 @@ def test_package_imports() -> None:
     assert isinstance(Attributes(), Attributes)
     assert isinstance(ComponentRuntime(), ComponentRuntime)
     assert isinstance(ComponentRegistry(), ComponentRegistry)
+    descriptor = ExtensionDescriptor("acme.renderer.demo", "Demo Renderer", "1.0.0")
+    extension = RendererExtension(descriptor, HtmlRenderer)
+    assert isinstance(RendererRegistry((extension,)), RendererRegistry)
+    assert default_renderer_registry().ids == (HTML_RENDERER_EXTENSION_ID,)
     assert issubclass(Section, Component)
     assert issubclass(Card, Component)
     assert issubclass(Hero, Component)
@@ -170,6 +187,12 @@ def test_package_imports() -> None:
     assert issubclass(ComponentError, Exception)
     assert issubclass(ComponentRegistryError, ComponentError)
     assert issubclass(DuplicateComponentRegistrationError, ComponentRegistryError)
+    assert issubclass(ExtensionError, Exception)
+    assert issubclass(DuplicateExtensionRegistrationError, ExtensionError)
+    assert issubclass(InvalidExtensionDescriptorError, ExtensionError)
+    assert issubclass(InvalidExtensionIdError, InvalidExtensionDescriptorError)
+    assert issubclass(InvalidRendererExtensionError, ExtensionError)
+    assert issubclass(UnknownExtensionError, ExtensionError)
     assert issubclass(InvalidComponentNameError, ComponentRegistryError)
     assert issubclass(InvalidRegisteredComponentError, ComponentRegistryError)
     assert issubclass(InvalidRouteError, Exception)
@@ -191,4 +214,4 @@ def test_package_imports() -> None:
 
 
 def test_current_version() -> None:
-    assert __version__ == "0.6.0b2"
+    assert __version__ == "0.7.0a1"

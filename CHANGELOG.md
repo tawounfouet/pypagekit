@@ -4,6 +4,30 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.7.0a1]
+
+### Added
+
+- Public `pypagekit.extensions` package.
+- Immutable `ExtensionDescriptor` metadata contract.
+- Immutable `RendererExtension` contribution model.
+- Public immutable `RendererRegistry`.
+- Stable namespaced extension IDs using lowercase ASCII dot/hyphen segments.
+- Explicit persistent `register()`, lookup, and renderer creation APIs.
+- Built-in HTML renderer registration under `pypagekit.renderer.html`.
+- Direct integration coverage proving registered renderers flow through `BuildPlanner`.
+- Extension-specific validation and registry exceptions.
+
+### Design
+
+- LOT-27 introduces explicit contracts and explicit registration only.
+- No process-global mutable extension registry exists.
+- No package scanning, import-string loading, or Python entry-point discovery is performed.
+- Renderer factories are invoked only when explicitly selected.
+- A created renderer must expose a callable `render()` method before entering the build pipeline.
+- Existing `BuildPlanner(renderer=...)` dependency injection remains the execution boundary.
+- Plugin discovery is deferred to LOT-29 after additional extension points are exercised.
+
 ## [0.6.0b2]
 
 ### Added
