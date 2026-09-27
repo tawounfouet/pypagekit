@@ -4,6 +4,32 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.2.0b3]
+
+### Added
+
+- Public immutable `Attributes` model for controlled author-facing HTML hooks.
+- Support for `id`, ordered CSS class tokens, `title`, `data-*`, and `aria-*`.
+- Attribute support on `Heading`, `Paragraph`, `Container`, `Link`, and `Image`.
+- Internal domain-to-HTML attribute mapping that preserves intrinsic attributes such as `href`, `src`, and `alt`.
+- Validation for class tokens and data/ARIA attribute suffixes.
+- Integration and security coverage for deterministic rendering and attribute injection resistance.
+
+### Security
+
+- No arbitrary attribute dictionary is exposed by the domain model.
+- Event-handler attributes and inline `style` are not part of the LOT-10 API.
+- Author values remain semantic strings and are escaped at the HTML serialization boundary.
+- `data-*` and `aria-*` names are namespaced from validated lowercase suffixes.
+
+### Design
+
+- `Text` remains a text fragment and therefore has no attribute surface.
+- Intrinsic link/image attributes remain owned by `Link` and `Image`, not by `Attributes`.
+- Class token order is preserved; data/ARIA mappings are normalized deterministically.
+- The generic attribute surface remains intentionally narrow until real component use cases justify expansion.
+
+
 ## [0.2.0b2]
 
 ### Added
