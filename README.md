@@ -425,9 +425,7 @@ registry = ComponentRegistry({"message": Message})
 runtime = ComponentRuntime(registry=registry)
 renderer = HtmlRenderer(component_runtime=runtime)
 
-html = renderer.render(
-    ComponentRef("message", {"text": "Hello"})
-)
+html = renderer.render(ComponentRef("message", {"text": "Hello"}))
 ```
 
 Registration is persistent rather than mutating:
