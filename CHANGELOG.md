@@ -4,6 +4,27 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.0]
+
+### Release Qualification
+
+- Advance the package release version from `0.9.0rc1` to `1.0.0` without changing the frozen 1.0 public contract.
+- Mark distribution metadata as `Development Status :: 5 - Production/Stable`.
+- Add a LOT-37 release gate that verifies the exact LOT-36 `API_CONTRACT_1_0.json` Git blob.
+- Keep exact contract regeneration checks across Python 3.11, 3.12, 3.13, and 3.14.
+- Qualify wheel metadata, `py.typed`, dependency consistency, and installed CLI entry points.
+- Add clean-environment source-distribution installation smoke coverage.
+- Add an installed-wheel project scaffold smoke that executes generated `site.py` through `dist/index.html`.
+- Generated projects now declare the stable-line requirement `pypagekit>=1.0.0,<1.1`.
+- Retain extension compatibility API `0.7`; package and plugin contract versions remain independent.
+- Start 1.0.0 with zero active public deprecations.
+- Document the final release evidence and post-1.0 boundary in `RELEASE_1_0.md`.
+
+### Compatibility
+
+- No stable Python facade, signature, protocol, exception hierarchy, CLI shell contract, plugin entry-point group, built-in extension ID, typing contract, or minimum Python requirement changes from the LOT-36 baseline.
+- The Python/Typer `pypagekit.cli` facade remains explicitly provisional.
+
 ## [0.9.0rc1]
 
 ### Contract Freeze

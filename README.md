@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current qualified milestone: **LOT-36 — 1.0 Contract Freeze** (`0.9.0rc1`). The exact 1.0 public contract is frozen in `API_CONTRACT_1_0.json`. Next: **LOT-37 — 1.0 Release Qualification**.
+**PyPageKit 1.0.0 is qualified stable.** LOT-37 completed release, distribution, installation, CLI, scaffold, and Python 3.11–3.14 qualification without changing the LOT-36 public contract frozen in `API_CONTRACT_1_0.json`.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -181,11 +181,11 @@ python -m build
 0.6.x  CLI & Developer Workflow   ✅ feature-complete
 0.7.x  Extensibility               ✅ feature-complete
 0.8.x  Hardening                    ✅ feature-complete
-0.9.x  API Freeze                   ← current
-1.0.0  Stable
+0.9.x  API Freeze                   ✅ contract frozen
+1.0.0  Stable                       ✅ qualified
 ```
 
-The **`0.9.x — API Freeze`** line has reached its release candidate. LOT-36 freezes the exact 1.0 contract; LOT-37 is the final release qualification.
+The **`0.9.x — API Freeze`** line and **LOT-37 — 1.0 Release Qualification** are complete. The historical LOT-01 → LOT-37 implementation train is closed at `1.0.0`. See `RELEASE_1_0.md`.
 
 
 ## Controlled attributes
