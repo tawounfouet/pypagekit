@@ -1,5 +1,12 @@
 """Public PyPageKit exception hierarchy."""
 
+from .build import (
+    BuildError,
+    BuildTargetCollisionError,
+    InvalidBuildContentError,
+    InvalidBuildInputError,
+    InvalidBuildTargetError,
+)
 from .component import (
     ComponentCycleError,
     ComponentError,
@@ -75,6 +82,8 @@ from .rendering import (
 )
 
 __all__ = [
+    "BuildError",
+    "BuildTargetCollisionError",
     "ComponentCycleError",
     "ComponentError",
     "ComponentRegistryError",
@@ -87,6 +96,9 @@ __all__ = [
     "DuplicateSiteRouteError",
     "DuplicateSlotError",
     "InvalidAriaAttributeNameError",
+    "InvalidBuildContentError",
+    "InvalidBuildInputError",
+    "InvalidBuildTargetError",
     "InvalidAssetError",
     "InvalidAssetSourceError",
     "InvalidAssetTargetError",
