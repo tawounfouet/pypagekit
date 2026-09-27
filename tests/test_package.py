@@ -10,6 +10,8 @@ from pypagekit import (
     Layout,
     LayoutRegion,
     Link,
+    Navigation,
+    NavigationItem,
     Node,
     Page,
     Paragraph,
@@ -29,6 +31,7 @@ from pypagekit.exceptions import (
     InvalidAttributeError,
     InvalidComponentNameError,
     InvalidLayoutError,
+    InvalidNavigationError,
     InvalidRegisteredComponentError,
     InvalidRouteError,
     InvalidSlotError,
@@ -53,6 +56,11 @@ def test_package_imports() -> None:
     assert issubclass(ComponentRef, Content)
     assert issubclass(Layout, Component)
     assert issubclass(LayoutRegion, Content)
+    assert isinstance(Navigation(), Navigation)
+    assert isinstance(
+        NavigationItem("Root", Route("/", Page("Root"))),
+        NavigationItem,
+    )
     assert issubclass(Fragment, Content)
     assert issubclass(Slot, Content)
     assert issubclass(SlottedComponent, Component)
@@ -80,6 +88,7 @@ def test_package_imports() -> None:
     assert issubclass(MissingComponentRegistryError, ComponentRegistryError)
     assert issubclass(UnknownComponentError, ComponentRegistryError)
     assert issubclass(InvalidLayoutError, Exception)
+    assert issubclass(InvalidNavigationError, Exception)
     assert issubclass(InvalidSlotError, Exception)
     assert issubclass(UnresolvedSlotError, InvalidSlotError)
     assert issubclass(SerializationError, RenderingError)
@@ -93,4 +102,4 @@ def test_package_imports() -> None:
 
 
 def test_current_version() -> None:
-    assert __version__ == "0.4.0a1"
+    assert __version__ == "0.4.0a2"
