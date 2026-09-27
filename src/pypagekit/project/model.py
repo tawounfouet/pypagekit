@@ -18,9 +18,7 @@ class ProjectFile:
         if not isinstance(self.target, PurePosixPath) or isinstance(self.target, Path):
             raise TypeError("Project file target must be a pathlib.PurePosixPath.")
         if self.target.is_absolute() or self.target == PurePosixPath("."):
-            raise ProjectPathConflictError(
-                "Project file target must be non-empty and relative."
-            )
+            raise ProjectPathConflictError("Project file target must be non-empty and relative.")
         if any(part in {".", ".."} for part in self.target.parts):
             raise ProjectPathConflictError(
                 "Project file target must not contain traversal segments."
@@ -57,8 +55,7 @@ class ProjectPlan:
         if invalid_files:
             invalid_type = type(invalid_files[0]).__name__
             raise TypeError(
-                "Project plan files must contain only ProjectFile objects; "
-                f"got {invalid_type}."
+                f"Project plan files must contain only ProjectFile objects; got {invalid_type}."
             )
 
         seen_targets: set[PurePosixPath] = set()
