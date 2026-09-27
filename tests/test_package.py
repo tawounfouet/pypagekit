@@ -3,6 +3,7 @@ from pypagekit import (
     Component,
     Container,
     Content,
+    Fragment,
     Heading,
     Image,
     Layout,
@@ -11,6 +12,9 @@ from pypagekit import (
     Node,
     Page,
     Paragraph,
+    Slot,
+    SlotBindings,
+    SlottedComponent,
     Text,
     __version__,
 )
@@ -36,6 +40,10 @@ def test_package_imports() -> None:
     assert issubclass(Component, Content)
     assert issubclass(Layout, Component)
     assert issubclass(LayoutRegion, Content)
+    assert issubclass(Fragment, Content)
+    assert issubclass(Slot, Content)
+    assert issubclass(SlottedComponent, Component)
+    assert isinstance(SlotBindings(), SlotBindings)
     assert issubclass(Text, Content)
     assert issubclass(Heading, Content)
     assert issubclass(Paragraph, Content)
@@ -62,4 +70,4 @@ def test_package_imports() -> None:
 
 
 def test_current_version() -> None:
-    assert __version__ == "0.3.0b1"
+    assert __version__ == "0.3.0b2"
