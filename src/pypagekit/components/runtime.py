@@ -1,10 +1,18 @@
 """Runtime resolution for PyPageKit components."""
 
-from pypagekit.domain import Component, Container, Content, LayoutRegion
+from pypagekit.domain import (
+    Component,
+    Container,
+    Content,
+    Fragment,
+    LayoutRegion,
+    Slot,
+)
 from pypagekit.exceptions import (
     ComponentCycleError,
     ComponentResolutionDepthError,
     InvalidComponentResultError,
+    UnresolvedSlotError,
 )
 
 
@@ -50,6 +58,21 @@ class ComponentRuntime:
                 active_component_ids=active_component_ids,
                 component_depth=component_depth,
             )
+
+        if isinstance(content, Slot):
+            raise UnresolvedSlotError(
+                f"Slot '{content.name}' reached the component runtime unresolved."
+            )
+
+        if isinstance(content, Fragment):
+            resolved_children = self._resolve_children(
+                content.children,
+                active_component_ids=active_component_ids,
+                component_depth=component_depth,
+            )
+            if resolved_children is content.children:
+                return content
+            return Fragment(resolved_children)
 
         if isinstance(content, Container):
             resolved_children = self._resolve_children(
