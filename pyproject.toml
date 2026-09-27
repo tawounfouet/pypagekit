@@ -8,7 +8,10 @@ dynamic = ["version"]
 description = "Python-first framework for structured page composition and static site generation."
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+  "typer>=0.27.2,<0.28",
+  "rich>=15.0.0,<16",
+]
 keywords = ["python", "html", "static-site", "components", "web"]
 classifiers = [
   "Development Status :: 2 - Pre-Alpha",
@@ -20,6 +23,9 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Typing :: Typed",
 ]
+
+[project.scripts]
+pypagekit = "pypagekit.cli.app:main"
 
 [project.optional-dependencies]
 dev = [

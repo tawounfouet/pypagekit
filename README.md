@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-22 — Static Site Generation** (`0.5.0b2`).
+Current implementation milestone: **LOT-23 — CLI Foundations** (`0.6.0a1`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -44,7 +44,8 @@ Implemented so far:
 - declarative static assets with validated publish targets and no filesystem I/O;
 - deterministic in-memory build planning for pages and assets;
 - safe filesystem materialization of qualified build plans;
-- end-to-end static-site generation through a thin orchestration facade.
+- end-to-end static-site generation through a thin orchestration facade;
+- Typer + Rich CLI foundations with installed shell and module entry points.
 
 ## Quick example
 
@@ -170,14 +171,14 @@ python -m build
 0.3.x  Components              ✅ feature-complete
 0.4.x  Routing & Site           ✅ feature-complete
 0.5.x  Static Build              ✅ feature-complete
-0.6.x  CLI & Developer Workflow   ← next
+0.6.x  CLI & Developer Workflow   ← current
 0.7.x  Extensibility
 0.8.x  Hardening
 0.9.x  API Freeze
 1.0.0  Stable
 ```
 
-The `0.5.x — Static Build` line is now feature-complete. The next milestone is **LOT-23 — CLI Foundations** (`0.6.x`).
+The current release line is **`0.6.x — CLI & Developer Workflow`**. The next milestone is **LOT-24 — Project Scaffolding**.
 
 
 ## Controlled attributes
@@ -884,3 +885,44 @@ Static site
 ```
 
 The next release line, `0.6.x`, adds developer workflow and CLI surfaces on top of this stable programmatic pipeline.
+
+
+## CLI foundations
+
+LOT-23 introduces the official PyPageKit command-line boundary using Typer + Rich:
+
+```bash
+pypagekit --help
+pypagekit --version
+
+python -m pypagekit --help
+python -m pypagekit --version
+```
+
+The responsibility split is explicit:
+
+```text
+Typer
+  ↓
+CLI parsing / dispatch
+
+PyPageKit Core
+  ↓
+execution semantics
+
+Rich
+  ↓
+human terminal presentation
+```
+
+The shared Rich consoles disable markup and automatic highlighting by default so project values are treated as literal text unless presentation code explicitly opts into richer formatting.
+
+LOT-23 intentionally does not advertise workflow commands that are not implemented yet. The registration boundary is ready, and subsequent lots add commands only when their underlying workflow exists:
+
+```text
+LOT-24  pypagekit new
+LOT-25  pypagekit serve
+LOT-26  pypagekit inspect / doctor
+```
+
+The CLI layer remains optional from the core's architectural perspective: importing `pypagekit` does not import Typer or Rich, and domain/components/rendering/build packages are forbidden from depending on them.

@@ -67,3 +67,9 @@ jobs:
 
       - name: Smoke test installed package
         run: python -c "import pypagekit; print(pypagekit.__version__)"
+
+      - name: Smoke test installed CLI
+        run: |
+          pypagekit --version
+          pypagekit --help
+          python -m pypagekit --version
