@@ -21,7 +21,7 @@
 | LOT-17 | Navigation Model | QUALIFIED | `0.4.0a2` |
 | LOT-18 | Sitemap & Site Model | QUALIFIED | `0.4.0b1` |
 | LOT-19 | Assets | QUALIFIED | `0.5.0a1` |
-| LOT-20 | Build Pipeline | NOT STARTED | `0.5.0a2` |
+| LOT-20 | Build Pipeline | QUALIFIED | `0.5.0a2` |
 | LOT-21 | Filesystem Output | NOT STARTED | `0.5.0b1` |
 | LOT-22 | Static Site Generation | NOT STARTED | `0.5.0b2` |
 
@@ -394,4 +394,36 @@ Next: **LOT-20 — Build Pipeline**.
 - asset declarations are pure domain values with no I/O
 - target validation protects the future output boundary before filesystem planning exists
 - collection-level validation detects target collisions deterministically
+- GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
+
+
+## LOT-20 exit criteria
+
+- [x] public build-planning package exists
+- [x] immutable `PageBuildEntry` exists
+- [x] immutable `AssetBuildEntry` exists
+- [x] immutable `BuildPlan` exists
+- [x] public `BuildPlanner` exists
+- [x] planner accepts canonical `Site` and optional `Assets`
+- [x] root route maps to `index.html`
+- [x] non-root routes map to pretty `<segments>/index.html` targets
+- [x] page content is rendered into memory through the renderer contract
+- [x] custom renderer injection is supported
+- [x] asset entries retain canonical Asset declarations
+- [x] page and asset target order is deterministic
+- [x] exact target collisions fail explicitly
+- [x] file/directory prefix collisions fail explicitly
+- [x] page/page structural collisions fail explicitly
+- [x] non-portable route-derived targets fail explicitly
+- [x] collision validation happens before rendering
+- [x] existing HTML escaping/security remains active during planning
+- [x] no output root, mkdir, copy, write, or filesystem execution occurs
+
+Next: **LOT-21 — Filesystem Output**.
+
+## LOT-20 qualification evidence
+
+- Site + Assets produce a deterministic complete in-memory BuildPlan
+- route mapping and target safety are validated before materialization
+- collisions are caught before renderer work or filesystem execution
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
