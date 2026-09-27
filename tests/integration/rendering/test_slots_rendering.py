@@ -77,9 +77,7 @@ def test_slotted_component_renders_multiple_bound_nodes_without_extra_wrapper() 
         )
     )
 
-    assert HtmlRenderer().render(panel) == (
-        "<p>Before</p><p>One</p><p>Two</p><p>After</p>"
-    )
+    assert HtmlRenderer().render(panel) == ("<p>Before</p><p>One</p><p>Two</p><p>After</p>")
 
 
 def test_explicit_empty_slot_binding_renders_nothing() -> None:
@@ -133,9 +131,7 @@ def test_slot_binding_may_contain_existing_action_content() -> None:
         )
     )
 
-    assert HtmlRenderer().render(panel) == (
-        '<p>Before</p><a href="/docs">Docs</a><p>After</p>'
-    )
+    assert HtmlRenderer().render(panel) == ('<p>Before</p><a href="/docs">Docs</a><p>After</p>')
 
 
 def test_unresolved_slot_cannot_render_directly() -> None:
