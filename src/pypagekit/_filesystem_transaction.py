@@ -1,7 +1,6 @@
 """Internal rollback transaction for local filesystem materialization."""
 
 import os
-import shutil
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
@@ -63,7 +62,7 @@ class FilesystemTransaction:
             os.close(descriptor)
             backup = Path(backup_name)
             try:
-                shutil.copy2(destination, backup)
+                os.replace(destination, backup)
             except Exception:
                 backup.unlink(missing_ok=True)
                 raise
