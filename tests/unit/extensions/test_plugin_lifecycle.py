@@ -320,9 +320,7 @@ def test_unknown_plugin_cannot_be_activated() -> None:
 
 
 def test_duplicate_activation_request_is_rejected() -> None:
-    qualified = PluginLifecycle.from_discovery(
-        _discovery(renderers=(_renderer(),))
-    ).qualify()
+    qualified = PluginLifecycle.from_discovery(_discovery(renderers=(_renderer(),))).qualify()
 
     with pytest.raises(PluginActivationError, match="more than once"):
         qualified.activate(("acme.renderer.plain", "acme.renderer.plain"))
@@ -368,9 +366,9 @@ def test_deactivating_inactive_plugin_fails_explicitly() -> None:
 
 
 def test_active_renderer_is_usable_through_existing_registry_contract() -> None:
-    active = PluginLifecycle.from_discovery(
-        _discovery(renderers=(_renderer(),))
-    ).qualify().activate()
+    active = (
+        PluginLifecycle.from_discovery(_discovery(renderers=(_renderer(),))).qualify().activate()
+    )
 
     renderer = active.active_plugins.renderers.create("acme.renderer.plain")
 
