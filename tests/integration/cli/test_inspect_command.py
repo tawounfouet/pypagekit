@@ -19,9 +19,7 @@ def test_inspect_help_succeeds() -> None:
     result = runner.invoke(app, ["inspect", "--help"])
 
     assert result.exit_code == SUCCESS
-    assert "Describe a PyPageKit project without executing project code." in _plain(
-        result.output
-    )
+    assert "Describe a PyPageKit project without executing project code." in _plain(result.output)
 
 
 def test_inspect_describes_project(tmp_path: Path) -> None:
