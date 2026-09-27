@@ -28,7 +28,7 @@
 | LOT-24 | Project Scaffolding | QUALIFIED | `0.6.0a2` |
 | LOT-25 | Development Server | QUALIFIED | `0.6.0b1` |
 | LOT-26 | Developer Diagnostics | QUALIFIED | `0.6.0b2` |
-| LOT-27 | Extension Contracts & Renderer Registry | IN PROGRESS | `0.7.0a1` |
+| LOT-27 | Extension Contracts & Renderer Registry | IN QUALIFICATION | `0.7.0a1` |
 | LOT-28 | Build & Component Extension Points | NOT STARTED | `0.7.0a2` |
 | LOT-29 | Plugin Discovery & Entry Points | NOT STARTED | `0.7.0b1` |
 | LOT-30 | Plugin Lifecycle & Conformance | NOT STARTED | `0.7.0b2` |
@@ -714,3 +714,27 @@ contract freeze
 
 No automatic plugin discovery is introduced before the explicit registries and extension contracts
 have been exercised directly.
+
+
+## LOT-27 exit criteria
+
+- [x] public `pypagekit.extensions` package exists
+- [x] immutable `ExtensionDescriptor` exists
+- [x] extension IDs use a stable portable namespaced format
+- [x] immutable `RendererExtension` contribution model exists
+- [x] immutable `RendererRegistry` exists
+- [x] registry ordering is deterministic
+- [x] registration is persistent rather than mutating
+- [x] duplicate extension IDs fail explicitly
+- [x] unknown extension IDs fail explicitly
+- [x] renderer factory output is validated before use
+- [x] built-in HtmlRenderer is available through an explicit default registry
+- [x] registered renderers integrate through existing BuildPlanner dependency injection
+- [x] extensions package remains independent from Typer and Rich
+- [x] no process-global mutable extension registry exists
+- [x] no package discovery or dynamic import-string loading exists
+- [x] no Python entry-point discovery exists yet
+- [x] package version advances to `0.7.0a1`
+- [ ] GitHub CI qualification is fully green
+
+Next after qualification: **LOT-28 — Build & Component Extension Points**.
