@@ -4,6 +4,28 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.3.0b1]
+
+### Added
+
+- Public built-in reusable components: `Section`, `Card`, and `Hero`.
+- Immutable normalization of reusable-component child content.
+- Configurable semantic heading levels for built-in titled components.
+- Independent outer-container and heading `Attributes` hooks.
+- Support for nested custom components inside reusable components.
+- LOT-13 unit, integration, and security coverage.
+
+### Design
+
+- Built-in components are exported from `pypagekit.components`, not from the package root.
+- Reusable components compose only existing core primitives; they introduce no new rendering path.
+- `Section` composes a required heading followed by ordered child content.
+- `Card` composes an optional heading followed by ordered child content.
+- `Hero` composes a heading, optional paragraph body, and optional `Link` action.
+- No implicit CSS class, data marker, style, or JavaScript behavior is attached to built-in components.
+- Dynamic slots remain deferred to LOT-14.
+
+
 ## [0.3.0a2]
 
 ### Added
