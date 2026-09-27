@@ -2,7 +2,11 @@ from pathlib import Path
 
 import pytest
 
-from pypagekit.project import ProjectScaffolder, ProjectSymlinkError
+from pypagekit.project import (
+    ProjectPathConflictError,
+    ProjectScaffolder,
+    ProjectSymlinkError,
+)
 
 
 def test_scaffold_cannot_traverse_symlinked_parent(tmp_path: Path) -> None:
@@ -25,6 +29,19 @@ def test_force_never_follows_target_symlink(tmp_path: Path) -> None:
     (target / "README.md").symlink_to(outside)
 
     with pytest.raises(ProjectSymlinkError):
+        ProjectScaffolder().scaffold(target, force=True)
+
+    assert outside.read_text(encoding="utf-8") == "protected"
+
+
+def test_force_rejects_hardlinked_project_target(tmp_path: Path) -> None:
+    target = tmp_path / "demo"
+    target.mkdir()
+    outside = tmp_path / "outside.md"
+    outside.write_text("protected", encoding="utf-8")
+    (target / "README.md").hardlink_to(outside)
+
+    with pytest.raises(ProjectPathConflictError, match="hard-linked"):
         ProjectScaffolder().scaffold(target, force=True)
 
     assert outside.read_text(encoding="utf-8") == "protected"

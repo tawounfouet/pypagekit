@@ -7,6 +7,8 @@ from pypagekit.exceptions import UnsafeUrlError
 _LINK_SCHEMES = frozenset({"http", "https", "mailto"})
 _IMAGE_SCHEMES = frozenset({"http", "https"})
 _SCHEME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*$")
+_PERCENT_ESCAPE_RE = re.compile(r"%(?![0-9A-Fa-f]{2})")
+_ASCII_PERCENT_ESCAPE_RE = re.compile(r"%([0-9A-Fa-f]{2})")
 
 
 def validate_link_href(value: str) -> str:
@@ -40,8 +42,16 @@ def _validate_url_reference(
 
     if _contains_forbidden_control(value):
         raise UnsafeUrlError(f"Unsafe {context}: control characters are not allowed.")
+    if _PERCENT_ESCAPE_RE.search(value):
+        raise UnsafeUrlError(f"Unsafe {context}: invalid percent escape.")
 
-    candidate = value.strip()
+    decoded_ascii = _decode_ascii_percent_escapes(value)
+    if _contains_forbidden_control(decoded_ascii):
+        raise UnsafeUrlError(
+            f"Unsafe {context}: percent-encoded control characters are not allowed."
+        )
+
+    candidate = decoded_ascii.strip()
     colon_index = candidate.find(":")
     if colon_index < 0:
         return value
@@ -57,6 +67,16 @@ def _validate_url_reference(
         raise UnsafeUrlError(f"Unsafe {context}: URL scheme '{normalized_prefix}' is not allowed.")
 
     return value
+
+
+def _decode_ascii_percent_escapes(value: str) -> str:
+    def replace(match: re.Match[str]) -> str:
+        byte = int(match.group(1), 16)
+        if byte <= 0x7F:
+            return chr(byte)
+        return match.group(0)
+
+    return _ASCII_PERCENT_ESCAPE_RE.sub(replace, value)
 
 
 def _remove_ascii_whitespace(value: str) -> str:

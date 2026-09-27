@@ -197,6 +197,10 @@ def _validate_destination(
             raise ProjectPathConflictError(
                 f"Project target '{destination}' is an existing directory."
             )
+        if force and destination.stat(follow_symlinks=False).st_nlink > 1:
+            raise ProjectPathConflictError(
+                f"Project target '{destination}' must not be a hard-linked file."
+            )
         if not force:
             raise ExistingProjectFileError(f"Project target '{destination}' already exists.")
 

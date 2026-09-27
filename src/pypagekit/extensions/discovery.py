@@ -117,6 +117,17 @@ class EntryPointDiscovery:
             ) from exc
 
         normalized = sorted(entry_points, key=lambda item: (item.name, item.value))
+        duplicate_names = {
+            entry_point.name
+            for entry_point in normalized
+            if sum(item.name == entry_point.name for item in normalized) > 1
+        }
+        if duplicate_names:
+            names = ", ".join(sorted(duplicate_names))
+            raise InvalidPluginEntryPointError(
+                f"Duplicate plugin entry point name(s) in group '{group}': {names}."
+            )
+
         contributions: list[ExtensionT] = []
         for entry_point in normalized:
             if entry_point.group != group:

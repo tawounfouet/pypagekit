@@ -32,7 +32,7 @@
 | LOT-28 | Build & Component Extension Points | QUALIFIED | `0.7.0a2` |
 | LOT-29 | Plugin Discovery & Entry Points | QUALIFIED | `0.7.0b1` |
 | LOT-30 | Plugin Lifecycle & Conformance | QUALIFIED | `0.7.0b2` |
-| LOT-31 | Security Hardening | NOT STARTED | `0.8.0a1` |
+| LOT-31 | Security Hardening | QUALIFIED | `0.8.0a1` |
 | LOT-32 | Reliability & Failure Hardening | NOT STARTED | `0.8.0a2` |
 | LOT-33 | Performance & Scalability Hardening | NOT STARTED | `0.8.0b1` |
 | LOT-34 | Public API Inventory & Stability Classification | NOT STARTED | `0.9.0a1` |
@@ -839,3 +839,31 @@ Next after qualification: **LOT-30 — Plugin Lifecycle & Conformance**.
 After qualification, the `0.7.x — Extensibility` line is complete.
 
 Next: **LOT-31 — Security Hardening** (`0.8.0a1`).
+
+
+## LOT-31 exit criteria
+
+- [x] output-root ancestor symlinks are rejected before directory creation
+- [x] target symlinks remain rejected in overwrite mode
+- [x] multiply-linked output files are rejected before overwrite
+- [x] asset source/output identity conflicts include hard-link aliases
+- [x] scaffold force mode rejects multiply-linked generated files
+- [x] malformed URL percent escapes are rejected
+- [x] percent-encoded ASCII controls are rejected
+- [x] unsafe schemes hidden behind ASCII percent encoding are rejected
+- [x] approved URL values remain unmodified
+- [x] malformed development-server percent escapes fail closed
+- [x] development-server DEL characters fail closed
+- [x] development server emits no-store
+- [x] development server emits nosniff
+- [x] development server denies framing
+- [x] development server emits a baseline self-only CSP
+- [x] development server emits no-referrer policy
+- [x] duplicate plugin entry-point names fail before provider loading
+- [x] duplicate entry-point failure executes no duplicate providers
+- [x] existing symlink traversal protections remain covered
+- [x] existing HTML escaping and unsafe-scheme protections remain covered
+- [x] package version advances to `0.8.0a1`
+- [x] GitHub CI qualification is fully green
+
+Next after qualification: **LOT-32 — Reliability & Failure Hardening** (`0.8.0a2`).

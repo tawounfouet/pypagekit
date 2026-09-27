@@ -98,19 +98,13 @@ class FilesystemWriter:
         *,
         overwrite: bool,
     ) -> None:
+        _validate_output_root_symlinks(output_root)
         _validate_output_root(output_root)
 
         destinations = tuple(
             _destination(output_root, target)
             for target in plan.targets
         )
-
-        for destination in destinations:
-            _validate_destination(
-                output_root,
-                destination,
-                overwrite=overwrite,
-            )
 
         resolved_destinations = {
             destination.resolve(strict=False) for destination in destinations
@@ -136,9 +130,35 @@ class FilesystemWriter:
                     f"Asset source '{source}' is also a planned output destination."
                 )
 
+            for destination in destinations:
+                if destination.exists() and source.samefile(destination):
+                    raise AssetSourceOutputConflictError(
+                        f"Asset source '{source}' shares an inode with planned output "
+                        f"destination '{destination}'."
+                    )
+
+        for destination in destinations:
+            _validate_destination(
+                output_root,
+                destination,
+                overwrite=overwrite,
+            )
+
 
 def _destination(output_root: Path, target: PurePosixPath) -> Path:
     return output_root.joinpath(*target.parts)
+
+
+def _validate_output_root_symlinks(output_root: Path) -> None:
+    cursor = output_root
+    while True:
+        if cursor.is_symlink():
+            raise OutputSymlinkError(
+                f"Output root path '{cursor}' must not traverse a symlink."
+            )
+        if cursor == cursor.parent:
+            break
+        cursor = cursor.parent
 
 
 def _validate_output_root(output_root: Path) -> None:
@@ -181,6 +201,10 @@ def _validate_destination(
         if destination.is_dir():
             raise OutputPathConflictError(
                 f"Output target '{destination}' is an existing directory."
+            )
+        if overwrite and destination.stat(follow_symlinks=False).st_nlink > 1:
+            raise OutputPathConflictError(
+                f"Output target '{destination}' must not be a hard-linked file."
             )
         if not overwrite:
             raise ExistingOutputError(
