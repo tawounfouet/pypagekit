@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-14 — Slots & Composition** (`0.3.0b2`).
+Current implementation milestone: **LOT-15 — Component Registry** (`0.3.0b3`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -36,7 +36,8 @@ Implemented so far:
 - reusable component abstraction with explicit runtime resolution;
 - named structural layouts and regions without CSS assumptions;
 - built-in reusable components composed entirely from the existing domain primitives;
-- named slot composition with wrapperless multi-node injection.
+- named slot composition with wrapperless multi-node injection;
+- explicit immutable component registry and symbolic component references.
 
 ## Quick example
 
@@ -169,7 +170,7 @@ python -m build
 1.0.0  Stable
 ```
 
-The current release line is **`0.3.x — Components`**. The next milestone is **LOT-15 — Component Registry**.
+The `0.3.x — Components` line is now feature-complete. The next milestone is **LOT-16 — Route Model** (`0.4.x`).
 
 
 ## Controlled attributes
@@ -398,3 +399,61 @@ HtmlRenderer
 A missing optional slot uses its fallback, while a required slot must be explicitly bound. An explicit empty binding is valid and intentionally produces no content.
 
 Bindings are lexical: a component or layout resolves only the slots declared in its own template. Global component registration remains the concern of LOT-15.
+
+
+## Explicit component registry
+
+LOT-15 adds symbolic component references without introducing global mutable state:
+
+```python
+from dataclasses import dataclass
+
+from pypagekit import Component, ComponentRef, Content, Paragraph
+from pypagekit.components import ComponentRegistry, ComponentRuntime
+from pypagekit.rendering import HtmlRenderer
+
+
+@dataclass(frozen=True, slots=True)
+class Message(Component):
+    text: str
+
+    def compose(self) -> Content:
+        return Paragraph(self.text)
+
+
+registry = ComponentRegistry({"message": Message})
+runtime = ComponentRuntime(registry=registry)
+renderer = HtmlRenderer(component_runtime=runtime)
+
+html = renderer.render(
+    ComponentRef("message", {"text": "Hello"})
+)
+```
+
+Registration is persistent rather than mutating:
+
+```python
+base = ComponentRegistry()
+extended = base.register("message", Message)
+
+assert base.names == ()
+assert extended.names == ("message",)
+```
+
+The registry performs no dynamic imports and no implicit discovery:
+
+```text
+ComponentRef
+    ↓
+explicit ComponentRegistry
+    ↓ factory
+Component
+    ↓
+ComponentRuntime
+    ↓
+Content
+    ↓
+HtmlRenderer
+```
+
+With LOT-15 complete, the component layer is closed and the roadmap moves to routing and site composition.
