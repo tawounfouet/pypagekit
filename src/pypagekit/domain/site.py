@@ -84,9 +84,7 @@ class Site:
         normalized_routes = _normalize_site_routes(routes, owner="Site")
 
         if navigation is not None and not isinstance(navigation, Navigation):
-            raise InvalidSiteNavigationError(
-                "Site navigation must be a Navigation object or None."
-            )
+            raise InvalidSiteNavigationError("Site navigation must be a Navigation object or None.")
 
         _validate_navigation_membership(normalized_routes, navigation)
 
@@ -120,9 +118,7 @@ class Site:
             if route.path == normalized_path:
                 return route
 
-        raise UnknownSiteRouteError(
-            f"Route '{normalized_path}' does not belong to this site."
-        )
+        raise UnknownSiteRouteError(f"Route '{normalized_path}' does not belong to this site.")
 
 
 def _normalize_site_routes(
@@ -135,9 +131,7 @@ def _normalize_site_routes(
     except TypeError as exc:
         raise TypeError(f"{owner} routes must be an iterable of Route objects.") from exc
 
-    invalid_routes = [
-        route for route in normalized_routes if not isinstance(route, Route)
-    ]
+    invalid_routes = [route for route in normalized_routes if not isinstance(route, Route)]
     if invalid_routes:
         invalid_type = type(invalid_routes[0]).__name__
         raise InvalidSiteRouteError(
