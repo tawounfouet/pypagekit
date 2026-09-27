@@ -29,6 +29,17 @@ def validate_extension_id(extension_id: str) -> None:
         )
 
 
+def validate_extension_api_version(api_version: str) -> None:
+    """Validate a stable major.minor extension API version."""
+
+    if not isinstance(api_version, str):
+        raise TypeError("Extension API version must be a string.")
+    if not _EXTENSION_API_VERSION_RE.fullmatch(api_version):
+        raise InvalidExtensionDescriptorError(
+            "Extension API version must use '<major>.<minor>' numeric form."
+        )
+
+
 @dataclass(frozen=True, slots=True)
 class ExtensionDescriptor:
     """Stable metadata identifying one extension contribution."""
@@ -43,12 +54,7 @@ class ExtensionDescriptor:
         _validate_non_empty_literal(self.name, field_name="Extension name")
         _validate_non_empty_literal(self.version, field_name="Extension version")
         if self.api_version is not None:
-            if not isinstance(self.api_version, str):
-                raise TypeError("Extension API version must be a string or None.")
-            if not _EXTENSION_API_VERSION_RE.fullmatch(self.api_version):
-                raise InvalidExtensionDescriptorError(
-                    "Extension API version must use '<major>.<minor>' numeric form."
-                )
+            validate_extension_api_version(self.api_version)
 
 
 @dataclass(frozen=True, slots=True)
@@ -121,5 +127,6 @@ __all__ = [
     "PYPAGEKIT_EXTENSION_API_VERSION",
     "RendererExtension",
     "RendererFactory",
+    "validate_extension_api_version",
     "validate_extension_id",
 ]
