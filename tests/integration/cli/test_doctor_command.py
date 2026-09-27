@@ -32,9 +32,7 @@ def test_doctor_help_succeeds() -> None:
     result = runner.invoke(app, ["doctor", "--help"])
 
     assert result.exit_code == SUCCESS
-    assert "Check whether a local PyPageKit project environment is usable." in _plain(
-        result.output
-    )
+    assert "Check whether a local PyPageKit project environment is usable." in _plain(result.output)
 
 
 def test_doctor_succeeds_for_complete_project(
