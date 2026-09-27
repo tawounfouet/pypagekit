@@ -5,6 +5,8 @@ from pypagekit import (
     Content,
     Heading,
     Image,
+    Layout,
+    LayoutRegion,
     Link,
     Node,
     Page,
@@ -17,6 +19,7 @@ from pypagekit.domain import Action, Media
 from pypagekit.exceptions import (
     ComponentError,
     InvalidAttributeError,
+    InvalidLayoutError,
     RenderingError,
     SecurityError,
     SerializationError,
@@ -31,6 +34,8 @@ def test_package_imports() -> None:
     assert issubclass(Content, Node)
     assert issubclass(Page, Node)
     assert issubclass(Component, Content)
+    assert issubclass(Layout, Component)
+    assert issubclass(LayoutRegion, Content)
     assert issubclass(Text, Content)
     assert issubclass(Heading, Content)
     assert issubclass(Paragraph, Content)
@@ -42,6 +47,7 @@ def test_package_imports() -> None:
     assert isinstance(Attributes(), Attributes)
     assert isinstance(ComponentRuntime(), ComponentRuntime)
     assert issubclass(ComponentError, Exception)
+    assert issubclass(InvalidLayoutError, Exception)
     assert issubclass(SerializationError, RenderingError)
     assert issubclass(SecurityError, RenderingError)
     assert issubclass(UnsafeUrlError, SecurityError)
@@ -53,4 +59,4 @@ def test_package_imports() -> None:
 
 
 def test_current_version() -> None:
-    assert __version__ == "0.3.0a1"
+    assert __version__ == "0.3.0a2"
