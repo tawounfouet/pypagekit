@@ -41,7 +41,7 @@ __all__ = [
     "InvalidProjectTargetError",
     "ProjectError",
     "ProjectPathConflictError",
-    "ProjectScaffoldingError",
     "ProjectScaffoldWriteError",
+    "ProjectScaffoldingError",
     "ProjectSymlinkError",
 ]
