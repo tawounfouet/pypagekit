@@ -72,4 +72,5 @@ jobs:
         run: |
           pypagekit --version
           pypagekit --help
+          pypagekit new --help
           python -m pypagekit --version
