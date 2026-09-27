@@ -186,6 +186,29 @@ def test_discovery_sorts_entry_points_deterministically() -> None:
     )
 
 
+def test_duplicate_entry_point_names_fail_before_loading() -> None:
+    first = FakeEntryPoint(
+        "acme.renderer.plain",
+        RENDERER_ENTRY_POINT_GROUP,
+        "alpha:provider",
+        _renderer_extension,
+    )
+    second = FakeEntryPoint(
+        "acme.renderer.plain",
+        RENDERER_ENTRY_POINT_GROUP,
+        "zeta:provider",
+        _renderer_extension,
+    )
+
+    with pytest.raises(InvalidPluginEntryPointError, match="Duplicate plugin entry point"):
+        EntryPointDiscovery(
+            source=_source({RENDERER_ENTRY_POINT_GROUP: (first, second)})
+        ).discover()
+
+    assert not first.loaded
+    assert not second.loaded
+
+
 def test_invalid_entry_point_name_fails_before_loading() -> None:
     entry_point = FakeEntryPoint(
         "ACME renderer",
