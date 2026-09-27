@@ -10,7 +10,7 @@ from pypagekit.exceptions import (
     InvalidDataAttributeNameError,
 )
 
-_SUFFIX_RE = re.compile(r"^[a-z][a-z0-9-]*$")
+_SUFFIX_RE = re.compile(r"^[a-z](?:[a-z0-9]|-(?=[a-z0-9]))*$")
 
 
 @dataclass(frozen=True, slots=True, init=False)
