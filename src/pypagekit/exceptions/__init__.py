@@ -2,7 +2,11 @@
 
 from .domain import (
     DomainError,
+    InvalidAriaAttributeNameError,
+    InvalidAttributeError,
+    InvalidClassTokenError,
     InvalidContainerChildError,
+    InvalidDataAttributeNameError,
     InvalidHeadingLevelError,
     InvalidImageSourceError,
     InvalidLinkHrefError,
@@ -25,7 +29,11 @@ from .rendering import (
 
 __all__ = [
     "DomainError",
+    "InvalidAriaAttributeNameError",
+    "InvalidAttributeError",
+    "InvalidClassTokenError",
     "InvalidContainerChildError",
+    "InvalidDataAttributeNameError",
     "InvalidHeadingLevelError",
     "InvalidHtmlAttributeNameError",
     "InvalidHtmlTagError",
