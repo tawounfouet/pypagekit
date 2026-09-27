@@ -21,3 +21,35 @@ class BuildTargetCollisionError(BuildError):
 
 class InvalidBuildContentError(BuildError):
     """Raised when a renderer does not produce string page content."""
+
+
+class FilesystemOutputError(BuildError):
+    """Base exception for filesystem materialization failures."""
+
+
+class InvalidOutputRootError(FilesystemOutputError):
+    """Raised when an output root is not a usable directory path."""
+
+
+class ExistingOutputError(FilesystemOutputError):
+    """Raised when a target file exists and overwrite is disabled."""
+
+
+class OutputPathConflictError(FilesystemOutputError):
+    """Raised when existing filesystem structure conflicts with the plan."""
+
+
+class OutputSymlinkError(FilesystemOutputError):
+    """Raised when an output path would traverse or replace a symlink."""
+
+
+class InvalidAssetSourceForOutputError(FilesystemOutputError):
+    """Raised when an asset source cannot be copied as a regular file."""
+
+
+class AssetSourceOutputConflictError(FilesystemOutputError):
+    """Raised when an asset source is also its planned destination."""
+
+
+class FilesystemWriteError(FilesystemOutputError):
+    """Raised when filesystem I/O fails after successful preflight."""

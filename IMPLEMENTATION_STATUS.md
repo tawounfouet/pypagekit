@@ -22,7 +22,7 @@
 | LOT-18 | Sitemap & Site Model | QUALIFIED | `0.4.0b1` |
 | LOT-19 | Assets | QUALIFIED | `0.5.0a1` |
 | LOT-20 | Build Pipeline | QUALIFIED | `0.5.0a2` |
-| LOT-21 | Filesystem Output | NOT STARTED | `0.5.0b1` |
+| LOT-21 | Filesystem Output | QUALIFIED | `0.5.0b1` |
 | LOT-22 | Static Site Generation | NOT STARTED | `0.5.0b2` |
 
 ## LOT-07 exit criteria
@@ -426,4 +426,40 @@ Next: **LOT-21 — Filesystem Output**.
 - Site + Assets produce a deterministic complete in-memory BuildPlan
 - route mapping and target safety are validated before materialization
 - collisions are caught before renderer work or filesystem execution
+- GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
+
+
+## LOT-21 exit criteria
+
+- [x] public `FilesystemWriter` exists
+- [x] public immutable `FilesystemWriteResult` exists
+- [x] writer accepts only an already-qualified `BuildPlan`
+- [x] caller supplies an explicit pathlib output root
+- [x] missing output root is created deterministically
+- [x] nested target directories are created as required
+- [x] page content is written as UTF-8
+- [x] asset bytes are copied from declared sources
+- [x] existing targets fail by default
+- [x] overwrite requires explicit `overwrite=True`
+- [x] unplanned existing files remain untouched
+- [x] predictable conflicts are preflighted before any write
+- [x] missing asset sources fail before output-root creation
+- [x] non-file asset sources fail explicitly
+- [x] asset sources cannot overlap any planned output destination
+- [x] output root symlinks fail explicitly
+- [x] target-ancestor symlinks fail explicitly
+- [x] target-file symlinks fail even with overwrite enabled
+- [x] existing file/directory structural conflicts fail explicitly
+- [x] default execution uses exclusive file creation
+- [x] filesystem I/O failures are wrapped in build-specific errors
+- [x] writer does not re-render or mutate the build plan
+- [x] no global clean/delete behavior is introduced
+
+Next: **LOT-22 — Static Site Generation**.
+
+## LOT-21 qualification evidence
+
+- a qualified BuildPlan now materializes into an actual static output tree
+- predictable filesystem failures are rejected during preflight before writes begin
+- symlink and overwrite protections enforce the output-root safety boundary
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate

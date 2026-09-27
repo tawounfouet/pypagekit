@@ -33,19 +33,26 @@ from pypagekit.build import (
     AssetBuildEntry,
     BuildPlan,
     BuildPlanner,
+    FilesystemWriter,
+    FilesystemWriteResult,
     PageBuildEntry,
     route_output_target,
 )
 from pypagekit.components import Card, ComponentRegistry, ComponentRuntime, Hero, Section
 from pypagekit.domain import Action, Media
 from pypagekit.exceptions import (
+    AssetSourceOutputConflictError,
     BuildError,
     BuildTargetCollisionError,
     ComponentError,
     ComponentRegistryError,
     DuplicateAssetTargetError,
     DuplicateComponentRegistrationError,
+    ExistingOutputError,
+    FilesystemOutputError,
+    FilesystemWriteError,
     InvalidAssetError,
+    InvalidAssetSourceForOutputError,
     InvalidAttributeError,
     InvalidBuildContentError,
     InvalidBuildInputError,
@@ -53,11 +60,14 @@ from pypagekit.exceptions import (
     InvalidComponentNameError,
     InvalidLayoutError,
     InvalidNavigationError,
+    InvalidOutputRootError,
     InvalidRegisteredComponentError,
     InvalidRouteError,
     InvalidSiteError,
     InvalidSlotError,
     MissingComponentRegistryError,
+    OutputPathConflictError,
+    OutputSymlinkError,
     RenderingError,
     SecurityError,
     SerializationError,
@@ -76,6 +86,11 @@ def test_package_imports() -> None:
     assert isinstance(Assets([asset]), Assets)
     assert isinstance(BuildPlan(), BuildPlan)
     assert isinstance(BuildPlanner(), BuildPlanner)
+    assert isinstance(FilesystemWriter(), FilesystemWriter)
+    assert isinstance(
+        FilesystemWriteResult(Path("dist"), (), ()),
+        FilesystemWriteResult,
+    )
     assert isinstance(AssetBuildEntry(asset), AssetBuildEntry)
     assert issubclass(Content, Node)
     assert issubclass(Page, Node)
@@ -112,10 +127,18 @@ def test_package_imports() -> None:
     assert issubclass(Card, Component)
     assert issubclass(Hero, Component)
     assert issubclass(DuplicateAssetTargetError, InvalidAssetError)
+    assert issubclass(AssetSourceOutputConflictError, FilesystemOutputError)
     assert issubclass(BuildTargetCollisionError, BuildError)
+    assert issubclass(ExistingOutputError, FilesystemOutputError)
+    assert issubclass(FilesystemOutputError, BuildError)
+    assert issubclass(FilesystemWriteError, FilesystemOutputError)
     assert issubclass(InvalidBuildContentError, BuildError)
     assert issubclass(InvalidBuildInputError, BuildError)
+    assert issubclass(InvalidAssetSourceForOutputError, FilesystemOutputError)
     assert issubclass(InvalidBuildTargetError, BuildError)
+    assert issubclass(InvalidOutputRootError, FilesystemOutputError)
+    assert issubclass(OutputPathConflictError, FilesystemOutputError)
+    assert issubclass(OutputSymlinkError, FilesystemOutputError)
     assert issubclass(ComponentError, Exception)
     assert issubclass(ComponentRegistryError, ComponentError)
     assert issubclass(DuplicateComponentRegistrationError, ComponentRegistryError)
@@ -140,4 +163,4 @@ def test_package_imports() -> None:
 
 
 def test_current_version() -> None:
-    assert __version__ == "0.5.0a2"
+    assert __version__ == "0.5.0b1"

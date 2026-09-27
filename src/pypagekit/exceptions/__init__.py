@@ -1,11 +1,19 @@
 """Public PyPageKit exception hierarchy."""
 
 from .build import (
+    AssetSourceOutputConflictError,
     BuildError,
     BuildTargetCollisionError,
+    ExistingOutputError,
+    FilesystemOutputError,
+    FilesystemWriteError,
+    InvalidAssetSourceForOutputError,
     InvalidBuildContentError,
     InvalidBuildInputError,
     InvalidBuildTargetError,
+    InvalidOutputRootError,
+    OutputPathConflictError,
+    OutputSymlinkError,
 )
 from .component import (
     ComponentCycleError,
@@ -82,6 +90,7 @@ from .rendering import (
 )
 
 __all__ = [
+    "AssetSourceOutputConflictError",
     "BuildError",
     "BuildTargetCollisionError",
     "ComponentCycleError",
@@ -95,9 +104,13 @@ __all__ = [
     "DuplicateNavigationRouteError",
     "DuplicateSiteRouteError",
     "DuplicateSlotError",
+    "ExistingOutputError",
+    "FilesystemOutputError",
+    "FilesystemWriteError",
     "InvalidAriaAttributeNameError",
     "InvalidAssetError",
     "InvalidAssetSourceError",
+    "InvalidAssetSourceForOutputError",
     "InvalidAssetTargetError",
     "InvalidAttributeError",
     "InvalidBuildContentError",
@@ -122,6 +135,7 @@ __all__ = [
     "InvalidNavigationError",
     "InvalidNavigationLabelError",
     "InvalidNavigationRouteError",
+    "InvalidOutputRootError",
     "InvalidPageContentError",
     "InvalidPageLanguageError",
     "InvalidPageTitleError",
@@ -140,6 +154,8 @@ __all__ = [
     "MissingRequiredSlotError",
     "NavigationCycleError",
     "NavigationRouteMismatchError",
+    "OutputPathConflictError",
+    "OutputSymlinkError",
     "PyPageKitError",
     "RenderingError",
     "SecurityError",
