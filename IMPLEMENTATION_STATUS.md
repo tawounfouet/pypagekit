@@ -27,7 +27,7 @@
 | LOT-23 | CLI Foundations | QUALIFIED | `0.6.0a1` |
 | LOT-24 | Project Scaffolding | QUALIFIED | `0.6.0a2` |
 | LOT-25 | Development Server | QUALIFIED | `0.6.0b1` |
-| LOT-26 | Developer Diagnostics | IN QUALIFICATION | `0.6.0b2` |
+| LOT-26 | Developer Diagnostics | QUALIFIED | `0.6.0b2` |
 
 ## LOT-07 exit criteria
 
