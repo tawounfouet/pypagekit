@@ -4,11 +4,10 @@ from __future__ import annotations
 
 import os
 from contextlib import suppress
-from functools import partial
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path, PurePosixPath
-from typing import IO
+from typing import ClassVar
 from urllib.parse import unquote, urlsplit
 
 from .exceptions import DevelopmentServerBindError
@@ -26,16 +25,8 @@ class _StaticRequestHandler(SimpleHTTPRequestHandler):
     """Serve a static root without listings or symlink escapes."""
 
     server_version = "PyPageKitDevelopmentServer"
-
-    def __init__(
-        self,
-        *args: object,
-        directory: str,
-        **kwargs: object,
-    ) -> None:
-        self._root = Path(directory)
-        self._resolved_root = self._root.resolve(strict=True)
-        super().__init__(*args, directory=directory, **kwargs)
+    _root: ClassVar[Path]
+    _resolved_root: ClassVar[Path]
 
     def translate_path(self, path: str) -> str:
         """Translate one URL path while keeping it inside the static root."""
@@ -71,12 +62,11 @@ class _StaticRequestHandler(SimpleHTTPRequestHandler):
 
         return str(resolved_candidate)
 
-    def list_directory(self, path: str) -> IO[bytes] | None:
+    def list_directory(self, path: str | os.PathLike[str]) -> None:
         """Disable automatic directory listings."""
 
         del path
         self.send_error(HTTPStatus.NOT_FOUND, "Directory listing is disabled")
-        return None
 
     def end_headers(self) -> None:
         """Disable browser caching for local development responses."""
@@ -148,10 +138,7 @@ class DevelopmentServer:
         if not isinstance(config, DevelopmentServerConfig):
             raise TypeError("Development server config must be a DevelopmentServerConfig object.")
 
-        handler = partial(
-            _StaticRequestHandler,
-            directory=os.fspath(config.root),
-        )
+        handler = _handler_for(config.root)
 
         try:
             server = _DevelopmentHTTPServer((config.host, config.port), handler)
@@ -180,6 +167,17 @@ class DevelopmentServer:
             with suppress(KeyboardInterrupt):
                 session.serve_forever()
             return info
+
+
+def _handler_for(root: Path) -> type[_StaticRequestHandler]:
+    root_path = root
+    resolved_root = root.resolve(strict=True)
+
+    class BoundStaticRequestHandler(_StaticRequestHandler):
+        _root = root_path
+        _resolved_root = resolved_root
+
+    return BoundStaticRequestHandler
 
 
 def _path_contains_symlink(root: Path, candidate: Path) -> bool:
