@@ -37,10 +37,6 @@
   },
   "provisional_facades": {
     "pypagekit.cli": {
-      "exports": [
-        "app",
-        "main"
-      ],
       "frozen": false
     }
   },
@@ -79,7 +75,11 @@
       ],
       "symbols": {
         "Asset": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -96,7 +96,9 @@
                 "type": "pathlib.PurePosixPath"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -133,7 +135,11 @@
           }
         },
         "Assets": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -141,16 +147,11 @@
                 "name": "items",
                 "required": true,
                 "type": "tuple[pypagekit.Asset, Ellipsis]"
-              },
-              {
-                "init": true,
-                "kw_only": false,
-                "name": "_target_index",
-                "required": true,
-                "type": "tuple[tuple[str, pypagekit.Asset], Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -235,7 +236,11 @@
           }
         },
         "Attributes": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -273,7 +278,9 @@
                 "type": "tuple[tuple[str, str], Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -318,6 +325,10 @@
           }
         },
         "Component": {
+          "abstract": true,
+          "bases": [
+            "pypagekit.Content"
+          ],
           "kind": "class",
           "members": {
             "compose": {
@@ -341,7 +352,11 @@
           }
         },
         "ComponentRef": {
+          "bases": [
+            "pypagekit.Content"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -358,7 +373,9 @@
                 "type": "tuple[tuple[str, object], Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -397,7 +414,11 @@
           }
         },
         "Container": {
+          "bases": [
+            "pypagekit.Content"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -414,7 +435,9 @@
                 "type": "pypagekit.Attributes"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -431,20 +454,36 @@
                 "kind": "KEYWORD_ONLY",
                 "name": "attributes",
                 "required": false,
-                "value": "<pypagekit.domain.attributes.Attributes>"
+                "value": {
+                  "dataclass": "pypagekit.Attributes",
+                  "state": {
+                    "aria": [],
+                    "classes": [],
+                    "data": [],
+                    "id": null,
+                    "title": null
+                  }
+                }
               }
             ],
             "return": "None"
           }
         },
         "Content": {
+          "bases": [
+            "pypagekit.Node"
+          ],
           "kind": "class",
           "signature": {
             "parameters": []
           }
         },
         "Fragment": {
+          "bases": [
+            "pypagekit.Content"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -454,7 +493,9 @@
                 "type": "tuple[pypagekit.Content, Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -471,7 +512,11 @@
           }
         },
         "Heading": {
+          "bases": [
+            "pypagekit.Content"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -495,7 +540,9 @@
                 "type": "pypagekit.Attributes"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -518,14 +565,18 @@
                 "kind": "KEYWORD_ONLY",
                 "name": "attributes",
                 "required": false,
-                "value": "<dataclasses._HAS_DEFAULT_FACTORY_CLASS>"
+                "value": "<factory>"
               }
             ],
             "return": "None"
           }
         },
         "Image": {
+          "bases": [
+            "pypagekit.domain.Media"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -549,7 +600,9 @@
                 "type": "pypagekit.Attributes"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -571,13 +624,17 @@
                 "kind": "KEYWORD_ONLY",
                 "name": "attributes",
                 "required": false,
-                "value": "<dataclasses._HAS_DEFAULT_FACTORY_CLASS>"
+                "value": "<factory>"
               }
             ],
             "return": "None"
           }
         },
         "Layout": {
+          "abstract": true,
+          "bases": [
+            "pypagekit.Component"
+          ],
           "kind": "class",
           "members": {
             "compose": {
@@ -629,7 +686,11 @@
           }
         },
         "LayoutRegion": {
+          "bases": [
+            "pypagekit.Content"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -653,7 +714,9 @@
                 "type": "pypagekit.Attributes"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -676,14 +739,27 @@
                 "kind": "KEYWORD_ONLY",
                 "name": "attributes",
                 "required": false,
-                "value": "<pypagekit.domain.attributes.Attributes>"
+                "value": {
+                  "dataclass": "pypagekit.Attributes",
+                  "state": {
+                    "aria": [],
+                    "classes": [],
+                    "data": [],
+                    "id": null,
+                    "title": null
+                  }
+                }
               }
             ],
             "return": "None"
           }
         },
         "Link": {
+          "bases": [
+            "pypagekit.domain.Action"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -707,7 +783,9 @@
                 "type": "pypagekit.Attributes"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -729,14 +807,18 @@
                 "kind": "KEYWORD_ONLY",
                 "name": "attributes",
                 "required": false,
-                "value": "<dataclasses._HAS_DEFAULT_FACTORY_CLASS>"
+                "value": "<factory>"
               }
             ],
             "return": "None"
           }
         },
         "Navigation": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -746,7 +828,9 @@
                 "type": "tuple[pypagekit.NavigationItem, Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -805,7 +889,11 @@
           }
         },
         "NavigationItem": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -829,7 +917,9 @@
                 "type": "tuple[NavigationItem, Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -858,13 +948,20 @@
           }
         },
         "Node": {
+          "bases": [
+            "object"
+          ],
           "kind": "class",
           "signature": {
             "parameters": []
           }
         },
         "Page": {
+          "bases": [
+            "pypagekit.Node"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -895,7 +992,9 @@
                 "type": "str | None"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -932,7 +1031,11 @@
           }
         },
         "Paragraph": {
+          "bases": [
+            "pypagekit.Content"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -949,7 +1052,9 @@
                 "type": "pypagekit.Attributes"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -965,14 +1070,18 @@
                 "kind": "KEYWORD_ONLY",
                 "name": "attributes",
                 "required": false,
-                "value": "<dataclasses._HAS_DEFAULT_FACTORY_CLASS>"
+                "value": "<factory>"
               }
             ],
             "return": "None"
           }
         },
         "Route": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -989,7 +1098,9 @@
                 "type": "pypagekit.Page"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -1039,7 +1150,11 @@
           }
         },
         "Site": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -1061,16 +1176,11 @@
                 "name": "sitemap",
                 "required": true,
                 "type": "pypagekit.Sitemap"
-              },
-              {
-                "init": true,
-                "kw_only": false,
-                "name": "_route_index",
-                "required": true,
-                "type": "tuple[tuple[str, pypagekit.Route], Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -1162,7 +1272,11 @@
           }
         },
         "Sitemap": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -1172,7 +1286,9 @@
                 "type": "tuple[pypagekit.SitemapEntry, Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -1217,7 +1333,11 @@
           }
         },
         "SitemapEntry": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -1227,7 +1347,9 @@
                 "type": "pypagekit.Route"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -1271,7 +1393,11 @@
           }
         },
         "Slot": {
+          "bases": [
+            "pypagekit.Content"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -1295,7 +1421,9 @@
                 "type": "bool"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -1325,7 +1453,11 @@
           }
         },
         "SlotBindings": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -1335,7 +1467,9 @@
                 "type": "tuple[tuple[str, tuple[pypagekit.Content, Ellipsis]], Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -1407,6 +1541,10 @@
           }
         },
         "SlottedComponent": {
+          "abstract": true,
+          "bases": [
+            "pypagekit.Component"
+          ],
           "kind": "class",
           "members": {
             "compose": {
@@ -1458,7 +1596,11 @@
           }
         },
         "Text": {
+          "bases": [
+            "pypagekit.Content"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -1468,7 +1610,9 @@
                 "type": "str"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -1523,7 +1667,11 @@
       ],
       "symbols": {
         "AssetBuildEntry": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -1533,7 +1681,9 @@
                 "type": "pypagekit.Asset"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -1564,7 +1714,11 @@
           }
         },
         "BuildPlan": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -1581,7 +1735,9 @@
                 "type": "tuple[pypagekit.build.AssetBuildEntry, Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -1646,6 +1802,9 @@
           }
         },
         "BuildPlanner": {
+          "bases": [
+            "object"
+          ],
           "kind": "class",
           "members": {
             "plan": {
@@ -1703,6 +1862,9 @@
           }
         },
         "BuildPlannerProtocol": {
+          "bases": [
+            "typing.Protocol"
+          ],
           "kind": "protocol",
           "members": {
             "plan": {
@@ -1749,7 +1911,11 @@
           }
         },
         "FilesystemWriteResult": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -1773,7 +1939,9 @@
                 "type": "tuple[pathlib.Path, Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -1816,6 +1984,9 @@
           }
         },
         "FilesystemWriter": {
+          "bases": [
+            "object"
+          ],
           "kind": "class",
           "members": {
             "write": {
@@ -1857,7 +2028,11 @@
           }
         },
         "PageBuildEntry": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -1881,7 +2056,9 @@
                 "type": "str"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -1909,7 +2086,11 @@
           }
         },
         "StaticSiteGenerationResult": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -1926,7 +2107,9 @@
                 "type": "pypagekit.build.FilesystemWriteResult"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -2002,6 +2185,9 @@
           }
         },
         "StaticSiteGenerator": {
+          "bases": [
+            "object"
+          ],
           "kind": "class",
           "members": {
             "generate": {
@@ -2118,7 +2304,11 @@
       ],
       "symbols": {
         "Card": {
+          "bases": [
+            "pypagekit.Component"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -2156,7 +2346,9 @@
                 "type": "pypagekit.Attributes"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -2203,14 +2395,32 @@
                 "kind": "KEYWORD_ONLY",
                 "name": "attributes",
                 "required": false,
-                "value": "<pypagekit.domain.attributes.Attributes>"
+                "value": {
+                  "dataclass": "pypagekit.Attributes",
+                  "state": {
+                    "aria": [],
+                    "classes": [],
+                    "data": [],
+                    "id": null,
+                    "title": null
+                  }
+                }
               },
               {
                 "annotation": "pypagekit.Attributes",
                 "kind": "KEYWORD_ONLY",
                 "name": "heading_attributes",
                 "required": false,
-                "value": "<pypagekit.domain.attributes.Attributes>"
+                "value": {
+                  "dataclass": "pypagekit.Attributes",
+                  "state": {
+                    "aria": [],
+                    "classes": [],
+                    "data": [],
+                    "id": null,
+                    "title": null
+                  }
+                }
               }
             ],
             "return": "None"
@@ -2221,7 +2431,11 @@
           "type": "pypagekit.components.ComponentFactory"
         },
         "ComponentRegistry": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -2229,16 +2443,11 @@
                 "name": "entries",
                 "required": true,
                 "type": "tuple[tuple[str, pypagekit.components.ComponentFactory], Ellipsis]"
-              },
-              {
-                "init": true,
-                "kw_only": false,
-                "name": "_names",
-                "required": true,
-                "type": "tuple[str, Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -2356,6 +2565,9 @@
           }
         },
         "ComponentRuntime": {
+          "bases": [
+            "object"
+          ],
           "kind": "class",
           "members": {
             "max_depth": {
@@ -2426,7 +2638,11 @@
           }
         },
         "Hero": {
+          "bases": [
+            "pypagekit.Component"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -2471,7 +2687,9 @@
                 "type": "pypagekit.Attributes"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -2524,21 +2742,43 @@
                 "kind": "KEYWORD_ONLY",
                 "name": "attributes",
                 "required": false,
-                "value": "<pypagekit.domain.attributes.Attributes>"
+                "value": {
+                  "dataclass": "pypagekit.Attributes",
+                  "state": {
+                    "aria": [],
+                    "classes": [],
+                    "data": [],
+                    "id": null,
+                    "title": null
+                  }
+                }
               },
               {
                 "annotation": "pypagekit.Attributes",
                 "kind": "KEYWORD_ONLY",
                 "name": "heading_attributes",
                 "required": false,
-                "value": "<pypagekit.domain.attributes.Attributes>"
+                "value": {
+                  "dataclass": "pypagekit.Attributes",
+                  "state": {
+                    "aria": [],
+                    "classes": [],
+                    "data": [],
+                    "id": null,
+                    "title": null
+                  }
+                }
               }
             ],
             "return": "None"
           }
         },
         "Section": {
+          "bases": [
+            "pypagekit.Component"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -2576,7 +2816,9 @@
                 "type": "pypagekit.Attributes"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -2622,14 +2864,32 @@
                 "kind": "KEYWORD_ONLY",
                 "name": "attributes",
                 "required": false,
-                "value": "<pypagekit.domain.attributes.Attributes>"
+                "value": {
+                  "dataclass": "pypagekit.Attributes",
+                  "state": {
+                    "aria": [],
+                    "classes": [],
+                    "data": [],
+                    "id": null,
+                    "title": null
+                  }
+                }
               },
               {
                 "annotation": "pypagekit.Attributes",
                 "kind": "KEYWORD_ONLY",
                 "name": "heading_attributes",
                 "required": false,
-                "value": "<pypagekit.domain.attributes.Attributes>"
+                "value": {
+                  "dataclass": "pypagekit.Attributes",
+                  "state": {
+                    "aria": [],
+                    "classes": [],
+                    "data": [],
+                    "id": null,
+                    "title": null
+                  }
+                }
               }
             ],
             "return": "None"
@@ -2651,6 +2911,9 @@
       ],
       "symbols": {
         "DevelopmentServer": {
+          "bases": [
+            "object"
+          ],
           "kind": "class",
           "members": {
             "create": {
@@ -2705,7 +2968,11 @@
           "kind": "exception"
         },
         "DevelopmentServerConfig": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -2729,7 +2996,9 @@
                 "type": "int"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -2765,7 +3034,11 @@
           "kind": "exception"
         },
         "DevelopmentServerInfo": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -2789,7 +3062,9 @@
                 "type": "int"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -2832,6 +3107,9 @@
           }
         },
         "DevelopmentServerSession": {
+          "bases": [
+            "object"
+          ],
           "kind": "class",
           "members": {
             "close": {
@@ -2941,6 +3219,9 @@
       ],
       "symbols": {
         "DeveloperDiagnostics": {
+          "bases": [
+            "object"
+          ],
           "kind": "class",
           "members": {
             "run": {
@@ -2970,7 +3251,11 @@
           }
         },
         "DiagnosticCheck": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -3001,7 +3286,9 @@
                 "type": "str"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -3035,7 +3322,11 @@
           }
         },
         "DiagnosticReport": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -3045,7 +3336,9 @@
                 "type": "tuple[pypagekit.diagnostics.DiagnosticCheck, Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -3135,7 +3428,11 @@
           "kind": "exception"
         },
         "ProjectInspection": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -3208,7 +3505,9 @@
                 "type": "str | None"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -3279,6 +3578,9 @@
           }
         },
         "ProjectInspector": {
+          "bases": [
+            "object"
+          ],
           "kind": "class",
           "members": {
             "inspect": {
@@ -3345,13 +3647,20 @@
       ],
       "symbols": {
         "Action": {
+          "bases": [
+            "pypagekit.Content"
+          ],
           "kind": "class",
           "signature": {
             "parameters": []
           }
         },
         "Asset": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -3368,7 +3677,9 @@
                 "type": "pathlib.PurePosixPath"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -3405,7 +3716,11 @@
           }
         },
         "Assets": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -3413,16 +3728,11 @@
                 "name": "items",
                 "required": true,
                 "type": "tuple[pypagekit.Asset, Ellipsis]"
-              },
-              {
-                "init": true,
-                "kw_only": false,
-                "name": "_target_index",
-                "required": true,
-                "type": "tuple[tuple[str, pypagekit.Asset], Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -3507,7 +3817,11 @@
           }
         },
         "Attributes": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -3545,7 +3859,9 @@
                 "type": "tuple[tuple[str, str], Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -3590,6 +3906,10 @@
           }
         },
         "Component": {
+          "abstract": true,
+          "bases": [
+            "pypagekit.Content"
+          ],
           "kind": "class",
           "members": {
             "compose": {
@@ -3613,7 +3933,11 @@
           }
         },
         "ComponentRef": {
+          "bases": [
+            "pypagekit.Content"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -3630,7 +3954,9 @@
                 "type": "tuple[tuple[str, object], Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -3669,7 +3995,11 @@
           }
         },
         "Container": {
+          "bases": [
+            "pypagekit.Content"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -3686,7 +4016,9 @@
                 "type": "pypagekit.Attributes"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -3703,20 +4035,36 @@
                 "kind": "KEYWORD_ONLY",
                 "name": "attributes",
                 "required": false,
-                "value": "<pypagekit.domain.attributes.Attributes>"
+                "value": {
+                  "dataclass": "pypagekit.Attributes",
+                  "state": {
+                    "aria": [],
+                    "classes": [],
+                    "data": [],
+                    "id": null,
+                    "title": null
+                  }
+                }
               }
             ],
             "return": "None"
           }
         },
         "Content": {
+          "bases": [
+            "pypagekit.Node"
+          ],
           "kind": "class",
           "signature": {
             "parameters": []
           }
         },
         "Fragment": {
+          "bases": [
+            "pypagekit.Content"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -3726,7 +4074,9 @@
                 "type": "tuple[pypagekit.Content, Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -3743,7 +4093,11 @@
           }
         },
         "Heading": {
+          "bases": [
+            "pypagekit.Content"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -3767,7 +4121,9 @@
                 "type": "pypagekit.Attributes"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -3790,14 +4146,18 @@
                 "kind": "KEYWORD_ONLY",
                 "name": "attributes",
                 "required": false,
-                "value": "<dataclasses._HAS_DEFAULT_FACTORY_CLASS>"
+                "value": "<factory>"
               }
             ],
             "return": "None"
           }
         },
         "Image": {
+          "bases": [
+            "pypagekit.domain.Media"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -3821,7 +4181,9 @@
                 "type": "pypagekit.Attributes"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -3843,13 +4205,17 @@
                 "kind": "KEYWORD_ONLY",
                 "name": "attributes",
                 "required": false,
-                "value": "<dataclasses._HAS_DEFAULT_FACTORY_CLASS>"
+                "value": "<factory>"
               }
             ],
             "return": "None"
           }
         },
         "Layout": {
+          "abstract": true,
+          "bases": [
+            "pypagekit.Component"
+          ],
           "kind": "class",
           "members": {
             "compose": {
@@ -3901,7 +4267,11 @@
           }
         },
         "LayoutRegion": {
+          "bases": [
+            "pypagekit.Content"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -3925,7 +4295,9 @@
                 "type": "pypagekit.Attributes"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -3948,14 +4320,27 @@
                 "kind": "KEYWORD_ONLY",
                 "name": "attributes",
                 "required": false,
-                "value": "<pypagekit.domain.attributes.Attributes>"
+                "value": {
+                  "dataclass": "pypagekit.Attributes",
+                  "state": {
+                    "aria": [],
+                    "classes": [],
+                    "data": [],
+                    "id": null,
+                    "title": null
+                  }
+                }
               }
             ],
             "return": "None"
           }
         },
         "Link": {
+          "bases": [
+            "pypagekit.domain.Action"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -3979,7 +4364,9 @@
                 "type": "pypagekit.Attributes"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -4001,20 +4388,27 @@
                 "kind": "KEYWORD_ONLY",
                 "name": "attributes",
                 "required": false,
-                "value": "<dataclasses._HAS_DEFAULT_FACTORY_CLASS>"
+                "value": "<factory>"
               }
             ],
             "return": "None"
           }
         },
         "Media": {
+          "bases": [
+            "pypagekit.Content"
+          ],
           "kind": "class",
           "signature": {
             "parameters": []
           }
         },
         "Navigation": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -4024,7 +4418,9 @@
                 "type": "tuple[pypagekit.NavigationItem, Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -4083,7 +4479,11 @@
           }
         },
         "NavigationItem": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -4107,7 +4507,9 @@
                 "type": "tuple[NavigationItem, Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -4136,13 +4538,20 @@
           }
         },
         "Node": {
+          "bases": [
+            "object"
+          ],
           "kind": "class",
           "signature": {
             "parameters": []
           }
         },
         "Page": {
+          "bases": [
+            "pypagekit.Node"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -4173,7 +4582,9 @@
                 "type": "str | None"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -4210,7 +4621,11 @@
           }
         },
         "Paragraph": {
+          "bases": [
+            "pypagekit.Content"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -4227,7 +4642,9 @@
                 "type": "pypagekit.Attributes"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -4243,14 +4660,18 @@
                 "kind": "KEYWORD_ONLY",
                 "name": "attributes",
                 "required": false,
-                "value": "<dataclasses._HAS_DEFAULT_FACTORY_CLASS>"
+                "value": "<factory>"
               }
             ],
             "return": "None"
           }
         },
         "Route": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -4267,7 +4688,9 @@
                 "type": "pypagekit.Page"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -4317,7 +4740,11 @@
           }
         },
         "Site": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -4339,16 +4766,11 @@
                 "name": "sitemap",
                 "required": true,
                 "type": "pypagekit.Sitemap"
-              },
-              {
-                "init": true,
-                "kw_only": false,
-                "name": "_route_index",
-                "required": true,
-                "type": "tuple[tuple[str, pypagekit.Route], Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -4440,7 +4862,11 @@
           }
         },
         "Sitemap": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -4450,7 +4876,9 @@
                 "type": "tuple[pypagekit.SitemapEntry, Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -4495,7 +4923,11 @@
           }
         },
         "SitemapEntry": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -4505,7 +4937,9 @@
                 "type": "pypagekit.Route"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -4549,7 +4983,11 @@
           }
         },
         "Slot": {
+          "bases": [
+            "pypagekit.Content"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -4573,7 +5011,9 @@
                 "type": "bool"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -4603,7 +5043,11 @@
           }
         },
         "SlotBindings": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -4613,7 +5057,9 @@
                 "type": "tuple[tuple[str, tuple[pypagekit.Content, Ellipsis]], Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -4685,6 +5131,10 @@
           }
         },
         "SlottedComponent": {
+          "abstract": true,
+          "bases": [
+            "pypagekit.Component"
+          ],
           "kind": "class",
           "members": {
             "compose": {
@@ -4736,7 +5186,11 @@
           }
         },
         "Text": {
+          "bases": [
+            "pypagekit.Content"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -4746,7 +5200,9 @@
                 "type": "str"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -5566,7 +6022,11 @@
           "value": "pypagekit.components.builtin"
         },
         "BuildPlannerExtension": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -5583,7 +6043,9 @@
                 "type": "pypagekit.extensions.BuildPlannerFactory"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -5609,7 +6071,11 @@
           "type": "pypagekit.extensions.BuildPlannerFactory"
         },
         "BuildPlannerRegistry": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -5617,16 +6083,11 @@
                 "name": "entries",
                 "required": true,
                 "type": "tuple[pypagekit.extensions.BuildPlannerExtension, Ellipsis]"
-              },
-              {
-                "init": true,
-                "kw_only": false,
-                "name": "_ids",
-                "required": true,
-                "type": "tuple[str, Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -5743,7 +6204,11 @@
           "value": "pypagekit.components"
         },
         "ComponentExtension": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -5760,7 +6225,9 @@
                 "type": "tuple[tuple[str, pypagekit.components.ComponentFactory], Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -5797,7 +6264,11 @@
           }
         },
         "ComponentExtensionRegistry": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -5805,23 +6276,11 @@
                 "name": "entries",
                 "required": true,
                 "type": "tuple[pypagekit.extensions.ComponentExtension, Ellipsis]"
-              },
-              {
-                "init": true,
-                "kw_only": false,
-                "name": "_ids",
-                "required": true,
-                "type": "tuple[str, Ellipsis]"
-              },
-              {
-                "init": true,
-                "kw_only": false,
-                "name": "_component_names",
-                "required": true,
-                "type": "tuple[str, Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -5940,6 +6399,9 @@
           }
         },
         "EntryPointDiscovery": {
+          "bases": [
+            "object"
+          ],
           "kind": "class",
           "members": {
             "discover": {
@@ -5971,6 +6433,9 @@
           }
         },
         "EntryPointReference": {
+          "bases": [
+            "typing.Protocol"
+          ],
           "kind": "protocol",
           "members": {
             "group": {
@@ -6047,7 +6512,11 @@
           "type": "pypagekit.extensions.EntryPointSource"
         },
         "ExtensionDescriptor": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -6078,7 +6547,9 @@
                 "type": "str | None"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -6123,7 +6594,11 @@
           "value": "0.7"
         },
         "PluginDiscoveryResult": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -6147,7 +6622,9 @@
                 "type": "pypagekit.extensions.RendererRegistry"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -6183,7 +6660,11 @@
           }
         },
         "PluginLifecycle": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -6207,7 +6688,9 @@
                 "type": "str"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -6428,7 +6911,11 @@
           }
         },
         "PluginStatus": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -6459,7 +6946,9 @@
                 "type": "str | None"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -6499,7 +6988,11 @@
           "value": "pypagekit.renderers"
         },
         "RendererExtension": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -6516,7 +7009,9 @@
                 "type": "pypagekit.extensions.RendererFactory"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -6542,7 +7037,11 @@
           "type": "pypagekit.extensions.RendererFactory"
         },
         "RendererRegistry": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -6550,16 +7049,11 @@
                 "name": "entries",
                 "required": true,
                 "type": "tuple[pypagekit.extensions.RendererExtension, Ellipsis]"
-              },
-              {
-                "init": true,
-                "kw_only": false,
-                "name": "_ids",
-                "required": true,
-                "type": "tuple[str, Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -6765,7 +7259,11 @@
           "kind": "exception"
         },
         "ProjectFile": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -6782,7 +7280,9 @@
                 "type": "str"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "signature": {
@@ -6810,7 +7310,11 @@
           "kind": "exception"
         },
         "ProjectPlan": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -6834,7 +7338,9 @@
                 "type": "tuple[pypagekit.project.ProjectFile, Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -6877,7 +7383,11 @@
           }
         },
         "ProjectScaffoldResult": {
+          "bases": [
+            "object"
+          ],
           "dataclass": {
+            "eq": true,
             "fields": [
               {
                 "init": true,
@@ -6894,7 +7404,9 @@
                 "type": "tuple[pathlib.Path, Ellipsis]"
               }
             ],
-            "frozen": true
+            "frozen": true,
+            "order": false,
+            "unsafe_hash": false
           },
           "kind": "class",
           "members": {
@@ -6956,6 +7468,9 @@
           "kind": "exception"
         },
         "ProjectScaffolder": {
+          "bases": [
+            "object"
+          ],
           "kind": "class",
           "members": {
             "plan": {
@@ -7093,6 +7608,9 @@
       ],
       "symbols": {
         "HtmlRenderer": {
+          "bases": [
+            "object"
+          ],
           "kind": "class",
           "members": {
             "render": {
@@ -7130,6 +7648,9 @@
           }
         },
         "Renderer": {
+          "bases": [
+            "typing.Protocol"
+          ],
           "kind": "protocol",
           "members": {
             "render": {
