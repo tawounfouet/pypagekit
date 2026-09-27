@@ -5,6 +5,7 @@ import pytest
 from pypagekit import Node, Text
 from pypagekit.exceptions import (
     DuplicateExtensionRegistrationError,
+    ExtensionFactoryError,
     InvalidExtensionDescriptorError,
     InvalidExtensionIdError,
     InvalidRendererExtensionError,
@@ -119,3 +120,16 @@ def test_default_registry_exposes_html_renderer() -> None:
 
     assert registry.ids == (HTML_RENDERER_EXTENSION_ID,)
     assert registry.create(HTML_RENDERER_EXTENSION_ID).render(Text("<b>")) == "&lt;b&gt;"
+
+
+
+def test_renderer_factory_failure_is_wrapped_with_extension_context() -> None:
+    def broken_factory() -> PlainRenderer:
+        raise RuntimeError("boom")
+
+    registry = RendererRegistry((_extension(factory=broken_factory),))
+
+    with pytest.raises(ExtensionFactoryError, match="acme.renderer.plain") as exc_info:
+        registry.create("acme.renderer.plain")
+
+    assert isinstance(exc_info.value.__cause__, RuntimeError)
