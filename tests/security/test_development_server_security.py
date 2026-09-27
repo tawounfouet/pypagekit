@@ -44,9 +44,7 @@ def test_symlinked_directory_inside_root_is_not_served(tmp_path: Path) -> None:
     (outside / "secret.txt").write_text("protected", encoding="utf-8")
     (root / "linked").symlink_to(outside, target_is_directory=True)
 
-    session = DevelopmentServer().create(
-        DevelopmentServerConfig(root, port=0)
-    )
+    session = DevelopmentServer().create(DevelopmentServerConfig(root, port=0))
     thread = Thread(target=session.serve_forever, daemon=True)
     thread.start()
     try:
