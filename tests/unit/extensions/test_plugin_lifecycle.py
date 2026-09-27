@@ -235,7 +235,7 @@ def test_factory_exception_becomes_rejected_conformance() -> None:
     status = lifecycle.status("acme.renderer.plain")
 
     assert status.state is PluginState.REJECTED
-    assert status.reason == "renderer conformance failed with RuntimeError"
+    assert status.reason == "renderer conformance failed with ExtensionFactoryError"
 
 
 def test_global_extension_id_collision_is_rejected_across_kinds() -> None:
