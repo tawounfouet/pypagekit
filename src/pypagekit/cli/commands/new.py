@@ -37,9 +37,7 @@ def new_command(
         error_console.print(f"Project creation failed: {exc}")
         raise typer.Exit(code=EXECUTION_ERROR) from exc
 
-    console.print(
-        f"Created PyPageKit project '{result.project_name}' at {result.target_root}"
-    )
+    console.print(f"Created PyPageKit project '{result.project_name}' at {result.target_root}")
     for created_file in result.files:
         console.print(f"  {created_file.relative_to(result.target_root)}")
 
