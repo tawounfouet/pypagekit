@@ -47,9 +47,7 @@ def test_build_pipeline_rejects_asset_collision_with_page_target() -> None:
 
 def test_build_pipeline_performs_no_filesystem_write() -> None:
     missing = Path("/definitely/not/present/app.css")
-    assets = Assets(
-        [Asset(missing, PurePosixPath("assets/app.css"))]
-    )
+    assets = Assets([Asset(missing, PurePosixPath("assets/app.css"))])
 
     plan = BuildPlanner().plan(Site(), assets)
 
