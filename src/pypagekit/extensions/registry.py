@@ -1,7 +1,7 @@
 """Explicit immutable registries for extension contributions."""
 
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from pypagekit.build import BuildPlannerProtocol
 from pypagekit.components import ComponentRegistry
@@ -28,6 +28,7 @@ class BuildPlannerRegistry:
     """Immutable collection of explicitly supplied build planner extensions."""
 
     entries: tuple[BuildPlannerExtension, ...]
+    _ids: tuple[str, ...] = field(repr=False, compare=False)
 
     def __init__(self, extensions: Iterable[BuildPlannerExtension] | None = None) -> None:
         if extensions is None:
@@ -50,18 +51,23 @@ class BuildPlannerRegistry:
             normalized = tuple(sorted(collected, key=lambda item: item.descriptor.extension_id))
 
         object.__setattr__(self, "entries", normalized)
+        object.__setattr__(
+            self,
+            "_ids",
+            tuple(extension.descriptor.extension_id for extension in normalized),
+        )
 
     @property
     def ids(self) -> tuple[str, ...]:
         """Return registered extension IDs in deterministic order."""
 
-        return tuple(extension.descriptor.extension_id for extension in self.entries)
+        return self._ids
 
     def contains(self, extension_id: str) -> bool:
         """Return whether a build planner extension is registered."""
 
         validate_extension_id(extension_id)
-        return extension_id in self.ids
+        return _sorted_string_index(self._ids, extension_id) is not None
 
     def register(self, extension: BuildPlannerExtension) -> "BuildPlannerRegistry":
         """Return a new registry containing one additional build planner extension."""
@@ -81,9 +87,9 @@ class BuildPlannerRegistry:
         """Return the build planner extension registered under an ID."""
 
         validate_extension_id(extension_id)
-        for extension in self.entries:
-            if extension.descriptor.extension_id == extension_id:
-                return extension
+        index = _sorted_string_index(self._ids, extension_id)
+        if index is not None:
+            return self.entries[index]
         raise UnknownExtensionError(f"Unknown build planner extension: '{extension_id}'.")
 
     def create(self, extension_id: str) -> BuildPlannerProtocol:
@@ -110,6 +116,8 @@ class ComponentExtensionRegistry:
     """Immutable registry of component extension bundles."""
 
     entries: tuple[ComponentExtension, ...]
+    _ids: tuple[str, ...] = field(repr=False, compare=False)
+    _component_names: tuple[str, ...] = field(repr=False, compare=False)
 
     def __init__(self, extensions: Iterable[ComponentExtension] | None = None) -> None:
         if extensions is None:
@@ -144,24 +152,34 @@ class ComponentExtensionRegistry:
                     component_owners[name] = extension_id
 
         object.__setattr__(self, "entries", normalized)
+        object.__setattr__(
+            self,
+            "_ids",
+            tuple(extension.descriptor.extension_id for extension in normalized),
+        )
+        object.__setattr__(
+            self,
+            "_component_names",
+            tuple(sorted(name for extension in normalized for name, _ in extension.components)),
+        )
 
     @property
     def ids(self) -> tuple[str, ...]:
         """Return registered extension IDs in deterministic order."""
 
-        return tuple(extension.descriptor.extension_id for extension in self.entries)
+        return self._ids
 
     @property
     def component_names(self) -> tuple[str, ...]:
         """Return all contributed component names in deterministic order."""
 
-        return tuple(sorted(name for extension in self.entries for name, _ in extension.components))
+        return self._component_names
 
     def contains(self, extension_id: str) -> bool:
         """Return whether a component extension is registered."""
 
         validate_extension_id(extension_id)
-        return extension_id in self.ids
+        return _sorted_string_index(self._ids, extension_id) is not None
 
     def register(self, extension: ComponentExtension) -> "ComponentExtensionRegistry":
         """Return a new registry containing one additional component extension."""
@@ -181,9 +199,9 @@ class ComponentExtensionRegistry:
         """Return the component extension registered under an ID."""
 
         validate_extension_id(extension_id)
-        for extension in self.entries:
-            if extension.descriptor.extension_id == extension_id:
-                return extension
+        index = _sorted_string_index(self._ids, extension_id)
+        if index is not None:
+            return self.entries[index]
         raise UnknownExtensionError(f"Unknown component extension: '{extension_id}'.")
 
     def component_registry(self) -> ComponentRegistry:
@@ -200,6 +218,7 @@ class RendererRegistry:
     """Immutable collection of explicitly supplied renderer extensions."""
 
     entries: tuple[RendererExtension, ...]
+    _ids: tuple[str, ...] = field(repr=False, compare=False)
 
     def __init__(self, extensions: Iterable[RendererExtension] | None = None) -> None:
         if extensions is None:
@@ -220,18 +239,23 @@ class RendererRegistry:
             normalized = tuple(sorted(collected, key=lambda item: item.descriptor.extension_id))
 
         object.__setattr__(self, "entries", normalized)
+        object.__setattr__(
+            self,
+            "_ids",
+            tuple(extension.descriptor.extension_id for extension in normalized),
+        )
 
     @property
     def ids(self) -> tuple[str, ...]:
         """Return registered extension IDs in deterministic order."""
 
-        return tuple(extension.descriptor.extension_id for extension in self.entries)
+        return self._ids
 
     def contains(self, extension_id: str) -> bool:
         """Return whether a renderer extension is registered."""
 
         validate_extension_id(extension_id)
-        return extension_id in self.ids
+        return _sorted_string_index(self._ids, extension_id) is not None
 
     def register(self, extension: RendererExtension) -> "RendererRegistry":
         """Return a new registry containing one additional renderer extension."""
@@ -249,9 +273,9 @@ class RendererRegistry:
         """Return the renderer extension registered under an ID."""
 
         validate_extension_id(extension_id)
-        for extension in self.entries:
-            if extension.descriptor.extension_id == extension_id:
-                return extension
+        index = _sorted_string_index(self._ids, extension_id)
+        if index is not None:
+            return self.entries[index]
         raise UnknownExtensionError(f"Unknown renderer extension: '{extension_id}'.")
 
     def create(self, extension_id: str) -> Renderer:
@@ -271,6 +295,21 @@ class RendererRegistry:
                 "with a callable render() method."
             )
         return renderer
+
+
+def _sorted_string_index(values: tuple[str, ...], value: str) -> int | None:
+    low = 0
+    high = len(values)
+    while low < high:
+        middle = (low + high) // 2
+        candidate = values[middle]
+        if candidate < value:
+            low = middle + 1
+        elif candidate > value:
+            high = middle
+        else:
+            return middle
+    return None
 
 
 __all__ = [
