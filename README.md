@@ -1395,6 +1395,7 @@ from pypagekit.extensions import (
     RendererExtension,
 )
 
+
 def provide_renderer() -> RendererExtension:
     return RendererExtension(
         ExtensionDescriptor(
@@ -1465,9 +1466,7 @@ Only qualified plugins may become active:
 ```python
 active = qualified.activate()
 
-renderer = active.active_plugins.renderers.create(
-    "acme.renderer.custom"
-)
+renderer = active.active_plugins.renderers.create("acme.renderer.custom")
 ```
 
 Activation can also be selective:
