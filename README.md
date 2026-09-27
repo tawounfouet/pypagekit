@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-16 — Route Model** (`0.4.0a1`).
+Current implementation milestone: **LOT-17 — Navigation Model** (`0.4.0a2`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -38,7 +38,8 @@ Implemented so far:
 - built-in reusable components composed entirely from the existing domain primitives;
 - named slot composition with wrapperless multi-node injection;
 - explicit immutable component registry and symbolic component references;
-- canonical logical routes that bind URL paths to pages.
+- canonical logical routes that bind URL paths to pages;
+- immutable hierarchical navigation that references those routes directly.
 
 ## Quick example
 
@@ -171,7 +172,7 @@ python -m build
 1.0.0  Stable
 ```
 
-The current release line is **`0.4.x — Routing & Site`**. The next milestone is **LOT-17 — Navigation Model**.
+The current release line is **`0.4.x — Routing & Site`**. The next milestone is **LOT-18 — Sitemap & Site Model**.
 
 
 ## Controlled attributes
@@ -496,3 +497,51 @@ Route("/docs/api", page).segments
 A route cannot contain a query string, fragment, external URL, protocol-relative URL, empty internal segment, traversal segment, backslash separator, or ambiguous encoded separator.
 
 LOT-16 deliberately does not map routes to `index.html` files yet. Physical output planning belongs to the later build pipeline.
+
+
+## Navigation
+
+LOT-17 builds hierarchical navigation directly from route objects:
+
+```python
+from pypagekit import Navigation, NavigationItem, Page, Route
+
+
+docs = Route("/docs", Page("Docs"))
+api = Route("/docs/api", Page("API"))
+about = Route("/about", Page("About"))
+
+navigation = Navigation(
+    [
+        NavigationItem(
+            "Docs",
+            docs,
+            [
+                NavigationItem("API", api),
+            ],
+        ),
+        NavigationItem("About", about),
+    ]
+)
+```
+
+Navigation does not copy URL strings:
+
+```text
+Page
+  ↓
+Route
+  ↑
+NavigationItem
+  ↓
+Navigation
+```
+
+The tree is immutable and ordered. A route path may appear only once in one navigation tree, cycles are rejected, and traversal is deterministic:
+
+```python
+navigation.route_paths
+# ("/docs", "/docs/api", "/about")
+```
+
+Labels remain semantic strings. Navigation does not render HTML and does not decide which item is active. Site-wide consistency between routes, navigation, and sitemap belongs to LOT-18.
