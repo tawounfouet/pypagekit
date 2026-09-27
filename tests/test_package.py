@@ -29,15 +29,27 @@ from pypagekit import (
     Text,
     __version__,
 )
+from pypagekit.build import (
+    AssetBuildEntry,
+    BuildPlan,
+    BuildPlanner,
+    PageBuildEntry,
+    route_output_target,
+)
 from pypagekit.components import Card, ComponentRegistry, ComponentRuntime, Hero, Section
 from pypagekit.domain import Action, Media
 from pypagekit.exceptions import (
+    BuildError,
+    BuildTargetCollisionError,
     ComponentError,
     ComponentRegistryError,
     DuplicateAssetTargetError,
     DuplicateComponentRegistrationError,
     InvalidAssetError,
     InvalidAttributeError,
+    InvalidBuildContentError,
+    InvalidBuildInputError,
+    InvalidBuildTargetError,
     InvalidComponentNameError,
     InvalidLayoutError,
     InvalidNavigationError,
@@ -62,9 +74,15 @@ def test_package_imports() -> None:
     asset = Asset(Path("logo.png"), PurePosixPath("assets/logo.png"))
     assert isinstance(asset, Asset)
     assert isinstance(Assets([asset]), Assets)
+    assert isinstance(BuildPlan(), BuildPlan)
+    assert isinstance(BuildPlanner(), BuildPlanner)
+    assert isinstance(AssetBuildEntry(asset), AssetBuildEntry)
     assert issubclass(Content, Node)
     assert issubclass(Page, Node)
     root_route = Route("/", Page("Root"))
+    page_entry = PageBuildEntry(root_route, PurePosixPath("index.html"), "<html></html>")
+    assert isinstance(page_entry, PageBuildEntry)
+    assert route_output_target(root_route) == PurePosixPath("index.html")
     assert isinstance(root_route, Route)
     assert isinstance(Site([root_route]), Site)
     assert isinstance(Sitemap([root_route]), Sitemap)
@@ -94,6 +112,10 @@ def test_package_imports() -> None:
     assert issubclass(Card, Component)
     assert issubclass(Hero, Component)
     assert issubclass(DuplicateAssetTargetError, InvalidAssetError)
+    assert issubclass(BuildTargetCollisionError, BuildError)
+    assert issubclass(InvalidBuildContentError, BuildError)
+    assert issubclass(InvalidBuildInputError, BuildError)
+    assert issubclass(InvalidBuildTargetError, BuildError)
     assert issubclass(ComponentError, Exception)
     assert issubclass(ComponentRegistryError, ComponentError)
     assert issubclass(DuplicateComponentRegistrationError, ComponentRegistryError)
@@ -118,4 +140,4 @@ def test_package_imports() -> None:
 
 
 def test_current_version() -> None:
-    assert __version__ == "0.5.0a1"
+    assert __version__ == "0.5.0a2"

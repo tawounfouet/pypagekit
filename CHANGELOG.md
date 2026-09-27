@@ -4,6 +4,31 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.5.0a2]
+
+### Added
+
+- Public `pypagekit.build` planning API.
+- Immutable `PageBuildEntry`, `AssetBuildEntry`, and `BuildPlan`.
+- Public `BuildPlanner` consuming `Site` and optional `Assets`.
+- Pretty static route mapping: `/ -> index.html`, `/about -> about/index.html`.
+- Page rendering into in-memory build entries through an injected `Renderer`.
+- Deterministic page-first / asset-second target ordering.
+- Structural target-collision detection for exact duplicates and file/directory conflicts.
+- Build-specific validation and collision errors.
+- LOT-20 unit, integration, and security coverage.
+
+### Design
+
+- LOT-20 implements plan-first, write-second.
+- Page HTML is rendered into memory during planning, but no output file is created.
+- Asset build entries carry declarative source/target information without reading source bytes.
+- Target collisions are detected before page rendering starts.
+- Route-to-output mapping remains separate from logical `Route.path`.
+- `BuildPlan` contains no output root and exposes no write/execute operation.
+- Filesystem materialization remains LOT-21.
+
+
 ## [0.5.0a1]
 
 ### Added

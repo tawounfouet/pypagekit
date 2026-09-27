@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-19 — Assets** (`0.5.0a1`).
+Current implementation milestone: **LOT-20 — Build Pipeline** (`0.5.0a2`).
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -41,7 +41,8 @@ Implemented so far:
 - canonical logical routes that bind URL paths to pages;
 - immutable hierarchical navigation that references those routes directly;
 - a canonical Site aggregate with deterministic Sitemap projection;
-- declarative static assets with validated publish targets and no filesystem I/O.
+- declarative static assets with validated publish targets and no filesystem I/O;
+- deterministic in-memory build planning for pages and assets.
 
 ## Quick example
 
@@ -174,7 +175,7 @@ python -m build
 1.0.0  Stable
 ```
 
-The current release line is **`0.5.x — Static Build`**. The next milestone is **LOT-20 — Build Pipeline**.
+The current release line is **`0.5.x — Static Build`**. The next milestone is **LOT-21 — Filesystem Output**.
 
 
 ## Controlled attributes
@@ -655,3 +656,77 @@ assets.public_paths
 ```
 
 LOT-20 will consume `Site` + `Assets` to produce a build plan. Physical file operations remain deferred to LOT-21.
+
+
+## Build planning
+
+LOT-20 combines logical site structure and declarative assets into a complete in-memory build plan:
+
+```python
+from pathlib import Path, PurePosixPath
+
+from pypagekit import Asset, Assets, Page, Route, Site
+from pypagekit.build import BuildPlanner
+
+
+site = Site(
+    [
+        Route("/", Page("Home")),
+        Route("/about", Page("About")),
+    ]
+)
+
+assets = Assets(
+    [
+        Asset(
+            Path("static/logo.svg"),
+            PurePosixPath("assets/logo.svg"),
+        )
+    ]
+)
+
+plan = BuildPlanner().plan(site, assets)
+```
+
+Route mapping is deterministic and filesystem-independent:
+
+```text
+/          -> index.html
+/about     -> about/index.html
+/docs/api  -> docs/api/index.html
+```
+
+The planner produces:
+
+```text
+Site ------------------┐
+                       │
+                       v
+                  BuildPlanner
+                       │
+Assets ----------------┘
+                       │
+                       v
+                    BuildPlan
+              ┌────────┴────────┐
+              v                 v
+      PageBuildEntry[]   AssetBuildEntry[]
+      target + HTML      source + target
+```
+
+The HTML is already rendered into memory, but no output directory or file is created. Target collisions are validated before rendering, including exact collisions and file/directory conflicts.
+
+For example, these plans are rejected before any write occurs:
+
+```text
+page  -> index.html
+asset -> index.html                 collision
+
+page  -> docs/index.html
+asset -> docs                       file/directory collision
+
+page  -> docs/index.html
+page  -> docs/index.html/index.html file/directory collision
+```
+
+LOT-21 will execute an already-qualified `BuildPlan` against an explicit output root.
