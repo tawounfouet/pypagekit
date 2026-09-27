@@ -1,0 +1,54 @@
+schema_version = 1
+package_version = "0.9.0b1"
+
+[release_policy]
+pre_1_0_freeze_line = "0.9"
+stable_major_line = "1"
+semantic_versioning = true
+
+[stable_candidate]
+compatible_changes = [
+  "add new public symbol",
+  "add optional keyword-only parameter with backward-compatible default",
+  "widen accepted input without changing existing semantics",
+  "add subclass or more specific exception beneath an existing documented base",
+  "add CLI command or optional CLI flag without changing existing command behavior",
+  "add plugin metadata that older compatible consumers may safely ignore",
+]
+breaking_changes = [
+  "remove or rename public facade export",
+  "move canonical public import path without compatibility alias",
+  "remove accepted argument or make an optional argument required",
+  "change positional or keyword calling convention incompatibly",
+  "narrow accepted input or change established output semantics",
+  "change documented exception family incompatibly",
+  "remove or rename CLI command, option, or exit-code meaning",
+  "change plugin entry-point group or built-in extension ID",
+  "change extension API compatibility line without explicit migration",
+  "raise minimum Python version inside a stable major without documented support policy change",
+]
+
+[provisional_public]
+pre_1_0_rule = "May change during 0.9.x when documented in changelog and migration guidance."
+post_1_0_rule = "Must be promoted to stable or explicitly remain provisional before 1.0 contract freeze."
+
+[operational_contract]
+rule = "User-visible operational names and semantics follow the same compatibility discipline as stable Python facades once frozen."
+
+[deprecation]
+warning_category = "DeprecationWarning"
+required_fields = ["id", "kind", "public_path", "since", "replacement", "removal"]
+pre_1_0_minimum = "During 0.9.x, preserve an alias when practical through the 1.0 release candidate."
+post_1_0_minimum = "A stable API deprecated in 1.x remains available until the next major release."
+message_fields = ["public_path", "since", "replacement", "removal"]
+silent_removal_allowed = false
+
+[migration]
+required_for_breaking_change = true
+canonical_guide = "MIGRATION_0_9_TO_1_0.md"
+changelog_required = true
+compatibility_alias_preferred = true
+
+[exceptions]
+security_exception = "An urgent security fix may override normal deprecation timing when preserving behavior would keep users exposed; the change must still be documented."
+invalid_contract_exception = "A behavior that was never part of the inventoried public contract may be corrected without a compatibility alias."

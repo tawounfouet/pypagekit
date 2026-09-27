@@ -302,4 +302,4 @@ def test_package_imports() -> None:
 
 
 def test_current_version() -> None:
-    assert __version__ == "0.9.0a1"
+    assert __version__ == "0.9.0b1"

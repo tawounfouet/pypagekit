@@ -36,7 +36,7 @@
 | LOT-32 | Reliability & Failure Hardening | QUALIFIED | `0.8.0a2` |
 | LOT-33 | Performance & Scalability Hardening | QUALIFIED | `0.8.0b1` |
 | LOT-34 | Public API Inventory & Stability Classification | QUALIFIED | `0.9.0a1` |
-| LOT-35 | Compatibility, Deprecation & Migration | NOT STARTED | `0.9.0b1` |
+| LOT-35 | Compatibility, Deprecation & Migration | QUALIFIED | `0.9.0b1` |
 | LOT-36 | 1.0 Contract Freeze | NOT STARTED | `0.9.0rc1` |
 | LOT-37 | 1.0 Release Qualification | NOT STARTED | `1.0.0` |
 
@@ -965,3 +965,37 @@ Next: **LOT-34 — Public API Inventory & Stability Classification** (`0.9.0a1`)
 - [x] GitHub CI qualification is fully green
 
 Next after qualification: **LOT-35 — Compatibility, Deprecation & Migration** (`0.9.0b1`).
+
+
+## LOT-35 exit criteria
+
+- [x] canonical compatibility policy exists
+- [x] machine-readable compatibility policy exists
+- [x] canonical 0.9.x → 1.0 migration guide exists
+- [x] machine-readable deprecation registry exists
+- [x] stable-candidate compatible changes are classified
+- [x] stable-candidate breaking changes are classified
+- [x] provisional-public evolution rules are explicit
+- [x] operational-contract evolution rules are explicit
+- [x] post-1.0 semantic-versioning policy is explicit
+- [x] silent stable-API removal is forbidden
+- [x] future public deprecations require structured metadata
+- [x] standard `DeprecationWarning` is the canonical warning category
+- [x] internal warning helper emits deterministic migration context
+- [x] post-1.0 deprecations remain supported through the current major line
+- [x] compatibility aliases are preferred for public renames/moves
+- [x] CLI compatibility rules cover commands/options/exit semantics
+- [x] plugin compatibility rules cover entry-point groups and extension API line
+- [x] exception hierarchy compatibility is documented
+- [x] typing compatibility is documented
+- [x] security exception to deprecation timing is narrowly defined
+- [x] active public deprecation registry is empty at 0.9.0b1
+- [x] architecture tests validate compatibility artifact versions
+- [x] architecture tests validate future deprecation records
+- [x] migration guide directs users away from deep imports
+- [x] migration guide enables deprecation warnings in CI
+- [x] migration guide covers plugin authors
+- [x] package version advances to `0.9.0b1`
+- [x] GitHub CI qualification is fully green
+
+Next after qualification: **LOT-36 — 1.0 Contract Freeze** (`0.9.0rc1`).
