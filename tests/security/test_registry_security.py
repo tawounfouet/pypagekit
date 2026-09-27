@@ -28,9 +28,7 @@ def test_registered_component_text_still_uses_html_escaping() -> None:
     registry = ComponentRegistry({"message": Message})
     renderer = HtmlRenderer(component_runtime=ComponentRuntime(registry=registry))
 
-    html = renderer.render(
-        ComponentRef("message", {"text": "<script>alert(1)</script>"})
-    )
+    html = renderer.render(ComponentRef("message", {"text": "<script>alert(1)</script>"}))
 
     assert "<script" not in html.lower()
     assert "&lt;script&gt;" in html
