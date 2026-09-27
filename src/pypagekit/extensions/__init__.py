@@ -1,5 +1,13 @@
 """Public extension contracts for PyPageKit."""
 
+from .defaults import (
+    BUILD_PLANNER_EXTENSION_ID,
+    BUILTIN_COMPONENTS_EXTENSION_ID,
+    HTML_RENDERER_EXTENSION_ID,
+    default_build_planner_registry,
+    default_component_extension_registry,
+    default_renderer_registry,
+)
 from .discovery import (
     BUILD_PLANNER_ENTRY_POINT_GROUP,
     COMPONENT_ENTRY_POINT_GROUP,
@@ -8,14 +16,6 @@ from .discovery import (
     EntryPointReference,
     EntryPointSource,
     PluginDiscoveryResult,
-)
-from .defaults import (
-    BUILD_PLANNER_EXTENSION_ID,
-    BUILTIN_COMPONENTS_EXTENSION_ID,
-    HTML_RENDERER_EXTENSION_ID,
-    default_build_planner_registry,
-    default_component_extension_registry,
-    default_renderer_registry,
 )
 from .model import (
     BuildPlannerExtension,
@@ -44,9 +44,9 @@ __all__ = [
     "EntryPointReference",
     "EntryPointSource",
     "ExtensionDescriptor",
+    "PluginDiscoveryResult",
     "RendererExtension",
     "RendererFactory",
-    "PluginDiscoveryResult",
     "RendererRegistry",
     "default_build_planner_registry",
     "default_component_extension_registry",
