@@ -101,6 +101,10 @@ class FilesystemWriter:
                 overwrite=overwrite,
             )
 
+        resolved_destinations = {
+            destination.resolve(strict=False) for destination in destinations
+        }
+
         for entry in plan.assets:
             source = entry.asset.source
             if source.is_symlink() and not source.exists():
@@ -116,10 +120,9 @@ class FilesystemWriter:
                     f"Asset source '{source}' must be a regular file."
                 )
 
-            destination = _destination(output_root, entry.target)
-            if source.resolve() == destination.resolve(strict=False):
+            if source.resolve() in resolved_destinations:
                 raise AssetSourceOutputConflictError(
-                    f"Asset source '{source}' is also its planned output destination."
+                    f"Asset source '{source}' is also a planned output destination."
                 )
 
 
