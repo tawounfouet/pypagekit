@@ -25,14 +25,14 @@ def normalize_route_path(path: str) -> str:
         raise InvalidRoutePathError("Route path must use forward slashes only.")
     if _PERCENT_ESCAPE_RE.search(path):
         raise InvalidRoutePathError("Route path contains an invalid percent escape.")
+    if "?" in path:
+        raise InvalidRoutePathError("Route path must not contain a query string.")
+    if "#" in path:
+        raise InvalidRoutePathError("Route path must not contain a fragment.")
 
     parsed = urlsplit(path)
     if parsed.scheme or parsed.netloc:
         raise InvalidRoutePathError("Route path must be internal, not an external URL.")
-    if parsed.query:
-        raise InvalidRoutePathError("Route path must not contain a query string.")
-    if parsed.fragment:
-        raise InvalidRoutePathError("Route path must not contain a fragment.")
     if not parsed.path.startswith("/"):
         raise InvalidRoutePathError("Route path must be absolute and start with '/'.")
     if parsed.path.startswith("//"):
@@ -40,7 +40,21 @@ def normalize_route_path(path: str) -> str:
     if "//" in parsed.path:
         raise InvalidRoutePathError("Route path must not contain empty path segments.")
 
-    decoded_segments = unquote(parsed.path).split("/")
+    decoded_path = unquote(parsed.path)
+    if _CONTROL_RE.search(decoded_path):
+        raise InvalidRoutePathError(
+            "Route path must not encode control characters."
+        )
+    if "\\" in decoded_path:
+        raise InvalidRoutePathError(
+            "Route path must not encode backslash separators."
+        )
+    if decoded_path.count("/") != parsed.path.count("/"):
+        raise InvalidRoutePathError(
+            "Route path must not encode slash separators."
+        )
+
+    decoded_segments = decoded_path.split("/")
     if any(segment in {".", ".."} for segment in decoded_segments):
         raise InvalidRoutePathError("Route path must not contain '.' or '..' segments.")
 
