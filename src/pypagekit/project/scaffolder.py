@@ -229,6 +229,14 @@ python site.py
 ```
 
 Generated output is written to `dist/`.
+
+## Preview
+
+```bash
+pypagekit serve
+```
+
+The development server serves `dist/` at `http://127.0.0.1:8000` by default.
 """
 
 
