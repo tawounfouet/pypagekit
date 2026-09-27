@@ -105,9 +105,7 @@ def test_discovery_constructor_performs_no_enumeration_or_loading() -> None:
         _renderer_extension,
     )
 
-    EntryPointDiscovery(
-        source=_source({RENDERER_ENTRY_POINT_GROUP: (entry_point,)}, calls)
-    )
+    EntryPointDiscovery(source=_source({RENDERER_ENTRY_POINT_GROUP: (entry_point,)}, calls))
 
     assert calls == []
     assert not entry_point.loaded
@@ -197,9 +195,7 @@ def test_invalid_entry_point_name_fails_before_loading() -> None:
     )
 
     with pytest.raises(InvalidPluginEntryPointError, match="valid extension ID"):
-        EntryPointDiscovery(
-            source=_source({RENDERER_ENTRY_POINT_GROUP: (entry_point,)})
-        ).discover()
+        EntryPointDiscovery(source=_source({RENDERER_ENTRY_POINT_GROUP: (entry_point,)})).discover()
 
     assert not entry_point.loaded
 
@@ -213,9 +209,7 @@ def test_wrong_group_from_source_is_rejected_before_loading() -> None:
     )
 
     with pytest.raises(InvalidPluginEntryPointError, match="expected"):
-        EntryPointDiscovery(
-            source=_source({RENDERER_ENTRY_POINT_GROUP: (entry_point,)})
-        ).discover()
+        EntryPointDiscovery(source=_source({RENDERER_ENTRY_POINT_GROUP: (entry_point,)})).discover()
 
     assert not entry_point.loaded
 
@@ -229,9 +223,7 @@ def test_non_callable_entry_point_target_is_rejected() -> None:
     )
 
     with pytest.raises(InvalidPluginEntryPointError, match="callable provider"):
-        EntryPointDiscovery(
-            source=_source({RENDERER_ENTRY_POINT_GROUP: (entry_point,)})
-        ).discover()
+        EntryPointDiscovery(source=_source({RENDERER_ENTRY_POINT_GROUP: (entry_point,)})).discover()
 
 
 def test_entry_point_load_failure_is_wrapped() -> None:
@@ -243,9 +235,7 @@ def test_entry_point_load_failure_is_wrapped() -> None:
     )
 
     with pytest.raises(PluginEntryPointLoadError) as exc_info:
-        EntryPointDiscovery(
-            source=_source({RENDERER_ENTRY_POINT_GROUP: (entry_point,)})
-        ).discover()
+        EntryPointDiscovery(source=_source({RENDERER_ENTRY_POINT_GROUP: (entry_point,)})).discover()
 
     assert isinstance(exc_info.value.__cause__, ImportError)
 
@@ -262,9 +252,7 @@ def test_provider_failure_is_wrapped() -> None:
     )
 
     with pytest.raises(PluginProviderError) as exc_info:
-        EntryPointDiscovery(
-            source=_source({RENDERER_ENTRY_POINT_GROUP: (entry_point,)})
-        ).discover()
+        EntryPointDiscovery(source=_source({RENDERER_ENTRY_POINT_GROUP: (entry_point,)})).discover()
 
     assert isinstance(exc_info.value.__cause__, RuntimeError)
 
@@ -278,9 +266,7 @@ def test_provider_must_return_expected_extension_type() -> None:
     )
 
     with pytest.raises(InvalidPluginEntryPointError, match="RendererExtension"):
-        EntryPointDiscovery(
-            source=_source({RENDERER_ENTRY_POINT_GROUP: (entry_point,)})
-        ).discover()
+        EntryPointDiscovery(source=_source({RENDERER_ENTRY_POINT_GROUP: (entry_point,)})).discover()
 
 
 def test_entry_point_name_must_match_returned_extension_id() -> None:
@@ -292,9 +278,7 @@ def test_entry_point_name_must_match_returned_extension_id() -> None:
     )
 
     with pytest.raises(InvalidPluginEntryPointError, match="returned extension ID"):
-        EntryPointDiscovery(
-            source=_source({RENDERER_ENTRY_POINT_GROUP: (entry_point,)})
-        ).discover()
+        EntryPointDiscovery(source=_source({RENDERER_ENTRY_POINT_GROUP: (entry_point,)})).discover()
 
 
 def test_component_collisions_across_plugins_remain_explicit() -> None:
