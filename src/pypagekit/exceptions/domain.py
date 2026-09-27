@@ -109,7 +109,6 @@ class UnresolvedSlotError(InvalidSlotError):
     """Raised when a slot placeholder escapes its composition boundary."""
 
 
-
 class InvalidRouteError(ValidationError):
     """Base exception for invalid route structure."""
 
