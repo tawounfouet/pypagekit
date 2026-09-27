@@ -19,7 +19,7 @@
 | LOT-15 | Component Registry | QUALIFIED | `0.3.0b3` |
 | LOT-16 | Route Model | QUALIFIED | `0.4.0a1` |
 | LOT-17 | Navigation Model | QUALIFIED | `0.4.0a2` |
-| LOT-18 | Sitemap & Site Model | NOT STARTED | `0.4.0b1` |
+| LOT-18 | Sitemap & Site Model | QUALIFIED | `0.4.0b1` |
 
 ## LOT-07 exit criteria
 
@@ -331,4 +331,34 @@ Next: **LOT-18 — Sitemap & Site Model**.
 - navigation owns hierarchy and labels while routes remain the single source of logical URL identity
 - tree validation covers duplicates, cycles, type safety, and deterministic ordering
 - security coverage proves navigation inherits route-path protections
+- GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
+
+
+## LOT-18 exit criteria
+
+- [x] public immutable `Site` aggregate exists
+- [x] site routes normalize to an immutable ordered tuple
+- [x] duplicate canonical route paths fail explicitly
+- [x] site exposes deterministic path and page projections
+- [x] site provides canonical logical-route lookup
+- [x] lookup input reuses LOT-16 route-path validation
+- [x] optional site navigation is supported
+- [x] navigation may reference a subset of site routes
+- [x] navigation cannot reference routes absent from the site
+- [x] navigation must reference the canonical Route objects owned by the site
+- [x] public immutable `Sitemap` exists
+- [x] public immutable `SitemapEntry` exists
+- [x] sitemap contains all site routes regardless of navigation visibility
+- [x] sitemap order follows site route declaration order
+- [x] standalone sitemap rejects duplicate route paths
+- [x] sitemap remains a domain model and does not serialize XML
+- [x] site performs no rendering, filesystem, or build work
+
+Next: **LOT-19 — Assets**.
+
+## LOT-18 qualification evidence
+
+- Site centralizes route identity and validates navigation consistency
+- Sitemap is derived deterministically from the canonical site route set
+- security coverage proves site lookup inherits route-path protections
 - GitHub CI is the authoritative Ruff, formatting, mypy, pytest, and packaging gate
