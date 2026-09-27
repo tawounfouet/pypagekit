@@ -4,6 +4,35 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [0.4.0a1]
+
+### Added
+
+- Public immutable `Route` associating a canonical logical URL path with a `Page`.
+- Public `normalize_route_path()` helper in `pypagekit.domain`.
+- Root-route and ordered path-segment inspection.
+- Canonical removal of a non-root trailing slash.
+- Route validation for absolute internal paths.
+- Explicit route errors for invalid paths and non-`Page` targets.
+- LOT-16 unit and security coverage.
+
+### Security
+
+- External and protocol-relative URLs are rejected.
+- Query strings and fragments are rejected, including empty markers.
+- Empty path segments and backslash separators are rejected.
+- Literal and percent-encoded `.` / `..` traversal segments are rejected.
+- Percent-encoded slash, backslash, and control-character ambiguity is rejected.
+- Invalid percent escapes are rejected.
+
+### Design
+
+- `Page != Route != filesystem output path`.
+- A route describes logical site location only.
+- Route construction performs no rendering, filesystem I/O, redirect handling, navigation generation, or output-path planning.
+- Duplicate route detection remains a `Site` concern for LOT-18.
+
+
 ## [0.3.0b3]
 
 ### Added

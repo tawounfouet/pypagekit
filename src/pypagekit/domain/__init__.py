@@ -9,6 +9,7 @@ from .layout import Layout, LayoutRegion
 from .media import Image, Media
 from .page import Page
 from .reference import ComponentRef
+from .route import Route, normalize_route_path
 from .slots import Fragment, Slot, SlotBindings, SlottedComponent, bind_slots
 from .text import Heading, Paragraph, Text
 
@@ -29,9 +30,11 @@ __all__ = [
     "Node",
     "Page",
     "Paragraph",
+    "Route",
     "Slot",
     "SlotBindings",
     "SlottedComponent",
     "Text",
     "bind_slots",
+    "normalize_route_path",
 ]
