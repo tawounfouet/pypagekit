@@ -487,8 +487,8 @@ Filesystem output path
 Routes are canonical logical URL paths. For example:
 
 ```python
-Route("/", page).path          # "/"
-Route("/about/", page).path    # "/about"
+Route("/", page).path  # "/"
+Route("/about/", page).path  # "/about"
 Route("/docs/api", page).segments
 # ("docs", "api")
 ```
