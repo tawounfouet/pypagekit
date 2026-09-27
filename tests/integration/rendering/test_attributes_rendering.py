@@ -26,9 +26,7 @@ def test_paragraph_renders_controlled_attributes() -> None:
         attributes=Attributes(classes=["copy"], data={"kind": "intro"}),
     )
 
-    assert HtmlRenderer().render(paragraph) == (
-        '<p class="copy" data-kind="intro">Body</p>'
-    )
+    assert HtmlRenderer().render(paragraph) == ('<p class="copy" data-kind="intro">Body</p>')
 
 
 def test_container_renders_attributes_and_children() -> None:
@@ -37,9 +35,7 @@ def test_container_renders_attributes_and_children() -> None:
         attributes=Attributes(id="content", classes=["stack"]),
     )
 
-    assert HtmlRenderer().render(container) == (
-        '<div class="stack" id="content"><p>Body</p></div>'
-    )
+    assert HtmlRenderer().render(container) == ('<div class="stack" id="content"><p>Body</p></div>')
 
 
 def test_link_combines_intrinsic_href_with_controlled_attributes() -> None:
@@ -54,8 +50,7 @@ def test_link_combines_intrinsic_href_with_controlled_attributes() -> None:
     )
 
     assert HtmlRenderer().render(link) == (
-        '<a aria-label="About page" class="nav-link" href="/about" '
-        'id="about-link">About</a>'
+        '<a aria-label="About page" class="nav-link" href="/about" id="about-link">About</a>'
     )
 
 
@@ -79,9 +74,7 @@ def test_default_attributes_do_not_change_existing_output() -> None:
     assert HtmlRenderer().render(Paragraph("Body")) == "<p>Body</p>"
     assert HtmlRenderer().render(Container()) == "<div></div>"
     assert HtmlRenderer().render(Link("Home", "/")) == '<a href="/">Home</a>'
-    assert HtmlRenderer().render(Image("/logo.png", "Logo")) == (
-        '<img alt="Logo" src="/logo.png">'
-    )
+    assert HtmlRenderer().render(Image("/logo.png", "Logo")) == ('<img alt="Logo" src="/logo.png">')
 
 
 def test_attribute_output_is_deterministic() -> None:
