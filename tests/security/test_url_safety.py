@@ -111,6 +111,4 @@ def test_renderer_preserves_safe_url_value_then_attribute_escapes_it() -> None:
         )
     )
 
-    assert html == (
-        '<a href="https://example.com/?a=1&amp;b=&quot;two&quot;">Docs</a>'
-    )
+    assert html == ('<a href="https://example.com/?a=1&amp;b=&quot;two&quot;">Docs</a>')
