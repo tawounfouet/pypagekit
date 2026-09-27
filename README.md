@@ -4,18 +4,22 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-Current implementation milestone: **LOT-04 — Composition Tree** (`0.1.0a4`).
+Current implementation milestone: **LOT-05 — Actions & Media** (`0.1.0b1`).
+
+The first `0.1.x` domain line is now feature-complete.
 
 Implemented so far:
 
 - typed `src/` package and CI foundations;
 - `Node` and `Content` domain foundations;
 - immutable `Page` root document object;
-- immutable `Text`, `Heading`, and `Paragraph` text primitives;
+- immutable `Text`, `Heading`, and `Paragraph` primitives;
 - immutable `Container` for ordered recursive composition;
+- semantic `Action` / `Media` base types;
+- immutable `Link` and `Image` primitives;
 - explicit domain validation and exceptions.
 
-HTML rendering is intentionally not implemented yet. The domain describes page structure without embedding HTML behavior.
+HTML rendering is intentionally not implemented yet. The domain describes page structure and references without embedding HTML behavior.
 
 ## Requirements
 
@@ -44,7 +48,7 @@ python -m build
 ## Current domain API
 
 ```python
-from pypagekit import Container, Heading, Page, Paragraph, Text
+from pypagekit import Container, Heading, Image, Link, Page, Paragraph
 
 
 page = Page(
@@ -53,31 +57,31 @@ page = Page(
         Container(
             children=[
                 Heading("Welcome", level=1),
-                Paragraph("PyPageKit models pages as composition trees."),
-                Container(
-                    children=[
-                        Text("Nested content remains ordinary Content."),
-                    ]
-                ),
+                Paragraph("PyPageKit models pages as structured Python objects."),
+                Link(label="About", href="/about"),
+                Image(src="/assets/logo.png", alt="Project logo"),
             ]
         )
     ],
-    lang="en",
-    description="Example page",
 )
 ```
 
-`Page` and `Container` normalize their content collections into immutable tuples. Text values remain raw semantic data; rendering and HTML escaping belong to later layers.
+`Page` and `Container` normalize composition collections into immutable tuples. Domain strings remain semantic values; HTML escaping and URL safety belong to later rendering/security layers.
 
-## Composition model
+## Domain hierarchy
 
 ```text
-Page
-└── Container
+Node
+├── Page
+└── Content
+    ├── Text
     ├── Heading
     ├── Paragraph
-    └── Container
-        └── Text
+    ├── Container
+    ├── Action
+    │   └── Link
+    └── Media
+        └── Image
 ```
 
 ## Source layout
@@ -89,22 +93,15 @@ src/
     ├── py.typed
     ├── domain/
     │   ├── __init__.py
+    │   ├── action.py
     │   ├── base.py
     │   ├── container.py
+    │   ├── media.py
     │   ├── page.py
     │   └── text.py
     └── exceptions/
         ├── __init__.py
         └── domain.py
-
-tests/
-├── test_package.py
-└── unit/
-    └── domain/
-        ├── test_base.py
-        ├── test_container.py
-        ├── test_page.py
-        └── test_text.py
 ```
 
 ## Roadmap
@@ -122,4 +119,4 @@ tests/
 1.0.0  Stable
 ```
 
-The immediate next milestone is **LOT-05 — Actions & Media**.
+The immediate next milestone is **LOT-06 — HTML Serialization**, beginning the `0.2.x` rendering line.
