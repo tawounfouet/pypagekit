@@ -1192,6 +1192,7 @@ A third-party build planner only needs to satisfy the structural build contract:
 from pypagekit import Assets, Site
 from pypagekit.build import BuildPlan
 
+
 class CustomPlanner:
     def plan(
         self,
