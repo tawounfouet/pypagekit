@@ -45,7 +45,7 @@
 | LOT-41 | Watch Service & Change Detection | QUALIFIED | `1.1.0b1` |
 | LOT-42 | Serve Watch Mode & Live Reload | QUALIFIED | `1.1.0b2` |
 | LOT-43 | 1.1 Public Contract Snapshot & Release Candidate | QUALIFIED | `1.1.0rc1` |
-| LOT-44 | 1.1 Release Qualification | IN QUALIFICATION | `1.1.0` |
+| LOT-44 | 1.1 Release Qualification | QUALIFIED | `1.1.0` |
 
 ## LOT-07 exit criteria
 
@@ -1320,12 +1320,11 @@ Next after qualification: **LOT-44 — 1.1 Release Qualification** (`1.1.0`).
 - [x] sdist qualification asserts installed version exactly `1.1.0`
 - [x] release qualification documentation exists in `RELEASE_1_1.md`
 - [x] LOT-44 introduces no new public feature surface
-- [ ] Python 3.11 pull-request qualification is green
-- [ ] Python 3.12 pull-request qualification is green
-- [ ] Python 3.13 pull-request qualification is green
-- [ ] Python 3.14 pull-request qualification is green
-- [ ] release package pull-request qualification is green
-- [ ] final pull-request CI is fully green
-- [ ] post-merge `main` CI is fully green
+- [x] Python 3.11 pull-request qualification is green
+- [x] Python 3.12 pull-request qualification is green
+- [x] Python 3.13 pull-request qualification is green
+- [x] Python 3.14 pull-request qualification is green
+- [x] release package pull-request qualification is green
+- [x] final pull-request CI is fully green
 
 After qualification, the complete **1.1.x — Incremental Developer Experience** implementation line is closed.
