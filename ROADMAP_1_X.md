@@ -48,7 +48,8 @@ LOT-38  1.1.0a1  compatibility baseline gate   ✅ qualified
 LOT-39  1.1.0a2  build fingerprints + manifest ✅ qualified
 LOT-40  1.1.0a3  incremental build diff         ✅ qualified
 LOT-41  1.1.0b1  watch service + change detection ✅ qualified
-LOT-42  1.1.0b2  serve --watch + live reload     ← in qualification
+LOT-42  1.1.0b2  serve --watch + live reload     ✅ qualified
+LOT-43  1.1.0rc1  1.1 public contract snapshot   ← next
 ```
 
 ## LOT-38 — Post-1.0 Compatibility Baseline Gate
