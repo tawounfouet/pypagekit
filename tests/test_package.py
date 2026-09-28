@@ -54,6 +54,17 @@ from pypagekit.development import (
     DevelopmentServer,
     DevelopmentServerConfig,
     DevelopmentServerInfo,
+    DevelopmentWatcher,
+    DevelopmentWatchError,
+    InvalidWatchRootError,
+    WatchChange,
+    WatchChangeBatch,
+    WatchChangeKind,
+    WatchPathKind,
+    WatchSnapshot,
+    WatchSnapshotEntry,
+    WatchSnapshotError,
+    diff_watch_snapshots,
 )
 from pypagekit.domain import Action, Media
 from pypagekit.exceptions import (
@@ -208,6 +219,23 @@ def test_package_imports() -> None:
         DevelopmentServerInfo,
     )
     assert isinstance(DevelopmentServer(), DevelopmentServer)
+    watch_root = Path(".").resolve()
+    watcher = DevelopmentWatcher(watch_root)
+    empty_watch = WatchSnapshot(watch_root)
+    assert isinstance(watcher, DevelopmentWatcher)
+    assert isinstance(empty_watch, WatchSnapshot)
+    watch_entry = WatchSnapshotEntry(
+        PurePosixPath("site.py"),
+        WatchPathKind.FILE,
+        "0" * 64,
+    )
+    changed_watch = WatchSnapshot(watch_root, [watch_entry])
+    watch_batch = diff_watch_snapshots(empty_watch, changed_watch)
+    assert isinstance(watch_batch, WatchChangeBatch)
+    assert isinstance(watch_batch.changes[0], WatchChange)
+    assert watch_batch.changes[0].kind is WatchChangeKind.CREATED
+    assert issubclass(InvalidWatchRootError, DevelopmentWatchError)
+    assert issubclass(WatchSnapshotError, DevelopmentWatchError)
     write_result = FilesystemWriteResult(Path("dist"), (), ())
     assert isinstance(write_result, FilesystemWriteResult)
     assert isinstance(
@@ -349,4 +377,4 @@ def test_package_imports() -> None:
 
 
 def test_current_version() -> None:
-    assert __version__ == "1.1.0a3"
+    assert __version__ == "1.1.0b1"
