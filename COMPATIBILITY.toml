@@ -15,6 +15,12 @@ extension_api_version = "0.7"
 python_cli_facade_frozen = false
 shell_cli_frozen = true
 
+[post_1_0_gate]
+baseline = "API_CONTRACT_1_0.json"
+mode = "compatible_superset"
+comparator = "tools/api_contract_compatibility.py"
+introduced = "1.1.0a1"
+
 [stable_candidate]
 compatible_changes = [
   "add new public symbol",
