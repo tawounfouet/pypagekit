@@ -23,10 +23,25 @@ class DevelopmentServerBindError(DevelopmentServerError):
     """Raised when the local HTTP server cannot bind its address."""
 
 
+class DevelopmentWatchError(PyPageKitError):
+    """Base exception for explicit development filesystem watching."""
+
+
+class InvalidWatchRootError(DevelopmentWatchError):
+    """Raised when a filesystem watch root is invalid or unsafe."""
+
+
+class WatchSnapshotError(DevelopmentWatchError):
+    """Raised when a deterministic filesystem snapshot cannot be completed."""
+
+
 __all__ = [
     "DevelopmentServerBindError",
     "DevelopmentServerError",
     "InvalidDevelopmentHostError",
     "InvalidDevelopmentPortError",
+    "DevelopmentWatchError",
     "InvalidDevelopmentRootError",
+    "InvalidWatchRootError",
+    "WatchSnapshotError",
 ]
