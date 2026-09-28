@@ -45,7 +45,8 @@ serve --watch + live reload
 
 ```text
 LOT-38  1.1.0a1  compatibility baseline gate   ✅ qualified
-LOT-39  1.1.0a2  build fingerprints + manifest ← next
+LOT-39  1.1.0a2  build fingerprints + manifest ✅ qualified
+LOT-40  1.1.0a3  incremental build diff         ← next
 ```
 
 ## LOT-38 — Post-1.0 Compatibility Baseline Gate
@@ -106,8 +107,28 @@ BuildManifestEntry
 BuildManifest
 ```
 
-The first implementation remains explicit and deterministic. It does not introduce background
-watchers or hidden file I/O.
+The implementation is explicit and deterministic:
+
+```text
+PageBuildEntry.content
+        ↓ UTF-8 bytes
+    SHA-256
+        ↓
+BuildFingerprint
+
+Asset.source
+        ↓ explicit streamed read
+    SHA-256
+        ↓
+BuildFingerprint
+```
+
+`BuildManifest` preserves BuildPlan declaration order while maintaining a private immutable sorted
+lookup index. Asset source state is compared before and after hashing so a concurrent mutation fails
+explicitly rather than yielding a mixed-content fingerprint.
+
+The lot introduces no output writes, background watchers, hidden build execution, or persistent
+cache files.
 
 ## LOT-40 — Incremental Build Diff & Materialization
 

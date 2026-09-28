@@ -31,6 +31,22 @@ class InvalidBuildPlanError(BuildError):
     """Raised when a planner does not return a BuildPlan."""
 
 
+class BuildManifestError(BuildError):
+    """Base exception for build fingerprint and manifest failures."""
+
+
+class InvalidBuildFingerprintError(BuildManifestError):
+    """Raised when a build fingerprint is malformed or unsupported."""
+
+
+class InvalidBuildManifestError(BuildManifestError):
+    """Raised when a build manifest declaration is invalid."""
+
+
+class BuildManifestSourceError(BuildManifestError):
+    """Raised when an asset source cannot be fingerprinted deterministically."""
+
+
 class FilesystemOutputError(BuildError):
     """Base exception for filesystem materialization failures."""
 

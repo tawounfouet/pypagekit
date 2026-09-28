@@ -31,6 +31,9 @@ from pypagekit import (
 )
 from pypagekit.build import (
     AssetBuildEntry,
+    BuildFingerprint,
+    BuildManifest,
+    BuildManifestEntry,
     BuildPlan,
     BuildPlanner,
     BuildPlannerProtocol,
@@ -39,6 +42,7 @@ from pypagekit.build import (
     PageBuildEntry,
     StaticSiteGenerationResult,
     StaticSiteGenerator,
+    build_manifest,
     route_output_target,
 )
 from pypagekit.components import Card, ComponentRegistry, ComponentRuntime, Hero, Section
@@ -51,6 +55,8 @@ from pypagekit.domain import Action, Media
 from pypagekit.exceptions import (
     AssetSourceOutputConflictError,
     BuildError,
+    BuildManifestError,
+    BuildManifestSourceError,
     BuildRenderError,
     BuildTargetCollisionError,
     ComponentError,
@@ -69,7 +75,9 @@ from pypagekit.exceptions import (
     InvalidAssetSourceForOutputError,
     InvalidAttributeError,
     InvalidBuildContentError,
+    InvalidBuildFingerprintError,
     InvalidBuildInputError,
+    InvalidBuildManifestError,
     InvalidBuildPlanError,
     InvalidBuildPlannerExtensionError,
     InvalidBuildTargetError,
@@ -145,6 +153,14 @@ def test_package_imports() -> None:
     assert isinstance(asset, Asset)
     assert isinstance(Assets([asset]), Assets)
     assert isinstance(BuildPlan(), BuildPlan)
+    fingerprint = BuildFingerprint.from_bytes(b"")
+    manifest_entry = BuildManifestEntry(
+        PurePosixPath("index.html"),
+        "page",
+        fingerprint,
+    )
+    assert isinstance(BuildManifest([manifest_entry]), BuildManifest)
+    assert isinstance(build_manifest(BuildPlan()), BuildManifest)
     planner: BuildPlannerProtocol = BuildPlanner()
     assert isinstance(planner, BuildPlanner)
     assert isinstance(FilesystemWriter(), FilesystemWriter)
@@ -247,6 +263,8 @@ def test_package_imports() -> None:
     assert issubclass(DuplicateAssetTargetError, InvalidAssetError)
     assert issubclass(DuplicateComponentContributionError, ExtensionError)
     assert issubclass(AssetSourceOutputConflictError, FilesystemOutputError)
+    assert issubclass(BuildManifestError, BuildError)
+    assert issubclass(BuildManifestSourceError, BuildManifestError)
     assert issubclass(BuildRenderError, BuildError)
     assert issubclass(BuildTargetCollisionError, BuildError)
     assert issubclass(ExistingOutputError, FilesystemOutputError)
@@ -254,6 +272,8 @@ def test_package_imports() -> None:
     assert issubclass(FilesystemRollbackError, FilesystemWriteError)
     assert issubclass(FilesystemWriteError, FilesystemOutputError)
     assert issubclass(InvalidBuildContentError, BuildError)
+    assert issubclass(InvalidBuildFingerprintError, BuildManifestError)
+    assert issubclass(InvalidBuildManifestError, BuildManifestError)
     assert issubclass(InvalidBuildPlannerExtensionError, ExtensionError)
     assert issubclass(InvalidBuildInputError, BuildError)
     assert issubclass(InvalidBuildPlanError, BuildError)
@@ -302,4 +322,4 @@ def test_package_imports() -> None:
 
 
 def test_current_version() -> None:
-    assert __version__ == "1.1.0a1"
+    assert __version__ == "1.1.0a2"

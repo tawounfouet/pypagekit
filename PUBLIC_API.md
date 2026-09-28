@@ -23,9 +23,10 @@ LOT-34 created that boundary, LOT-35 defined compatibility rules, and LOT-36 has
 
 ### `stable`
 
-A frozen public Python surface covered by the PyPageKit 1.0 compatibility contract.
+A public Python surface covered by PyPageKit's stable-major compatibility contract.
 
-At `0.9.0rc1`, the accepted LOT-34 candidates have been promoted to this class and are enforced by the exact 1.0 contract baseline.
+The original `1.0.0` surface is frozen in `API_CONTRACT_1_0.json`. Later `1.x` releases may add
+new stable symbols compatibly, but they may not remove or incompatibly mutate that historical floor.
 
 Examples:
 
@@ -184,6 +185,9 @@ Public static-build boundary:
 
 ```text
 AssetBuildEntry
+BuildFingerprint
+BuildManifest
+BuildManifestEntry
 BuildPlan
 BuildPlanner
 BuildPlannerProtocol
@@ -192,10 +196,11 @@ FilesystemWriter
 PageBuildEntry
 StaticSiteGenerationResult
 StaticSiteGenerator
+build_manifest
 route_output_target
 ```
 
-`BuildPlannerProtocol` is a public structural contract.
+`BuildPlannerProtocol` is a public structural contract. LOT-39 adds immutable SHA-256 build fingerprints and manifests as compatible `1.1.x` additions; `build_manifest()` reads declared asset source bytes explicitly but performs no output writes.
 
 ### `pypagekit.project`
 

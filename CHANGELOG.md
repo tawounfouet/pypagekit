@@ -4,6 +4,30 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.0a2]
+
+### Added
+
+- Public immutable `BuildFingerprint` value object using canonical SHA-256 digests.
+- Public immutable `BuildManifestEntry` with explicit `page` / `asset` artifact kinds.
+- Public immutable ordered `BuildManifest` with deterministic target lookup.
+- Public `build_manifest()` operation for fingerprinting an existing `BuildPlan`.
+- Explicit `BuildManifestError`, `InvalidBuildFingerprintError`, `InvalidBuildManifestError`, and `BuildManifestSourceError` exception hierarchy.
+
+### Design
+
+- Page fingerprints hash the exact UTF-8 bytes written by the existing filesystem writer.
+- Asset fingerprints stream the exact source bytes instead of using path, timestamp, or file-size identity.
+- Asset sources are stat-checked before and after hashing; a source that changes during fingerprinting fails explicitly instead of producing a mixed-content manifest.
+- Manifest declaration order remains pages first then assets, matching `BuildPlan`.
+- Manifest lookup uses a private immutable sorted index without changing public declaration order.
+- Fingerprinting performs no build-output writes, no background work, no watch behavior, and no filesystem cache persistence.
+- `API_CONTRACT_1_0.json` remains unchanged; the LOT-38 compatibility gate classifies the new public symbols as compatible additions.
+
+### Release
+
+- Advance the development version to `1.1.0a2`.
+
 ## [1.1.0a1]
 
 ### Compatibility
