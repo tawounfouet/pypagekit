@@ -74,10 +74,14 @@ jobs:
             git fetch --force origin "refs/tags/$tag:refs/tags/$tag"
             tagged_commit="$(git rev-list -n 1 "$tag")"
             if [[ "$tagged_commit" != "$target_commit" ]]; then
-              echo "Existing tag $tag points to $tagged_commit, not release commit $target_commit." >&2
-              exit 1
+              if ! git merge-base --is-ancestor "$tagged_commit" "$target_commit"; then
+                echo "Existing tag $tag points to $tagged_commit, which is not an ancestor of release branch $target_commit." >&2
+                exit 1
+              fi
+              echo "Tag $tag already exists at $tagged_commit; release automation fixes are being applied from descendant $target_commit."
+            else
+              echo "Tag $tag already exists on the selected release commit."
             fi
-            echo "Tag $tag already exists on the selected release commit."
           else
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -252,6 +256,7 @@ jobs:
       - name: Create or update GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
           RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
         shell: bash
