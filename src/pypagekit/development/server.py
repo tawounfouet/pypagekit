@@ -114,7 +114,7 @@ class _StaticRequestHandler(SimpleHTTPRequestHandler):
             return str(self._forbidden_path())
 
         if (
-            "\" in decoded_path
+            "\\" in decoded_path
             or "\x00" in decoded_path
             or any(ord(character) < 32 or ord(character) == 0x7F for character in decoded_path)
         ):
