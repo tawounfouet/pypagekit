@@ -103,7 +103,10 @@ def test_existing_parameter_contract_change_is_rejected() -> None:
 
     errors = _errors(current)
 
-    assert any(".kind changed" in error or "positional parameter ordering" in error for error in errors)
+    assert any(
+        ".kind changed" in error or "positional parameter ordering" in error
+        for error in errors
+    )
 
 
 def test_new_cli_command_is_compatible() -> None:
