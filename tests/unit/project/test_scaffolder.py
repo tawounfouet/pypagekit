@@ -80,6 +80,8 @@ def test_scaffold_creates_expected_files(tmp_path: Path) -> None:
     assert all(path.is_file() for path in result.files)
     assert "pypagekit>=" in (target / "pyproject.toml").read_text(encoding="utf-8")
     assert "StaticSiteGenerator" in (target / "site.py").read_text(encoding="utf-8")
+    readme = (target / "README.md").read_text(encoding="utf-8")
+    assert "pypagekit serve --watch" in readme
 
 
 def test_scaffold_preserves_unplanned_existing_files(tmp_path: Path) -> None:
