@@ -140,6 +140,26 @@ def test_cli_operational_contract_matches_package_metadata() -> None:
     assert scripts["pypagekit"] == "pypagekit.cli.app:main"
     assert cli["commands"] == ["doctor", "inspect", "new", "serve"]
     assert cli["root_options"] == ["--help", "--version"]
+    assert cli["command_arguments"] == {
+        "doctor": ["root"],
+        "inspect": ["root"],
+        "new": ["target"],
+        "serve": ["root"],
+    }
+    assert cli["command_options"] == {
+        "doctor": [],
+        "inspect": [],
+        "new": ["--force"],
+        "serve": [
+            "--host",
+            "--port",
+            "-p",
+            "--watch",
+            "--entry",
+            "--poll-interval",
+            "--debounce-interval",
+        ],
+    }
     assert cli["success_exit_code"] == SUCCESS
     assert cli["execution_error_exit_code"] == EXECUTION_ERROR
     assert cli["usage_error_exit_code"] == USAGE_ERROR
