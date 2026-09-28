@@ -26,6 +26,7 @@ from .manifest import (
     BuildFingerprint,
     BuildManifest,
     BuildManifestDiff,
+    BuildManifestEntry,
     build_manifest,
     diff_build_manifests,
 )
@@ -210,12 +211,11 @@ class FilesystemWriter:
 
             for entry in diff.removed:
                 destination = _destination(output_root, entry.target)
-                backup = transaction.prepare_file(
+                _prepare_tracked_file(
+                    transaction,
                     destination,
-                    backup_existing=True,
-                    require_existing=True,
+                    entry,
                 )
-                _verify_transaction_backup(entry, backup, destination)
 
             for page_entry in plan.pages:
                 if page_entry.target not in write_targets:
@@ -388,15 +388,30 @@ class FilesystemWriter:
         )
 
 
+def _prepare_tracked_file(
+    transaction: FilesystemTransaction,
+    destination: Path,
+    previous_entry: BuildManifestEntry,
+) -> None:
+    try:
+        backup = transaction.prepare_file(
+            destination,
+            backup_existing=True,
+            require_existing=True,
+        )
+    except FileNotFoundError as exc:
+        raise IncrementalOutputDriftError(
+            f"Tracked output '{destination}' disappeared before mutation."
+        ) from exc
+
+    _verify_transaction_backup(previous_entry, backup, destination)
+
+
 def _verify_transaction_backup(
-    previous_entry: object,
+    previous_entry: BuildManifestEntry,
     backup: Path | None,
     destination: Path,
 ) -> None:
-    from .manifest import BuildManifestEntry
-
-    if not isinstance(previous_entry, BuildManifestEntry):
-        raise TypeError("Previous build entry must be a BuildManifestEntry object.")
     if backup is None:
         raise IncrementalOutputDriftError(
             f"Tracked output '{destination}' disappeared before mutation."
