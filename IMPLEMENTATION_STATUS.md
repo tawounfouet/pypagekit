@@ -41,7 +41,7 @@
 | LOT-37 | 1.0 Release Qualification | QUALIFIED | `1.0.0` |
 | LOT-38 | Post-1.0 Compatibility Baseline Gate | QUALIFIED | `1.1.0a1` |
 | LOT-39 | Build Fingerprints & Manifest | QUALIFIED | `1.1.0a2` |
-| LOT-40 | Incremental Build Diff & Materialization | IN QUALIFICATION | `1.1.0a3` |
+| LOT-40 | Incremental Build Diff & Materialization | QUALIFIED | `1.1.0a3` |
 
 ## LOT-07 exit criteria
 
@@ -1142,6 +1142,9 @@ Next after qualification: **LOT-40 — Incremental Build Diff & Materialization*
 - [x] public immutable `IncrementalStaticSiteGenerationResult` exists
 - [x] public `StaticSiteGenerator.generate_incremental()` exists
 - [x] previous tracked output is fingerprint-verified before any mutation
+- [x] changed/removed outputs are reverified from the exact transaction backup
+- [x] disappearance between preflight and backup fails as output drift
+- [x] mutation between preflight and backup fails as output drift without losing the concurrent bytes
 - [x] missing tracked output fails closed
 - [x] manually modified tracked output fails closed
 - [x] tracked output symlinks remain rejected
@@ -1161,6 +1164,6 @@ Next after qualification: **LOT-40 — Incremental Build Diff & Materialization*
 - [x] frozen `API_CONTRACT_1_0.json` remains unchanged
 - [x] LOT-38 compatibility gate accepts LOT-40 as compatible 1.x evolution
 - [x] package version advances to `1.1.0a3`
-- [ ] GitHub pull-request CI is fully green
+- [x] GitHub pull-request CI is fully green
 
 Next after qualification: **LOT-41 — Watch Service & Change Detection** (`1.1.0b1`).
