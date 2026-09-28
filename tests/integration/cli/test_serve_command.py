@@ -1,13 +1,14 @@
 import re
 from pathlib import Path, PurePosixPath
+from typing import ClassVar
 
 import pytest
 from typer.testing import CliRunner
 
-from pypagekit.cli.app import app
-from pypagekit.cli.commands.serve import _ProjectPlanLoadError
 from pypagekit import Page, Route
 from pypagekit.build import BuildPlan, PageBuildEntry
+from pypagekit.cli.app import app
+from pypagekit.cli.commands.serve import _ProjectPlanLoadError
 from pypagekit.cli.exit_codes import EXECUTION_ERROR, SUCCESS, USAGE_ERROR
 from pypagekit.development import (
     DevelopmentServerConfig,
@@ -157,7 +158,7 @@ def _page_plan(content: str) -> BuildPlan:
 
 
 class _FakeWatcher:
-    instances: list["_FakeWatcher"] = []
+    instances: ClassVar[list["_FakeWatcher"]] = []
 
     def __init__(
         self,
