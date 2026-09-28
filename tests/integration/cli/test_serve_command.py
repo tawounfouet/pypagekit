@@ -5,6 +5,7 @@ import pytest
 from typer.testing import CliRunner
 
 from pypagekit.cli.app import app
+from pypagekit.cli.commands.serve import _ProjectPlanLoadError
 from pypagekit import Page, Route
 from pypagekit.build import BuildPlan, PageBuildEntry
 from pypagekit.cli.exit_codes import EXECUTION_ERROR, SUCCESS, USAGE_ERROR
@@ -298,7 +299,7 @@ def test_serve_watch_rebuild_failure_keeps_last_successful_output(
         calls += 1
         if calls == 1:
             return _page_plan("<html><body>stable</body></html>")
-        raise RuntimeError("broken rebuild")
+        raise _ProjectPlanLoadError("broken rebuild")
 
     monkeypatch.setattr(
         "pypagekit.cli.commands.serve._load_project_plan",
@@ -327,4 +328,9 @@ def test_serve_watch_rebuild_failure_keeps_last_successful_output(
 
     result = runner.invoke(app, ["serve", "--watch"])
 
-    assert result.exit_code != SUCCESS
+    assert result.exit_code == SUCCESS
+    assert (tmp_path / "dist" / "index.html").read_text(encoding="utf-8") == (
+        "<html><body>stable</body></html>"
+    )
+    assert session.reload_revisions == []
+    assert "Rebuild failed: broken rebuild" in result.stderr
