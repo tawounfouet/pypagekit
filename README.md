@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-**PyPageKit 1.0.0 remains the qualified stable baseline.** Development is now on `1.1.0a2` with LOT-39 — Build Fingerprints & Manifest. The frozen `API_CONTRACT_1_0.json` remains the backward-compatibility floor.
+**PyPageKit 1.0.0 remains the qualified stable baseline.** LOT-39 is qualified at `1.1.0a2` with deterministic build fingerprints and immutable manifests. The frozen `API_CONTRACT_1_0.json` remains the backward-compatibility floor. Next: LOT-40 — Incremental Build Diff & Materialization.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
