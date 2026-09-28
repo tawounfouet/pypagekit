@@ -494,7 +494,8 @@ def _snapshot_symlink(
         target = os.readlink(path)
         after = path.lstat()
     except OSError as exc:
-        raise WatchSnapshotError(f"Watched symlink '{path}' changed while being snapshotted.") from exc
+        message = f"Watched symlink '{path}' changed while being snapshotted."
+        raise WatchSnapshotError(message) from exc
 
     if (
         not stat.S_ISLNK(before.st_mode)
