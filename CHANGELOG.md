@@ -4,6 +4,24 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.0a1]
+
+### Compatibility
+
+- Replace the RC-era exact-runtime equality gate with a post-1.0 compatible-superset comparator.
+- Keep `API_CONTRACT_1_0.json` byte-for-byte immutable as the historical compatibility floor.
+- Permit compatible minor additions such as new public exports, new members, optional keyword-only parameters, and additive CLI commands/options.
+- Reject removal or incompatible mutation of frozen exports, signatures, members, CLI exit semantics, plugin compatibility metadata, and the minimum Python line.
+- Convert LOT-37 release checks into historical 1.0 invariants so they remain valid throughout the 1.x line.
+- Add adversarial compatibility tests covering both permitted and rejected contract evolution.
+- Open the dedicated post-1.0 roadmap in `ROADMAP_1_X.md`.
+
+### Release
+
+- Advance the development version to `1.1.0a1`.
+- Generated projects now target the current `1.1.x` compatibility line with an upper bound of `<1.2`.
+
+
 ### Release Engineering
 
 - Add canonical tag-driven publication workflow in `.github/workflows/release.yml`.
