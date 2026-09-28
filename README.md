@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-**PyPageKit 1.0.0 remains the qualified stable baseline.** LOT-41 is qualified at `1.1.0b1` with explicit deterministic filesystem watching and debounced change batches. The frozen `API_CONTRACT_1_0.json` remains the backward-compatibility floor. Next: LOT-42 — Serve Watch Mode & Live Reload.
+**PyPageKit 1.0.0 remains the qualified stable baseline.** Development is now on `1.1.0b2` with LOT-42 — Serve Watch Mode & Live Reload. The frozen `API_CONTRACT_1_0.json` remains the backward-compatibility floor.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -46,6 +46,7 @@ Implemented so far:
 - deterministic SHA-256 build fingerprints and immutable build manifests;
 - drift-safe incremental build diffs and minimal filesystem materialization;
 - explicit deterministic filesystem snapshots and debounced change batches;
+- opt-in `serve --watch` orchestration with incremental rebuilds and browser live reload;
 - safe filesystem materialization of qualified build plans;
 - end-to-end static-site generation through a thin orchestration facade;
 - Typer + Rich CLI foundations with installed shell and module entry points;
@@ -283,6 +284,62 @@ belongs to LOT-42.
 
 Symlinks are observed as symlinks and are never followed. Regular files are content-hashed, so a
 same-size edit is still detected even when metadata alone would be ambiguous.
+
+## Serve with watch + live reload
+
+The normal development server remains unchanged:
+
+```bash
+pypagekit serve
+```
+
+Opt into the integrated development loop with:
+
+```bash
+pypagekit serve --watch
+```
+
+The default watch contract expects the current project to expose a module-level `site` from
+`site.py`. A module-level `assets` value may also be provided.
+
+```text
+site.py / local project sources
+            ↓
+DevelopmentWatcher
+            ↓
+debounced WatchChangeBatch
+            ↓
+fresh Python subprocess
+            ↓
+BuildPlan
+            ↓
+LOT-40 incremental materialization
+            ↓
+successful commit
+            ↓
+DevelopmentServerSession.notify_reload()
+            ↓
+browser reload
+```
+
+The fresh subprocess avoids stale imported local modules between rebuilds. Generated `dist/` output
+is excluded from the watcher, so the rebuild cannot trigger itself.
+
+Useful tuning options:
+
+```bash
+pypagekit serve --watch \
+  --entry site.py \
+  --poll-interval 0.10 \
+  --debounce-interval 0.05
+```
+
+A failed project import, render, or incremental write keeps the last successful output online and
+does not notify browsers.
+
+Live reload is development-only. PyPageKit injects an external same-origin reload script into HTTP
+responses without modifying generated HTML files on disk and without enabling inline scripts in the
+development CSP.
 
 ## Post-1.0 roadmap
 
