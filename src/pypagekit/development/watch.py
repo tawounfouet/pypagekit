@@ -85,8 +85,7 @@ class WatchSnapshot:
         if invalid:
             invalid_type = type(invalid[0]).__name__
             raise TypeError(
-                "Watch snapshot must contain only WatchSnapshotEntry objects; "
-                f"got {invalid_type}."
+                f"Watch snapshot must contain only WatchSnapshotEntry objects; got {invalid_type}."
             )
 
         ordered = tuple(sorted(normalized, key=lambda entry: entry.path.as_posix()))
@@ -179,25 +178,19 @@ class WatchChangeBatch:
     def created(self) -> tuple[WatchChange, ...]:
         """Return created-path changes."""
 
-        return tuple(
-            change for change in self.changes if change.kind is WatchChangeKind.CREATED
-        )
+        return tuple(change for change in self.changes if change.kind is WatchChangeKind.CREATED)
 
     @property
     def modified(self) -> tuple[WatchChange, ...]:
         """Return modified-path changes."""
 
-        return tuple(
-            change for change in self.changes if change.kind is WatchChangeKind.MODIFIED
-        )
+        return tuple(change for change in self.changes if change.kind is WatchChangeKind.MODIFIED)
 
     @property
     def deleted(self) -> tuple[WatchChange, ...]:
         """Return deleted-path changes."""
 
-        return tuple(
-            change for change in self.changes if change.kind is WatchChangeKind.DELETED
-        )
+        return tuple(change for change in self.changes if change.kind is WatchChangeKind.DELETED)
 
     @property
     def has_changes(self) -> bool:
@@ -225,14 +218,10 @@ def diff_watch_snapshots(
 
     while previous_index < len(previous.entries) or current_index < len(current.entries):
         previous_entry = (
-            previous.entries[previous_index]
-            if previous_index < len(previous.entries)
-            else None
+            previous.entries[previous_index] if previous_index < len(previous.entries) else None
         )
         current_entry = (
-            current.entries[current_index]
-            if current_index < len(current.entries)
-            else None
+            current.entries[current_index] if current_index < len(current.entries) else None
         )
 
         if previous_entry is None:
@@ -482,16 +471,12 @@ def _snapshot_file(
     try:
         path_after = path.stat(follow_symlinks=False)
     except OSError as exc:
-        raise WatchSnapshotError(
-            f"Watched file '{path}' changed while being snapshotted."
-        ) from exc
+        raise WatchSnapshotError(f"Watched file '{path}' changed while being snapshotted.") from exc
 
-    if _stat_identity(before) != _stat_identity(after) or _stat_identity(
-        after
-    ) != _stat_identity(path_after):
-        raise WatchSnapshotError(
-            f"Watched file '{path}' changed while being snapshotted."
-        )
+    if _stat_identity(before) != _stat_identity(after) or _stat_identity(after) != _stat_identity(
+        path_after
+    ):
+        raise WatchSnapshotError(f"Watched file '{path}' changed while being snapshotted.")
 
     return WatchSnapshotEntry(
         relative_path,
@@ -509,9 +494,7 @@ def _snapshot_symlink(
         target = os.readlink(path)
         after = path.lstat()
     except OSError as exc:
-        raise WatchSnapshotError(
-            f"Watched symlink '{path}' changed while being snapshotted."
-        ) from exc
+        raise WatchSnapshotError(f"Watched symlink '{path}' changed while being snapshotted.") from exc
 
     if (
         not stat.S_ISLNK(before.st_mode)
@@ -546,13 +529,9 @@ def _validate_watch_root(root: Path) -> Path:
     if not root.exists():
         raise InvalidWatchRootError(f"Development watch root '{root}' does not exist.")
     if root.is_symlink():
-        raise InvalidWatchRootError(
-            f"Development watch root '{root}' must not be a symlink."
-        )
+        raise InvalidWatchRootError(f"Development watch root '{root}' must not be a symlink.")
     if not root.is_dir():
-        raise InvalidWatchRootError(
-            f"Development watch root '{root}' must be a directory."
-        )
+        raise InvalidWatchRootError(f"Development watch root '{root}' must be a directory.")
 
     cursor = root.parent
     while True:
