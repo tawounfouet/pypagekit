@@ -212,9 +212,8 @@ def _compare_class(
     errors: list[str],
 ) -> None:
     for key in ("bases", "abstract", "dataclass"):
-        if key in baseline or key in current:
-            if current.get(key) != baseline.get(key):
-                errors.append(
+        if (key in baseline or key in current) and current.get(key) != baseline.get(key):
+            errors.append(
                     f"{path}.{key} changed from {baseline.get(key)!r} "
                     f"to {current.get(key)!r}"
                 )
@@ -254,9 +253,10 @@ def _compare_class(
             continue
 
         for key in ("binding", "abstract"):
-            if key in baseline_member or key in current_member:
-                if current_member.get(key) != baseline_member.get(key):
-                    errors.append(
+            if (
+                key in baseline_member or key in current_member
+            ) and current_member.get(key) != baseline_member.get(key):
+                errors.append(
                         f"{member_path}.{key} changed from {baseline_member.get(key)!r} "
                         f"to {current_member.get(key)!r}"
                     )
@@ -331,9 +331,10 @@ def _compare_signature(
             continue
 
         for key in ("kind", "annotation", "required", "value"):
-            if key in baseline_parameter or key in current_parameter:
-                if current_parameter.get(key) != baseline_parameter.get(key):
-                    errors.append(
+            if (
+                key in baseline_parameter or key in current_parameter
+            ) and current_parameter.get(key) != baseline_parameter.get(key):
+                errors.append(
                         f"{parameter_path}.{key} changed from "
                         f"{baseline_parameter.get(key)!r} "
                         f"to {current_parameter.get(key)!r}"
