@@ -25,7 +25,7 @@ def test_release_workflow_is_tag_driven_and_not_manually_dispatchable() -> None:
     assert 'tags:\n      - "v*"' in content
     assert "workflow_dispatch" not in content
     assert "Verify stable tag matches package version" in content
-    assert r're.fullmatch(r"v\\d+\\.\\d+\\.\\d+", tag)' in content
+    assert 're.fullmatch(r"v\\d+\\.\\d+\\.\\d+", tag)' in content
 
 
 def test_release_workflow_uses_least_privilege_trusted_publishing() -> None:
