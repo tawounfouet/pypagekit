@@ -39,6 +39,7 @@
 | LOT-35 | Compatibility, Deprecation & Migration | QUALIFIED | `0.9.0b1` |
 | LOT-36 | 1.0 Contract Freeze | QUALIFIED | `0.9.0rc1` |
 | LOT-37 | 1.0 Release Qualification | QUALIFIED | `1.0.0` |
+| LOT-38 | Post-1.0 Compatibility Baseline Gate | QUALIFIED | `1.1.0a1` |
 
 ## LOT-07 exit criteria
 
@@ -1069,3 +1070,25 @@ Next after qualification: **LOT-37 — 1.0 Release Qualification** (`1.0.0`).
 LOT-37 is qualified. The historical implementation train from LOT-01 through LOT-37 is complete.
 Any stable contract drift requires a new post-1.0 compatibility decision rather than silently
 refreshing the LOT-36 baseline.
+
+
+## LOT-38 exit criteria
+
+- [x] dedicated post-1.0 roadmap exists
+- [x] package version advances to `1.1.0a1`
+- [x] public API, compatibility, and deprecation metadata track `1.1.0a1`
+- [x] generated project requirements target the `1.1.x` minor line
+- [x] frozen `API_CONTRACT_1_0.json` remains byte-for-byte unchanged
+- [x] RC-era exact runtime equality is replaced by a compatible-superset gate
+- [x] frozen public exports cannot be removed
+- [x] existing signatures cannot be narrowed or mutated incompatibly
+- [x] new optional keyword-only parameters are accepted
+- [x] new public exports are accepted
+- [x] additive CLI commands/options are accepted
+- [x] frozen CLI exit semantics remain immutable
+- [x] extension API line and frozen plugin metadata remain protected
+- [x] minimum Python line remains protected
+- [x] LOT-37 tests now preserve historical 1.0 evidence without pinning the current package version
+- [x] adversarial compatibility tests cover compatible and incompatible evolution
+- [x] GitHub pull-request CI is fully green
+Next after qualification: **LOT-39 — Build Fingerprints & Manifest** (`1.1.0a2`).

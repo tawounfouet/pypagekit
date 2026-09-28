@@ -72,9 +72,8 @@ jobs:
 
           import pypagekit
 
-          assert pypagekit.__version__ == "1.0.0"
           distribution = metadata.distribution("pypagekit")
-          assert distribution.version == "1.0.0"
+          assert distribution.version == pypagekit.__version__
           assert distribution.metadata["Requires-Python"] == ">=3.11"
           assert "Development Status :: 5 - Production/Stable" in distribution.metadata.get_all(
               "Classifier"
@@ -98,7 +97,19 @@ jobs:
         run: |
           project_root="$(mktemp -d)/release-smoke"
           pypagekit new "$project_root"
-          grep -F 'pypagekit>=1.0.0,<1.1' "$project_root/pyproject.toml"
+          python - "$project_root" <<'PY'
+          import sys
+          import tomllib
+          from pathlib import Path
+
+          from pypagekit.project import pypagekit_requirement
+
+          pyproject = Path(sys.argv[1]) / "pyproject.toml"
+          with pyproject.open("rb") as stream:
+              project = tomllib.load(stream)["project"]
+
+          assert project["dependencies"] == [pypagekit_requirement()]
+          PY
           (
             cd "$project_root"
             python site.py
@@ -112,5 +123,10 @@ jobs:
           python -m venv /tmp/pypagekit-sdist
           /tmp/pypagekit-sdist/bin/python -m pip install -U pip
           /tmp/pypagekit-sdist/bin/python -m pip install dist/*.tar.gz
-          /tmp/pypagekit-sdist/bin/python -c 'import pypagekit; assert pypagekit.__version__ == "1.0.0"'
+          /tmp/pypagekit-sdist/bin/python - <<'PY'
+          from importlib import metadata
+          import pypagekit
+
+          assert metadata.version("pypagekit") == pypagekit.__version__
+          PY
           /tmp/pypagekit-sdist/bin/pypagekit --version

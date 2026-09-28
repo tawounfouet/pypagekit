@@ -8,29 +8,38 @@ import pytest
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 CONTRACT_PATH = REPOSITORY_ROOT / "API_CONTRACT_1_0.json"
 GENERATOR_PATH = REPOSITORY_ROOT / "tools/api_contract_snapshot.py"
+COMPATIBILITY_PATH = REPOSITORY_ROOT / "tools/api_contract_compatibility.py"
 
 
-def _load_generator() -> ModuleType:
-    spec = importlib.util.spec_from_file_location("pypagekit_contract_snapshot", GENERATOR_PATH)
+def _load_module(name: str, path: Path) -> ModuleType:
+    spec = importlib.util.spec_from_file_location(name, path)
     if spec is None or spec.loader is None:
-        raise RuntimeError("Unable to load API contract snapshot generator.")
+        raise RuntimeError(f"Unable to load {path.name}.")
 
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
 
 
-def test_frozen_1_0_contract_matches_runtime_exactly() -> None:
-    expected = CONTRACT_PATH.read_text(encoding="utf-8")
-    actual = _load_generator().render_snapshot()
+def _load_generator() -> ModuleType:
+    return _load_module("pypagekit_contract_snapshot", GENERATOR_PATH)
 
-    if actual != expected:
-        pytest.fail(
-            "1.0 contract baseline mismatch.\n"
-            "CONTRACT_SNAPSHOT_BEGIN\n"
-            f"{actual}"
-            "CONTRACT_SNAPSHOT_END"
-        )
+
+def _load_compatibility() -> ModuleType:
+    return _load_module("pypagekit_contract_compatibility", COMPATIBILITY_PATH)
+
+
+def _frozen_contract() -> dict[str, object]:
+    return json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
+
+
+def test_frozen_1_0_contract_remains_compatible_with_current_runtime() -> None:
+    baseline = _frozen_contract()
+    current = _load_generator().build_snapshot()
+    errors = _load_compatibility().compatibility_errors(baseline, current)
+
+    if errors:
+        pytest.fail("1.0 compatibility regression:\n" + "\n".join(f"- {error}" for error in errors))
 
 
 def test_contract_snapshot_is_canonical_json() -> None:
@@ -49,8 +58,8 @@ def test_contract_snapshot_is_canonical_json() -> None:
     )
 
 
-def test_contract_snapshot_targets_1_0() -> None:
-    snapshot = _load_generator().build_snapshot()
+def test_frozen_contract_targets_1_0() -> None:
+    snapshot = _frozen_contract()
 
     assert snapshot["schema_version"] == 1
     assert snapshot["target_release"] == "1.0.0"

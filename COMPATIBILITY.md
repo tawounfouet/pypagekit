@@ -108,6 +108,27 @@ major line and may be removed in `2.0.0`.
 This is intentionally stronger than a short "two minor releases" policy: application authors may
 upgrade within a major without racing a removal clock.
 
+## Automated post-1.0 compatibility gate
+
+Starting with `1.1.0a1`, CI no longer requires the current runtime to equal the 1.0 snapshot
+byte-for-byte. Instead it requires the current runtime to remain a compatible superset of that
+historical baseline.
+
+```text
+API_CONTRACT_1_0.json
+        ↓
+tools/api_contract_compatibility.py
+        ↑
+current runtime snapshot
+        ↓
+compatible / incompatible
+```
+
+This distinction is required by semantic versioning: compatible additions are legal in a minor
+release, while removal or incompatible mutation of the frozen 1.0 surface remains forbidden.
+
+The 1.0 JSON file itself remains immutable and its Git blob identity continues to be checked.
+
 ## Deprecation lifecycle
 
 A future public deprecation follows:

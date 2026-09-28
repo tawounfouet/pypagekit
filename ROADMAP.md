@@ -41,7 +41,10 @@ LOT-36  0.9.0rc1  contract freeze         ✅ qualified
 LOT-37  1.0.0     release qualification   ✅ qualified
 ```
 
-The LOT-01 → LOT-37 implementation train is complete. Post-1.0 feature work belongs to a new roadmap.
+The LOT-01 → LOT-37 implementation train is complete.
+
+Post-1.0 evolution now continues in [ROADMAP_1_X.md](ROADMAP_1_X.md), beginning with LOT-38 on the
+`1.1.x` line.
 
 ## Extensibility sequencing
 
