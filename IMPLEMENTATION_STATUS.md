@@ -40,6 +40,7 @@
 | LOT-36 | 1.0 Contract Freeze | QUALIFIED | `0.9.0rc1` |
 | LOT-37 | 1.0 Release Qualification | QUALIFIED | `1.0.0` |
 | LOT-38 | Post-1.0 Compatibility Baseline Gate | QUALIFIED | `1.1.0a1` |
+| LOT-39 | Build Fingerprints & Manifest | IN QUALIFICATION | `1.1.0a2` |
 
 ## LOT-07 exit criteria
 
@@ -1092,3 +1093,34 @@ refreshing the LOT-36 baseline.
 - [x] adversarial compatibility tests cover compatible and incompatible evolution
 - [x] GitHub pull-request CI is fully green
 Next after qualification: **LOT-39 — Build Fingerprints & Manifest** (`1.1.0a2`).
+
+
+## LOT-39 exit criteria
+
+- [x] public immutable `BuildFingerprint` exists
+- [x] build fingerprints use canonical SHA-256
+- [x] malformed or unsupported fingerprints fail explicitly
+- [x] page fingerprints hash the exact UTF-8 output bytes
+- [x] asset fingerprints hash exact source bytes
+- [x] asset hashing is streamed rather than requiring a full-file memory copy
+- [x] public immutable `BuildManifestEntry` exists
+- [x] manifest artifact kind is explicit as page or asset
+- [x] public immutable ordered `BuildManifest` exists
+- [x] manifest order remains aligned with BuildPlan page-then-asset order
+- [x] manifest targets reuse existing build-target safety/collision validation
+- [x] manifest target lookup uses a private immutable sorted index
+- [x] public `build_manifest()` operation fingerprints an existing BuildPlan
+- [x] asset reads occur only during explicit manifest construction
+- [x] missing and non-file asset sources fail with framework-specific errors
+- [x] asset state is checked before and after hashing
+- [x] source mutation during hashing fails instead of returning a mixed-content fingerprint
+- [x] fingerprinting performs no output writes
+- [x] fingerprinting introduces no background watcher or cache persistence
+- [x] build manifest exception hierarchy is public
+- [x] current public API inventory includes all LOT-39 additions
+- [x] frozen `API_CONTRACT_1_0.json` remains unchanged
+- [x] LOT-38 compatibility gate accepts LOT-39 as compatible 1.x evolution
+- [x] package version advances to `1.1.0a2`
+- [ ] GitHub pull-request CI is fully green
+
+Next after qualification: **LOT-40 — Incremental Build Diff & Materialization** (`1.1.0a3`).
