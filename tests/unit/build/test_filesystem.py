@@ -500,7 +500,11 @@ def test_incremental_writer_classifies_and_applies_minimal_mutations(
     )
     assert result.removed_files == (output_root / "removed.html",)
     assert result.unchanged_files == (output_root / "index.html",)
-    assert result.written_files == result.added_files + result.changed_files
+    assert result.written_files == (
+        output_root / "changed.html",
+        output_root / "added.html",
+        output_root / "assets" / "app.css",
+    )
     assert result.files == (
         output_root / "index.html",
         output_root / "changed.html",
