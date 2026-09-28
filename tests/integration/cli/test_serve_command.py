@@ -255,8 +255,9 @@ def test_serve_watch_requires_project_entry(
     result = runner.invoke(app, ["serve", "--watch"])
 
     assert result.exit_code == EXECUTION_ERROR
-    assert "Development watch failed:" in result.stderr
-    assert "does not exist" in result.stderr
+    stderr = " ".join(_plain(result.stderr).split())
+    assert "Development watch failed:" in stderr
+    assert "does not exist" in stderr
 
 
 def test_serve_watch_rejects_entry_outside_project_root(
@@ -280,7 +281,8 @@ def test_serve_watch_rejects_entry_outside_project_root(
     )
 
     assert result.exit_code == EXECUTION_ERROR
-    assert "must remain inside the current project root" in result.stderr
+    stderr = " ".join(_plain(result.stderr).split())
+    assert "must remain inside the current project root" in stderr
 
 
 def test_serve_watch_rebuild_failure_keeps_last_successful_output(
