@@ -6,13 +6,6 @@ on:
       - "v*"
     branches:
       - "release/v*"
-  workflow_dispatch:
-    inputs:
-      ref:
-        description: "Git ref to release (defaults to main)."
-        required: false
-        default: "main"
-
 permissions:
   contents: read
 
@@ -34,7 +27,7 @@ jobs:
       - name: Checkout release source
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref }}
+          ref: ${{ github.ref }}
           fetch-depth: 0
 
       - name: Validate release request and ensure tag exists
