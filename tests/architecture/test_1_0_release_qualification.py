@@ -1,4 +1,6 @@
 import hashlib
+import json
+import re
 import tomllib
 from pathlib import Path
 
@@ -22,15 +24,11 @@ def _git_blob_sha(path: Path) -> str:
     return hashlib.sha1(payload).hexdigest()
 
 
-def test_release_version_is_exactly_1_0_0() -> None:
-    assert __version__ == "1.0.0"
-
-
 def test_lot_36_contract_file_is_byte_for_byte_unchanged() -> None:
     assert _git_blob_sha(FROZEN_CONTRACT_PATH) == FROZEN_CONTRACT_GIT_BLOB_SHA
 
 
-def test_release_metadata_tracks_1_0_0() -> None:
+def test_current_release_metadata_tracks_current_package_version() -> None:
     public_api = _load_toml("PUBLIC_API.toml")
     compatibility = _load_toml("COMPATIBILITY.toml")
     deprecations = _load_toml("DEPRECATIONS.toml")
@@ -40,7 +38,7 @@ def test_release_metadata_tracks_1_0_0() -> None:
     assert deprecations["package_version"] == __version__
 
 
-def test_release_keeps_frozen_compatibility_decisions() -> None:
+def test_historical_1_0_release_decisions_remain_recorded() -> None:
     compatibility = _load_toml("COMPATIBILITY.toml")
     contract_freeze = compatibility["contract_freeze"]
 
@@ -55,14 +53,21 @@ def test_release_keeps_frozen_compatibility_decisions() -> None:
     assert PYPAGEKIT_EXTENSION_API_VERSION == "0.7"
 
 
-def test_release_has_no_active_public_deprecations() -> None:
-    deprecations = _load_toml("DEPRECATIONS.toml")
+def test_frozen_1_0_release_started_without_public_deprecations() -> None:
+    contract = json.loads(FROZEN_CONTRACT_PATH.read_text(encoding="utf-8"))
 
-    assert deprecations["deprecations"] == []
+    assert contract["target_release"] == "1.0.0"
+    assert contract["active_deprecations"] == []
 
 
-def test_generated_projects_target_the_1_0_minor_line() -> None:
-    assert pypagekit_requirement() == "pypagekit>=1.0.0,<1.1"
+def test_generated_projects_track_current_minor_release_line() -> None:
+    match = re.match(r"^(?P<major>\d+)\.(?P<minor>\d+)", __version__)
+    assert match is not None
+
+    major = int(match.group("major"))
+    minor = int(match.group("minor"))
+
+    assert pypagekit_requirement() == f"pypagekit>={__version__},<{major}.{minor + 1}"
 
 
 def test_distribution_metadata_declares_stable_status() -> None:
