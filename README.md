@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-**PyPageKit 1.0.0 remains the qualified stable baseline.** Development is now on `1.1.0b2` with LOT-42 — Serve Watch Mode & Live Reload. The frozen `API_CONTRACT_1_0.json` remains the backward-compatibility floor.
+**PyPageKit 1.0.0 remains the qualified stable baseline.** LOT-42 is qualified at `1.1.0b2` with opt-in `serve --watch`, incremental rebuilds, and browser live reload. The frozen `API_CONTRACT_1_0.json` remains the backward-compatibility floor. Next: LOT-43 — 1.1 Public Contract Snapshot & Release Candidate.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
