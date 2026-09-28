@@ -1,5 +1,5 @@
 schema_version = 1
-package_version = "1.1.0b1"
+package_version = "1.1.0b2"
 
 [classifications]
 stable = "Stable public Python surface covered by the current PyPageKit major-version compatibility contract."

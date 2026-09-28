@@ -4,6 +4,46 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.0b2]
+
+### Added
+
+- Opt-in `pypagekit serve --watch` development workflow.
+- Fresh-process project-plan loading for watch rebuilds, avoiding stale imported local modules.
+- Automatic initial build before starting the watched development server.
+- Incremental rebuilds through the qualified LOT-40 filesystem transition.
+- Browser live reload through same-origin development-server resources.
+- Public optional `DevelopmentServer.create(..., live_reload=True)` mode.
+- Public `DevelopmentServerSession.live_reload` state and `notify_reload()` revision signal.
+- Watch tuning options `--entry`, `--poll-interval`, and `--debounce-interval`.
+
+### Watch + rebuild semantics
+
+- `serve` without `--watch` preserves its existing behavior.
+- Watch mode requires the selected entry file to remain inside the current project root and not traverse symlinks.
+- The project entry executes in a fresh Python subprocess with `PYTHONDONTWRITEBYTECODE=1`.
+- The entry must expose module-level `site`; optional module-level `assets` is supported.
+- Project stdout is redirected away from the machine-readable plan payload.
+- The initial build completes before the HTTP server binds.
+- The generated output tree and common local cache/environment directories are excluded from source watching.
+- Rebuild failures keep the last successful output and do not advance the browser reload revision.
+- Successful rebuilds use `FilesystemWriter.write_incremental()` and notify browsers only after commit.
+
+### Live reload semantics
+
+- Live reload is disabled by default.
+- HTML files on disk are never modified to add reload code.
+- In live-reload mode, HTML responses receive one external same-origin script tag dynamically.
+- The script polls an internal revision endpoint and reloads only after the revision changes.
+- No inline script permission is added; the existing self-only CSP remains in force.
+- Binary responses remain byte-for-byte unchanged.
+- Symlink/traversal protections continue to apply to the live-reload HTML path.
+- The internal live-reload resource paths are reserved only while live-reload mode is enabled.
+
+### Release
+
+- Advance the development version to `1.1.0b2`.
+
 ## [1.1.0b1]
 
 ### Added

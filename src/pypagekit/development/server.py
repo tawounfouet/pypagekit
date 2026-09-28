@@ -8,6 +8,7 @@ from contextlib import suppress
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path, PurePosixPath
+from threading import Lock
 from typing import ClassVar
 from urllib.parse import unquote, urlsplit
 
@@ -16,11 +17,59 @@ from .model import DevelopmentServerConfig, DevelopmentServerInfo
 
 _FORBIDDEN_SENTINEL = ".pypagekit-forbidden-resource"
 _PERCENT_ESCAPE_RE = re.compile(r"%(?![0-9A-Fa-f]{2})")
+_LIVE_RELOAD_SCRIPT_PATH = "/.pypagekit/live-reload.js"
+_LIVE_RELOAD_REVISION_PATH = "/.pypagekit/live-reload/revision"
+_LIVE_RELOAD_MARKER = b"data-pypagekit-live-reload"
+_LIVE_RELOAD_TAG = b'<script src="/.pypagekit/live-reload.js" data-pypagekit-live-reload></script>'
+_LIVE_RELOAD_SCRIPT = b"""(() => {
+  let revision = null;
+
+  async function poll() {
+    try {
+      const response = await fetch(
+        "/.pypagekit/live-reload/revision",
+        { cache: "no-store" }
+      );
+      if (!response.ok) return;
+      const next = Number(await response.text());
+      if (revision === null) {
+        revision = next;
+        return;
+      }
+      if (next !== revision) {
+        window.location.reload();
+      }
+    } catch {
+      // The development server may be restarting or shutting down.
+    }
+  }
+
+  poll();
+  window.setInterval(poll, 500);
+})();
+"""
+
+
+class _LiveReloadState:
+    def __init__(self) -> None:
+        self._lock = Lock()
+        self._revision = 0
+
+    @property
+    def revision(self) -> int:
+        with self._lock:
+            return self._revision
+
+    def notify(self) -> int:
+        with self._lock:
+            self._revision += 1
+            return self._revision
 
 
 class _DevelopmentHTTPServer(ThreadingHTTPServer):
     daemon_threads = True
     allow_reuse_address = True
+    live_reload_state: _LiveReloadState | None = None
 
 
 class _StaticRequestHandler(SimpleHTTPRequestHandler):
@@ -29,6 +78,25 @@ class _StaticRequestHandler(SimpleHTTPRequestHandler):
     server_version = "PyPageKitDevelopmentServer"
     _root: ClassVar[Path]
     _resolved_root: ClassVar[Path]
+    _live_reload_state: ClassVar[_LiveReloadState | None]
+
+    def do_GET(self) -> None:
+        """Serve static content and optional live-reload resources."""
+
+        if self._serve_live_reload_resource(head_only=False):
+            return
+        if self._serve_live_reload_html(head_only=False):
+            return
+        super().do_GET()
+
+    def do_HEAD(self) -> None:
+        """Serve static headers and optional live-reload resource headers."""
+
+        if self._serve_live_reload_resource(head_only=True):
+            return
+        if self._serve_live_reload_html(head_only=True):
+            return
+        super().do_HEAD()
 
     def translate_path(self, path: str) -> str:
         """Translate one URL path while keeping it inside the static root."""
@@ -91,6 +159,86 @@ class _StaticRequestHandler(SimpleHTTPRequestHandler):
 
         del format, args
 
+    def _serve_live_reload_resource(self, *, head_only: bool) -> bool:
+        state = self._live_reload_state
+        if state is None:
+            return False
+
+        request_path = urlsplit(self.path).path
+        if request_path == _LIVE_RELOAD_SCRIPT_PATH:
+            self._send_bytes(
+                _LIVE_RELOAD_SCRIPT,
+                content_type="text/javascript; charset=utf-8",
+                head_only=head_only,
+            )
+            return True
+        if request_path == _LIVE_RELOAD_REVISION_PATH:
+            self._send_bytes(
+                str(state.revision).encode("ascii"),
+                content_type="text/plain; charset=ascii",
+                head_only=head_only,
+            )
+            return True
+        return False
+
+    def _serve_live_reload_html(self, *, head_only: bool) -> bool:
+        if self._live_reload_state is None:
+            return False
+
+        target = self._html_target()
+        if target is None:
+            return False
+
+        try:
+            content = target.read_bytes()
+            target_stat = target.stat(follow_symlinks=False)
+        except OSError:
+            return False
+
+        if _LIVE_RELOAD_MARKER not in content:
+            content = _inject_live_reload_tag(content)
+
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(content)))
+        self.send_header("Last-Modified", self.date_time_string(target_stat.st_mtime))
+        self.end_headers()
+        if not head_only:
+            self.wfile.write(content)
+        return True
+
+    def _html_target(self) -> Path | None:
+        translated = Path(self.translate_path(self.path))
+        if translated.is_dir():
+            if not urlsplit(self.path).path.endswith("/"):
+                return None
+            translated = translated / "index.html"
+
+        if translated.suffix.lower() != ".html":
+            return None
+        if translated.is_symlink() or not translated.is_file():
+            return None
+
+        try:
+            translated.relative_to(self._resolved_root)
+        except ValueError:
+            return None
+        return translated
+
+    def _send_bytes(
+        self,
+        content: bytes,
+        *,
+        content_type: str,
+        head_only: bool,
+    ) -> None:
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(content)))
+        self.end_headers()
+        if not head_only:
+            self.wfile.write(content)
+
     def _forbidden_path(self) -> Path:
         return self._resolved_root / _FORBIDDEN_SENTINEL
 
@@ -105,10 +253,24 @@ class DevelopmentServerSession:
     ) -> None:
         self._server = server
         self._info = info
+        self._live_reload_state = server.live_reload_state
 
     @property
     def info(self) -> DevelopmentServerInfo:
         return self._info
+
+    @property
+    def live_reload(self) -> bool:
+        """Return whether this server session exposes live reload resources."""
+
+        return self._live_reload_state is not None
+
+    def notify_reload(self) -> int:
+        """Advance the live reload revision after a successful rebuild."""
+
+        if self._live_reload_state is None:
+            raise RuntimeError("Live reload is not enabled for this development server session.")
+        return self._live_reload_state.notify()
 
     def serve_forever(self) -> None:
         """Block while serving requests until shutdown is requested."""
@@ -144,13 +306,21 @@ class DevelopmentServer:
     def create(
         self,
         config: DevelopmentServerConfig,
+        *,
+        live_reload: bool = False,
     ) -> DevelopmentServerSession:
         """Bind a server and return an explicitly managed session."""
 
         if not isinstance(config, DevelopmentServerConfig):
             raise TypeError("Development server config must be a DevelopmentServerConfig object.")
+        if not isinstance(live_reload, bool):
+            raise TypeError("Development server live_reload flag must be a bool.")
 
-        handler = _handler_for(config.root)
+        live_reload_state = _LiveReloadState() if live_reload else None
+        handler = _handler_for(
+            config.root,
+            live_reload_state=live_reload_state,
+        )
 
         try:
             server = _DevelopmentHTTPServer((config.host, config.port), handler)
@@ -166,6 +336,7 @@ class DevelopmentServer:
             host=bound_host,
             port=bound_port,
         )
+        server.live_reload_state = live_reload_state
         return DevelopmentServerSession(server, info)
 
     def serve(
@@ -181,15 +352,30 @@ class DevelopmentServer:
             return info
 
 
-def _handler_for(root: Path) -> type[_StaticRequestHandler]:
+def _handler_for(
+    root: Path,
+    *,
+    live_reload_state: _LiveReloadState | None,
+) -> type[_StaticRequestHandler]:
     root_path = root
     resolved_root = root.resolve(strict=True)
+    reload_state = live_reload_state
 
     class BoundStaticRequestHandler(_StaticRequestHandler):
         _root = root_path
         _resolved_root = resolved_root
+        _live_reload_state = reload_state
 
     return BoundStaticRequestHandler
+
+
+def _inject_live_reload_tag(content: bytes) -> bytes:
+    lower = content.lower()
+    marker = b"</body>"
+    index = lower.rfind(marker)
+    if index < 0:
+        return content + _LIVE_RELOAD_TAG
+    return content[:index] + _LIVE_RELOAD_TAG + content[index:]
 
 
 def _path_contains_symlink(root: Path, candidate: Path) -> bool:

@@ -262,6 +262,16 @@ pypagekit serve
 
 The development server serves `dist/` at `http://127.0.0.1:8000` by default.
 
+For automatic rebuilds and browser live reload while editing the project:
+
+```bash
+pypagekit serve --watch
+```
+
+Watch mode executes the project entry in a fresh Python subprocess to obtain the module-level
+`site` value, ignores the generated `dist/` tree, applies incremental output updates, and reloads
+connected browser pages only after a successful rebuild.
+
 ## Diagnostics
 
 ```bash

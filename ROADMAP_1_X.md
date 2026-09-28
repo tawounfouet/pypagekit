@@ -48,7 +48,8 @@ LOT-38  1.1.0a1  compatibility baseline gate   ✅ qualified
 LOT-39  1.1.0a2  build fingerprints + manifest ✅ qualified
 LOT-40  1.1.0a3  incremental build diff         ✅ qualified
 LOT-41  1.1.0b1  watch service + change detection ✅ qualified
-LOT-42  1.1.0b2  serve --watch + live reload     ← next
+LOT-42  1.1.0b2  serve --watch + live reload     ✅ qualified
+LOT-43  1.1.0rc1  1.1 public contract snapshot   ← next
 ```
 
 ## LOT-38 — Post-1.0 Compatibility Baseline Gate
@@ -207,16 +208,43 @@ HTTP-server integration is introduced.
 
 Integrate the explicit watch/build path with the local development server.
 
-Candidate operational surface:
+Operational surface:
 
 ```bash
 pypagekit serve --watch
 ```
 
-The existing `pypagekit serve` behavior remains unchanged by default.
+The established `pypagekit serve` path remains unchanged by default.
 
-Live reload must remain a development-only capability and must not weaken the existing local-server
-security boundaries.
+Watch mode uses a fresh Python subprocess to load the project entry and obtain a deterministic
+`BuildPlan`, then delegates filesystem mutation to LOT-40:
+
+```text
+source change
+    ↓
+DevelopmentWatcher
+    ↓
+fresh subprocess
+    ↓
+BuildPlan
+    ↓
+FilesystemWriter.write_incremental()
+    ↓
+successful transaction commit
+    ↓
+notify_reload()
+```
+
+The subprocess contract requires module-level `site` and optionally accepts module-level `assets`.
+The generated output tree is excluded from source watching to prevent rebuild loops.
+
+Live reload is implemented by the development server only when explicitly enabled. HTML files are
+not modified on disk: the server injects one external same-origin script into HTML responses, while
+an internal no-store revision endpoint signals successful rebuilds. The existing self-only CSP remains
+in force without `unsafe-inline`.
+
+A failed project import, render, or incremental write leaves the last successful output online and
+does not advance the browser reload revision.
 
 ## LOT-43 — 1.1 Public Contract Snapshot & Release Candidate
 

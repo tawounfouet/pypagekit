@@ -236,6 +236,11 @@ The watcher is polling-based, explicit, and synchronous: constructing it starts 
 nothing. A snapshot reads regular-file bytes and symlink targets without following symlinks. Empty
 directories alone do not create watch entries.
 
+LOT-42 adds an opt-in live-reload mode through the compatible method extension
+`DevelopmentServer.create(config, *, live_reload=False)`. A live-reload session exposes
+`DevelopmentServerSession.live_reload` and `notify_reload()`; the default server path remains
+unchanged.
+
 The local server and watcher remain development tools; stability classification does not turn either
 into a production runtime claim.
 
@@ -295,6 +300,17 @@ inspect
 new
 serve
 ```
+
+LOT-42 adds compatible optional `serve` flags:
+
+```text
+--watch
+--entry
+--poll-interval
+--debounce-interval
+```
+
+Without `--watch`, the established `serve` behavior is unchanged.
 
 Root options:
 

@@ -132,3 +132,60 @@ def test_development_server_emits_defensive_headers(tmp_path: Path) -> None:
         session.shutdown()
         thread.join(timeout=2)
         session.close()
+
+
+def test_live_reload_mode_does_not_serve_symlinked_html(tmp_path: Path) -> None:
+    root = tmp_path / "dist"
+    root.mkdir()
+    outside = tmp_path / "outside.html"
+    outside.write_text("<p>protected</p>", encoding="utf-8")
+    (root / "leak.html").symlink_to(outside)
+
+    session = DevelopmentServer().create(
+        DevelopmentServerConfig(root, port=0),
+        live_reload=True,
+    )
+    thread = Thread(target=session.serve_forever, daemon=True)
+    thread.start()
+    try:
+        with pytest.raises(HTTPError) as exc_info:
+            urlopen(f"{session.info.url}/leak.html", timeout=2)
+
+        assert exc_info.value.code == 404
+    finally:
+        session.shutdown()
+        thread.join(timeout=2)
+        session.close()
+
+
+def test_live_reload_mode_preserves_csp_without_inline_script_permission(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "dist"
+    root.mkdir()
+    (root / "index.html").write_text(
+        "<html><body>safe</body></html>",
+        encoding="utf-8",
+    )
+
+    session = DevelopmentServer().create(
+        DevelopmentServerConfig(root, port=0),
+        live_reload=True,
+    )
+    thread = Thread(target=session.serve_forever, daemon=True)
+    thread.start()
+    try:
+        connection = HTTPConnection(session.info.host, session.info.port, timeout=2)
+        connection.request("GET", "/index.html")
+        response = connection.getresponse()
+        body = response.read()
+        csp = response.headers["Content-Security-Policy"]
+        connection.close()
+
+        assert b'src="/.pypagekit/live-reload.js"' in body
+        assert "default-src 'self'" in csp
+        assert "'unsafe-inline'" not in csp
+    finally:
+        session.shutdown()
+        thread.join(timeout=2)
+        session.close()
