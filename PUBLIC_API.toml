@@ -1,8 +1,8 @@
 schema_version = 1
-package_version = "1.1.0a2"
+package_version = "1.1.0a3"
 
 [classifications]
-stable = "Frozen public Python surface covered by the PyPageKit 1.0 compatibility contract."
+stable = "Stable public Python surface covered by the current PyPageKit major-version compatibility contract."
 provisional_public = "Explicitly public today, but still eligible for refinement during the 0.9 freeze cycle."
 operational_contract = "User-visible non-import contract such as CLI commands, exit semantics, or plugin metadata names."
 internal = "Importable implementation detail with no compatibility promise."
@@ -105,16 +105,20 @@ exports = [
   "AssetBuildEntry",
   "BuildFingerprint",
   "BuildManifest",
+  "BuildManifestDiff",
   "BuildManifestEntry",
   "BuildPlan",
   "BuildPlanner",
   "BuildPlannerProtocol",
   "FilesystemWriteResult",
   "FilesystemWriter",
+  "IncrementalFilesystemWriteResult",
+  "IncrementalStaticSiteGenerationResult",
   "PageBuildEntry",
   "StaticSiteGenerationResult",
   "StaticSiteGenerator",
   "build_manifest",
+  "diff_build_manifests",
   "route_output_target",
 ]
 
@@ -232,6 +236,7 @@ exports = [
   "FilesystemOutputError",
   "FilesystemRollbackError",
   "FilesystemWriteError",
+  "IncrementalOutputDriftError",
   "InvalidAriaAttributeNameError",
   "InvalidAssetError",
   "InvalidAssetSourceError",

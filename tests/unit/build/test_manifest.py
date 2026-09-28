@@ -9,10 +9,12 @@ from pypagekit.build import (
     AssetBuildEntry,
     BuildFingerprint,
     BuildManifest,
+    BuildManifestDiff,
     BuildManifestEntry,
     BuildPlan,
     PageBuildEntry,
     build_manifest,
+    diff_build_manifests,
 )
 from pypagekit.exceptions import (
     BuildManifestSourceError,
@@ -310,3 +312,143 @@ def test_build_manifest_rejects_directory_asset_source(tmp_path: Path) -> None:
 def test_build_manifest_requires_build_plan() -> None:
     with pytest.raises(TypeError, match="BuildPlan"):
         build_manifest(object())  # type: ignore[arg-type]
+
+
+def test_diff_build_manifests_classifies_added_changed_unchanged_and_removed() -> None:
+    unchanged_previous = BuildManifestEntry(
+        PurePosixPath("same.html"),
+        "page",
+        BuildFingerprint.from_text("same"),
+    )
+    changed_previous = BuildManifestEntry(
+        PurePosixPath("changed.html"),
+        "page",
+        BuildFingerprint.from_text("before"),
+    )
+    removed = BuildManifestEntry(
+        PurePosixPath("removed.css"),
+        "asset",
+        BuildFingerprint.from_bytes(b"removed"),
+    )
+    previous = BuildManifest(
+        [unchanged_previous, changed_previous, removed]
+    )
+
+    added = BuildManifestEntry(
+        PurePosixPath("added.js"),
+        "asset",
+        BuildFingerprint.from_bytes(b"added"),
+    )
+    changed_current = BuildManifestEntry(
+        PurePosixPath("changed.html"),
+        "page",
+        BuildFingerprint.from_text("after"),
+    )
+    unchanged_current = BuildManifestEntry(
+        PurePosixPath("same.html"),
+        "page",
+        BuildFingerprint.from_text("same"),
+    )
+    current = BuildManifest(
+        [added, changed_current, unchanged_current]
+    )
+
+    diff = diff_build_manifests(previous, current)
+
+    assert diff == BuildManifestDiff(
+        added=(added,),
+        changed=(changed_current,),
+        unchanged=(unchanged_current,),
+        removed=(removed,),
+    )
+    assert diff.added_targets == (PurePosixPath("added.js"),)
+    assert diff.changed_targets == (PurePosixPath("changed.html"),)
+    assert diff.unchanged_targets == (PurePosixPath("same.html"),)
+    assert diff.removed_targets == (PurePosixPath("removed.css"),)
+    assert diff.has_changes is True
+
+
+def test_diff_build_manifests_treats_kind_change_as_changed() -> None:
+    fingerprint = BuildFingerprint.from_bytes(b"same")
+    previous = BuildManifest(
+        [
+            BuildManifestEntry(
+                PurePosixPath("artifact"),
+                "asset",
+                fingerprint,
+            )
+        ]
+    )
+    current = BuildManifest(
+        [
+            BuildManifestEntry(
+                PurePosixPath("artifact"),
+                "page",
+                fingerprint,
+            )
+        ]
+    )
+
+    diff = diff_build_manifests(previous, current)
+
+    assert diff.changed == current.entries
+    assert diff.added == ()
+    assert diff.removed == ()
+    assert diff.unchanged == ()
+
+
+def test_diff_build_manifests_preserves_current_and_previous_declaration_order() -> None:
+    first = BuildManifestEntry(
+        PurePosixPath("first"),
+        "page",
+        BuildFingerprint.from_text("first"),
+    )
+    second = BuildManifestEntry(
+        PurePosixPath("second"),
+        "page",
+        BuildFingerprint.from_text("second"),
+    )
+    third = BuildManifestEntry(
+        PurePosixPath("third"),
+        "page",
+        BuildFingerprint.from_text("third"),
+    )
+
+    previous = BuildManifest([second, first])
+    current = BuildManifest([third, first])
+
+    diff = diff_build_manifests(previous, current)
+
+    assert diff.added == (third,)
+    assert diff.unchanged == (first,)
+    assert diff.removed == (second,)
+
+
+def test_diff_build_manifests_reports_no_changes_for_identical_manifest() -> None:
+    manifest = BuildManifest(
+        [
+            BuildManifestEntry(
+                PurePosixPath("index.html"),
+                "page",
+                BuildFingerprint.from_text("same"),
+            )
+        ]
+    )
+
+    diff = diff_build_manifests(manifest, manifest)
+
+    assert diff.added == ()
+    assert diff.changed == ()
+    assert diff.removed == ()
+    assert diff.unchanged == manifest.entries
+    assert diff.has_changes is False
+
+
+def test_diff_build_manifests_validates_inputs() -> None:
+    manifest = BuildManifest()
+
+    with pytest.raises(TypeError, match="Previous manifest"):
+        diff_build_manifests(object(), manifest)  # type: ignore[arg-type]
+
+    with pytest.raises(TypeError, match="Current manifest"):
+        diff_build_manifests(manifest, object())  # type: ignore[arg-type]

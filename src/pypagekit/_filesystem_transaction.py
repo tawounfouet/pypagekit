@@ -43,7 +43,13 @@ class FilesystemTransaction:
             candidate.mkdir()
             self._created_directories.append(candidate)
 
-    def prepare_file(self, destination: Path, *, backup_existing: bool) -> None:
+    def prepare_file(
+        self,
+        destination: Path,
+        *,
+        backup_existing: bool,
+        require_existing: bool = False,
+    ) -> Path | None:
         """Snapshot an existing destination before it may be mutated."""
 
         if self._finished:
@@ -51,6 +57,11 @@ class FilesystemTransaction:
 
         self.ensure_directory(destination.parent)
         existed = destination.exists()
+        if require_existing and not existed:
+            raise FileNotFoundError(
+                f"Required transaction target '{destination}' no longer exists."
+            )
+
         backup: Path | None = None
 
         if existed and backup_existing:
@@ -74,6 +85,7 @@ class FilesystemTransaction:
                 backup=backup,
             )
         )
+        return backup
 
     def commit(self) -> None:
         """Finish the transaction and remove rollback snapshots."""

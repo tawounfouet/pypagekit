@@ -4,6 +4,39 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.0a3]
+
+### Added
+
+- Public immutable `BuildManifestDiff` with deterministic `added`, `changed`, `unchanged`, and `removed` classifications.
+- Public `diff_build_manifests()` pure comparison operation.
+- Public immutable `IncrementalFilesystemWriteResult`.
+- Public `FilesystemWriter.write_incremental()` for drift-safe minimal filesystem mutation.
+- Public immutable `IncrementalStaticSiteGenerationResult`.
+- Public `StaticSiteGenerator.generate_incremental()` orchestration.
+- Public `IncrementalOutputDriftError` when tracked output no longer matches the supplied previous manifest.
+
+### Incremental semantics
+
+- Added/changed/unchanged entries preserve the current manifest declaration order.
+- Removed entries preserve the previous manifest declaration order.
+- A target is unchanged only when both artifact kind and fingerprint are unchanged.
+- Every previously tracked output is verified against its prior fingerprint before mutation.
+- Missing, manually modified, symlinked, or hard-linked tracked output fails closed before the transaction begins.
+- Only added and changed targets are physically written.
+- Removed tracked files are transactionally backed up and deleted.
+- Unchanged tracked files are not rewritten.
+- Unplanned existing files remain untouched.
+- Added targets must not overwrite untracked existing files.
+- Asset sources may not alias any current or removed output destination.
+- Newly written files are fingerprint-verified before transaction commit.
+- Failures restore changed and removed files and remove newly added files.
+- Empty directories left behind by removed artifacts are intentionally not pruned in this lot.
+
+### Release
+
+- Advance the development version to `1.1.0a3`.
+
 ## [1.1.0a2]
 
 ### Added

@@ -7,7 +7,12 @@ from pypagekit.domain import Assets, Site
 from pypagekit.exceptions import InvalidBuildPlanError
 
 from .base import BuildPlannerProtocol
-from .filesystem import FilesystemWriteResult, FilesystemWriter
+from .filesystem import (
+    FilesystemWriteResult,
+    FilesystemWriter,
+    IncrementalFilesystemWriteResult,
+)
+from .manifest import BuildManifest, BuildManifestDiff
 from .model import BuildPlan
 from .planner import BuildPlanner
 
@@ -50,6 +55,61 @@ class StaticSiteGenerationResult:
         """Return every materialized file, pages first then assets."""
 
         return self.write_result.files
+
+
+@dataclass(frozen=True, slots=True)
+class IncrementalStaticSiteGenerationResult:
+    """Immutable result of one incremental static-site generation transition."""
+
+    plan: BuildPlan
+    write_result: IncrementalFilesystemWriteResult
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.plan, BuildPlan):
+            raise TypeError(
+                "Incremental static site generation plan must be a BuildPlan object."
+            )
+        if not isinstance(self.write_result, IncrementalFilesystemWriteResult):
+            raise TypeError(
+                "Incremental static site generation write_result must be an "
+                "IncrementalFilesystemWriteResult object."
+            )
+
+    @property
+    def output_root(self) -> Path:
+        """Return the filesystem root used for incremental generation."""
+
+        return self.write_result.output_root
+
+    @property
+    def manifest(self) -> BuildManifest:
+        """Return the manifest produced for the resulting build."""
+
+        return self.write_result.manifest
+
+    @property
+    def diff(self) -> BuildManifestDiff:
+        """Return the manifest diff applied to the filesystem."""
+
+        return self.write_result.diff
+
+    @property
+    def files(self) -> tuple[Path, ...]:
+        """Return every file represented by the resulting manifest."""
+
+        return self.write_result.files
+
+    @property
+    def written_files(self) -> tuple[Path, ...]:
+        """Return only files physically written by the incremental transition."""
+
+        return self.write_result.written_files
+
+    @property
+    def removed_files(self) -> tuple[Path, ...]:
+        """Return files removed by the incremental transition."""
+
+        return self.write_result.removed_files
 
 
 class StaticSiteGenerator:
@@ -95,11 +155,7 @@ class StaticSiteGenerator:
     ) -> StaticSiteGenerationResult:
         """Plan and materialize a complete static site."""
 
-        plan = self._planner.plan(site, assets)
-        if not isinstance(plan, BuildPlan):
-            raise InvalidBuildPlanError(
-                f"Build planner returned {type(plan).__name__}; expected BuildPlan."
-            )
+        plan = self._plan(site, assets)
 
         write_result = self._writer.write(
             plan,
@@ -110,3 +166,42 @@ class StaticSiteGenerator:
             plan=plan,
             write_result=write_result,
         )
+
+    def generate_incremental(
+        self,
+        site: Site,
+        previous_manifest: BuildManifest,
+        output_root: Path,
+        *,
+        assets: Assets | None = None,
+    ) -> IncrementalStaticSiteGenerationResult:
+        """Plan a site and apply only changes since a previous build manifest."""
+
+        if not isinstance(previous_manifest, BuildManifest):
+            raise TypeError(
+                "Incremental static site generation previous_manifest must be "
+                "a BuildManifest object."
+            )
+
+        plan = self._plan(site, assets)
+        write_result = self._writer.write_incremental(
+            plan,
+            previous_manifest,
+            output_root,
+        )
+        return IncrementalStaticSiteGenerationResult(
+            plan=plan,
+            write_result=write_result,
+        )
+
+    def _plan(
+        self,
+        site: Site,
+        assets: Assets | None,
+    ) -> BuildPlan:
+        plan = self._planner.plan(site, assets)
+        if not isinstance(plan, BuildPlan):
+            raise InvalidBuildPlanError(
+                f"Build planner returned {type(plan).__name__}; expected BuildPlan."
+            )
+        return plan

@@ -187,6 +187,109 @@ class BuildManifest:
         return len(self.entries)
 
 
+@dataclass(frozen=True, slots=True)
+class BuildManifestDiff:
+    """Immutable classification of changes between two build manifests."""
+
+    added: tuple[BuildManifestEntry, ...]
+    changed: tuple[BuildManifestEntry, ...]
+    unchanged: tuple[BuildManifestEntry, ...]
+    removed: tuple[BuildManifestEntry, ...]
+
+    def __post_init__(self) -> None:
+        for name in ("added", "changed", "unchanged", "removed"):
+            entries = getattr(self, name)
+            if not isinstance(entries, tuple):
+                raise TypeError(f"Build manifest diff {name} entries must be a tuple.")
+            invalid = [entry for entry in entries if not isinstance(entry, BuildManifestEntry)]
+            if invalid:
+                invalid_type = type(invalid[0]).__name__
+                raise TypeError(
+                    f"Build manifest diff {name} entries must contain only "
+                    f"BuildManifestEntry objects; got {invalid_type}."
+                )
+
+        targets = (
+            tuple(entry.target for entry in self.added)
+            + tuple(entry.target for entry in self.changed)
+            + tuple(entry.target for entry in self.unchanged)
+            + tuple(entry.target for entry in self.removed)
+        )
+        if len(targets) != len(set(targets)):
+            raise InvalidBuildManifestError(
+                "A build manifest diff target must appear in exactly one classification."
+            )
+
+    @property
+    def added_targets(self) -> tuple[PurePosixPath, ...]:
+        """Return targets newly introduced by the next manifest."""
+
+        return tuple(entry.target for entry in self.added)
+
+    @property
+    def changed_targets(self) -> tuple[PurePosixPath, ...]:
+        """Return targets whose kind or fingerprint changed."""
+
+        return tuple(entry.target for entry in self.changed)
+
+    @property
+    def unchanged_targets(self) -> tuple[PurePosixPath, ...]:
+        """Return targets preserved exactly from the previous manifest."""
+
+        return tuple(entry.target for entry in self.unchanged)
+
+    @property
+    def removed_targets(self) -> tuple[PurePosixPath, ...]:
+        """Return targets no longer present in the next manifest."""
+
+        return tuple(entry.target for entry in self.removed)
+
+    @property
+    def has_changes(self) -> bool:
+        """Return whether the next manifest requires filesystem mutations."""
+
+        return bool(self.added or self.changed or self.removed)
+
+
+def diff_build_manifests(
+    previous: BuildManifest,
+    current: BuildManifest,
+) -> BuildManifestDiff:
+    """Classify deterministic changes from one build manifest to another."""
+
+    if not isinstance(previous, BuildManifest):
+        raise TypeError("Previous manifest must be a BuildManifest object.")
+    if not isinstance(current, BuildManifest):
+        raise TypeError("Current manifest must be a BuildManifest object.")
+
+    added: list[BuildManifestEntry] = []
+    changed: list[BuildManifestEntry] = []
+    unchanged: list[BuildManifestEntry] = []
+
+    for entry in current.entries:
+        previous_entry = previous.get(entry.target)
+        if previous_entry is None:
+            added.append(entry)
+        elif (
+            previous_entry.kind == entry.kind
+            and previous_entry.fingerprint == entry.fingerprint
+        ):
+            unchanged.append(entry)
+        else:
+            changed.append(entry)
+
+    removed = tuple(
+        entry for entry in previous.entries if current.get(entry.target) is None
+    )
+
+    return BuildManifestDiff(
+        added=tuple(added),
+        changed=tuple(changed),
+        unchanged=tuple(unchanged),
+        removed=removed,
+    )
+
+
 def build_manifest(plan: BuildPlan) -> BuildManifest:
     """Fingerprint a build plan, reading asset source bytes explicitly."""
 
@@ -263,6 +366,8 @@ def _source_state(source: Path) -> tuple[int, int, int, int]:
 __all__ = [
     "BuildFingerprint",
     "BuildManifest",
+    "BuildManifestDiff",
     "BuildManifestEntry",
     "build_manifest",
+    "diff_build_manifests",
 ]

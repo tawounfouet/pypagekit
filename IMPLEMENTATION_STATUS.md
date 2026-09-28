@@ -41,6 +41,7 @@
 | LOT-37 | 1.0 Release Qualification | QUALIFIED | `1.0.0` |
 | LOT-38 | Post-1.0 Compatibility Baseline Gate | QUALIFIED | `1.1.0a1` |
 | LOT-39 | Build Fingerprints & Manifest | QUALIFIED | `1.1.0a2` |
+| LOT-40 | Incremental Build Diff & Materialization | QUALIFIED | `1.1.0a3` |
 
 ## LOT-07 exit criteria
 
@@ -1124,3 +1125,45 @@ Next after qualification: **LOT-39 — Build Fingerprints & Manifest** (`1.1.0a2
 - [x] GitHub pull-request CI is fully green
 
 Next after qualification: **LOT-40 — Incremental Build Diff & Materialization** (`1.1.0a3`).
+
+
+## LOT-40 exit criteria
+
+- [x] public immutable `BuildManifestDiff` exists
+- [x] manifest diff classifies added targets
+- [x] manifest diff classifies changed targets
+- [x] manifest diff classifies unchanged targets
+- [x] manifest diff classifies removed targets
+- [x] artifact kind changes count as changed even with identical content bytes
+- [x] diff ordering is deterministic
+- [x] public `diff_build_manifests()` performs no filesystem I/O
+- [x] public immutable `IncrementalFilesystemWriteResult` exists
+- [x] public `FilesystemWriter.write_incremental()` exists
+- [x] public immutable `IncrementalStaticSiteGenerationResult` exists
+- [x] public `StaticSiteGenerator.generate_incremental()` exists
+- [x] previous tracked output is fingerprint-verified before any mutation
+- [x] changed/removed outputs are reverified from the exact transaction backup
+- [x] disappearance between preflight and backup fails as output drift
+- [x] mutation between preflight and backup fails as output drift without losing the concurrent bytes
+- [x] missing tracked output fails closed
+- [x] manually modified tracked output fails closed
+- [x] tracked output symlinks remain rejected
+- [x] tracked output hard links remain rejected
+- [x] added targets cannot overwrite untracked existing files
+- [x] unplanned existing files remain untouched
+- [x] unchanged files are not rewritten
+- [x] added files are written
+- [x] changed files are replaced
+- [x] removed files are transactionally deleted
+- [x] changed and removed files are restored after later failure
+- [x] newly added files are removed after later failure
+- [x] written output bytes are verified against the next manifest before commit
+- [x] asset sources cannot alias current or removed output destinations
+- [x] incremental no-op performs no transactional file mutation
+- [x] empty directories are deliberately not pruned in LOT-40
+- [x] frozen `API_CONTRACT_1_0.json` remains unchanged
+- [x] LOT-38 compatibility gate accepts LOT-40 as compatible 1.x evolution
+- [x] package version advances to `1.1.0a3`
+- [x] GitHub pull-request CI is fully green
+
+Next after qualification: **LOT-41 — Watch Service & Change Detection** (`1.1.0b1`).

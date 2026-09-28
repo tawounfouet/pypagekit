@@ -12,7 +12,9 @@ from pypagekit.build import (
     BuildPlan,
     FilesystemWriteResult,
     FilesystemWriter,
+    IncrementalFilesystemWriteResult,
     PageBuildEntry,
+    build_manifest,
 )
 from pypagekit.exceptions import (
     AssetSourceOutputConflictError,
@@ -20,6 +22,7 @@ from pypagekit.exceptions import (
     FilesystemRollbackError,
     FilesystemWriteError,
     InvalidAssetSourceForOutputError,
+    IncrementalOutputDriftError,
     InvalidOutputRootError,
     OutputPathConflictError,
     OutputSymlinkError,
@@ -442,3 +445,468 @@ def test_rollback_failure_is_reported_explicitly(
 
     with pytest.raises(FilesystemRollbackError, match="rollback failed"):
         FilesystemWriter().write(plan, output_root, overwrite=True)
+
+
+def test_incremental_writer_classifies_and_applies_minimal_mutations(
+    tmp_path: Path,
+) -> None:
+    output_root = tmp_path / "dist"
+    old_asset_source = tmp_path / "old.css"
+    old_asset_source.write_text("old css", encoding="utf-8")
+    initial_plan = BuildPlan(
+        pages=[
+            page_entry("index.html", "same"),
+            page_entry("changed.html", "before"),
+            page_entry("removed.html", "remove me"),
+        ],
+        assets=[
+            asset_entry(old_asset_source, "assets/app.css"),
+        ],
+    )
+    previous_manifest = build_manifest(initial_plan)
+    FilesystemWriter().write(initial_plan, output_root)
+
+    new_asset_source = tmp_path / "new.css"
+    new_asset_source.write_text("new css", encoding="utf-8")
+    next_plan = BuildPlan(
+        pages=[
+            page_entry("index.html", "same"),
+            page_entry("changed.html", "after"),
+            page_entry("added.html", "new page"),
+        ],
+        assets=[
+            asset_entry(new_asset_source, "assets/app.css"),
+        ],
+    )
+
+    result = FilesystemWriter().write_incremental(
+        next_plan,
+        previous_manifest,
+        output_root,
+    )
+
+    assert isinstance(result, IncrementalFilesystemWriteResult)
+    assert result.diff.added_targets == (PurePosixPath("added.html"),)
+    assert result.diff.changed_targets == (
+        PurePosixPath("changed.html"),
+        PurePosixPath("assets/app.css"),
+    )
+    assert result.diff.unchanged_targets == (PurePosixPath("index.html"),)
+    assert result.diff.removed_targets == (PurePosixPath("removed.html"),)
+    assert result.added_files == (output_root / "added.html",)
+    assert result.changed_files == (
+        output_root / "changed.html",
+        output_root / "assets" / "app.css",
+    )
+    assert result.removed_files == (output_root / "removed.html",)
+    assert result.unchanged_files == (output_root / "index.html",)
+    assert result.written_files == (
+        output_root / "changed.html",
+        output_root / "added.html",
+        output_root / "assets" / "app.css",
+    )
+    assert result.files == (
+        output_root / "index.html",
+        output_root / "changed.html",
+        output_root / "added.html",
+        output_root / "assets" / "app.css",
+    )
+
+    assert (output_root / "index.html").read_text(encoding="utf-8") == "same"
+    assert (output_root / "changed.html").read_text(encoding="utf-8") == "after"
+    assert (output_root / "added.html").read_text(encoding="utf-8") == "new page"
+    assert (output_root / "assets" / "app.css").read_text(encoding="utf-8") == "new css"
+    assert not (output_root / "removed.html").exists()
+
+
+def test_incremental_writer_no_change_performs_no_transactional_mutation(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    output_root = tmp_path / "dist"
+    plan = BuildPlan(
+        pages=[page_entry("index.html", "same")],
+    )
+    previous_manifest = build_manifest(plan)
+    FilesystemWriter().write(plan, output_root)
+
+    def fail_prepare(*args: object, **kwargs: object) -> None:
+        del args, kwargs
+        raise AssertionError("no mutation should be prepared")
+
+    monkeypatch.setattr(
+        transaction_module.FilesystemTransaction,
+        "prepare_file",
+        fail_prepare,
+    )
+
+    result = FilesystemWriter().write_incremental(
+        plan,
+        previous_manifest,
+        output_root,
+    )
+
+    assert result.diff.has_changes is False
+    assert result.written_files == ()
+    assert result.removed_files == ()
+    assert result.unchanged_files == (output_root / "index.html",)
+
+
+def test_incremental_writer_preserves_unplanned_existing_files(tmp_path: Path) -> None:
+    output_root = tmp_path / "dist"
+    initial_plan = BuildPlan(
+        pages=[page_entry("index.html", "before")],
+    )
+    previous_manifest = build_manifest(initial_plan)
+    FilesystemWriter().write(initial_plan, output_root)
+    unplanned = output_root / "keep.txt"
+    unplanned.write_text("keep", encoding="utf-8")
+
+    FilesystemWriter().write_incremental(
+        BuildPlan(pages=[page_entry("index.html", "after")]),
+        previous_manifest,
+        output_root,
+    )
+
+    assert unplanned.read_text(encoding="utf-8") == "keep"
+
+
+def test_incremental_writer_rejects_modified_tracked_output(tmp_path: Path) -> None:
+    output_root = tmp_path / "dist"
+    plan = BuildPlan(
+        pages=[page_entry("index.html", "generated")],
+    )
+    previous_manifest = build_manifest(plan)
+    FilesystemWriter().write(plan, output_root)
+    target = output_root / "index.html"
+    target.write_text("manual edit", encoding="utf-8")
+
+    with pytest.raises(IncrementalOutputDriftError, match="no longer matches"):
+        FilesystemWriter().write_incremental(
+            plan,
+            previous_manifest,
+            output_root,
+        )
+
+    assert target.read_text(encoding="utf-8") == "manual edit"
+
+
+def test_incremental_writer_rejects_missing_tracked_output(tmp_path: Path) -> None:
+    output_root = tmp_path / "dist"
+    plan = BuildPlan(
+        pages=[page_entry("index.html", "generated")],
+    )
+    previous_manifest = build_manifest(plan)
+    FilesystemWriter().write(plan, output_root)
+    (output_root / "index.html").unlink()
+
+    with pytest.raises(IncrementalOutputDriftError, match="missing"):
+        FilesystemWriter().write_incremental(
+            plan,
+            previous_manifest,
+            output_root,
+        )
+
+
+def test_incremental_writer_rejects_missing_tracked_output_root(tmp_path: Path) -> None:
+    plan = BuildPlan(
+        pages=[page_entry("index.html", "generated")],
+    )
+    previous_manifest = build_manifest(plan)
+
+    with pytest.raises(IncrementalOutputDriftError, match="root"):
+        FilesystemWriter().write_incremental(
+            plan,
+            previous_manifest,
+            tmp_path / "dist",
+        )
+
+
+def test_incremental_writer_rejects_hard_linked_tracked_output(tmp_path: Path) -> None:
+    output_root = tmp_path / "dist"
+    plan = BuildPlan(
+        pages=[page_entry("index.html", "generated")],
+    )
+    previous_manifest = build_manifest(plan)
+    FilesystemWriter().write(plan, output_root)
+    alias = tmp_path / "alias.html"
+    alias.hardlink_to(output_root / "index.html")
+
+    with pytest.raises(OutputPathConflictError, match="hard-linked"):
+        FilesystemWriter().write_incremental(
+            plan,
+            previous_manifest,
+            output_root,
+        )
+
+
+def test_incremental_writer_rejects_symlinked_tracked_output(tmp_path: Path) -> None:
+    output_root = tmp_path / "dist"
+    output_root.mkdir()
+    outside = tmp_path / "outside.html"
+    outside.write_text("generated", encoding="utf-8")
+    tracked = output_root / "index.html"
+    tracked.symlink_to(outside)
+    previous_manifest = build_manifest(
+        BuildPlan(pages=[page_entry("index.html", "generated")])
+    )
+
+    with pytest.raises(OutputSymlinkError, match="target"):
+        FilesystemWriter().write_incremental(
+            BuildPlan(pages=[page_entry("index.html", "generated")]),
+            previous_manifest,
+            output_root,
+        )
+
+
+def test_incremental_failure_restores_removed_and_changed_files(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    output_root = tmp_path / "dist"
+    source = tmp_path / "asset.bin"
+    source.write_bytes(b"before")
+    initial_plan = BuildPlan(
+        pages=[
+            page_entry("changed.html", "before"),
+            page_entry("removed.html", "remove me"),
+        ],
+        assets=[asset_entry(source, "assets/asset.bin")],
+    )
+    previous_manifest = build_manifest(initial_plan)
+    FilesystemWriter().write(initial_plan, output_root)
+
+    source.write_bytes(b"after")
+    next_plan = BuildPlan(
+        pages=[page_entry("changed.html", "after")],
+        assets=[asset_entry(source, "assets/asset.bin")],
+    )
+
+    def fail_copy(*args: object, **kwargs: object) -> None:
+        del args, kwargs
+        raise OSError("simulated incremental copy failure")
+
+    monkeypatch.setattr(filesystem_module.shutil, "copyfileobj", fail_copy)
+
+    with pytest.raises(FilesystemWriteError):
+        FilesystemWriter().write_incremental(
+            next_plan,
+            previous_manifest,
+            output_root,
+        )
+
+    assert (output_root / "changed.html").read_text(encoding="utf-8") == "before"
+    assert (output_root / "removed.html").read_text(encoding="utf-8") == "remove me"
+    assert (output_root / "assets" / "asset.bin").read_bytes() == b"before"
+    assert not tuple(output_root.rglob(".pypagekit-backup-*"))
+
+
+def test_incremental_writer_rolls_back_when_written_bytes_miss_planned_fingerprint(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    output_root = tmp_path / "dist"
+    source = tmp_path / "asset.bin"
+    source.write_bytes(b"before")
+    initial_plan = BuildPlan(
+        assets=[asset_entry(source, "assets/asset.bin")],
+    )
+    previous_manifest = build_manifest(initial_plan)
+    FilesystemWriter().write(initial_plan, output_root)
+
+    source.write_bytes(b"after")
+    next_plan = BuildPlan(
+        assets=[asset_entry(source, "assets/asset.bin")],
+    )
+
+    def corrupt_copy(source_file: object, output_file: object) -> None:
+        del source_file
+        output_file.write(b"corrupt")  # type: ignore[attr-defined]
+
+    monkeypatch.setattr(filesystem_module.shutil, "copyfileobj", corrupt_copy)
+
+    with pytest.raises(FilesystemWriteError, match="Filesystem output failed"):
+        FilesystemWriter().write_incremental(
+            next_plan,
+            previous_manifest,
+            output_root,
+        )
+
+    assert (output_root / "assets" / "asset.bin").read_bytes() == b"before"
+
+
+def test_incremental_writer_rejects_asset_source_that_is_removed_output(
+    tmp_path: Path,
+) -> None:
+    output_root = tmp_path / "dist"
+    initial_plan = BuildPlan(
+        pages=[page_entry("source.txt", "source bytes")],
+    )
+    previous_manifest = build_manifest(initial_plan)
+    FilesystemWriter().write(initial_plan, output_root)
+
+    next_plan = BuildPlan(
+        assets=[
+            asset_entry(
+                output_root / "source.txt",
+                "assets/copied.txt",
+            )
+        ]
+    )
+
+    with pytest.raises(AssetSourceOutputConflictError):
+        FilesystemWriter().write_incremental(
+            next_plan,
+            previous_manifest,
+            output_root,
+        )
+
+    assert (output_root / "source.txt").read_text(encoding="utf-8") == "source bytes"
+    assert not (output_root / "assets").exists()
+
+
+def test_incremental_writer_validates_arguments(tmp_path: Path) -> None:
+    writer = FilesystemWriter()
+    manifest = build_manifest(BuildPlan())
+
+    with pytest.raises(TypeError, match="BuildPlan"):
+        writer.write_incremental(
+            object(),  # type: ignore[arg-type]
+            manifest,
+            tmp_path / "dist",
+        )
+
+    with pytest.raises(TypeError, match="previous_manifest"):
+        writer.write_incremental(
+            BuildPlan(),
+            object(),  # type: ignore[arg-type]
+            tmp_path / "dist",
+        )
+
+    with pytest.raises(TypeError, match="pathlib.Path"):
+        writer.write_incremental(
+            BuildPlan(),
+            manifest,
+            "dist",  # type: ignore[arg-type]
+        )
+
+
+def test_incremental_write_result_is_immutable(tmp_path: Path) -> None:
+    manifest = build_manifest(BuildPlan())
+    result = IncrementalFilesystemWriteResult(
+        tmp_path,
+        manifest,
+        filesystem_module.diff_build_manifests(manifest, manifest),
+        (),
+        (),
+        (),
+        (),
+    )
+
+    with pytest.raises(FrozenInstanceError):
+        result.output_root = tmp_path / "other"  # type: ignore[misc]
+
+
+def test_incremental_writer_detects_drift_between_preflight_and_backup(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    output_root = tmp_path / "dist"
+    initial_plan = BuildPlan(
+        pages=[page_entry("index.html", "before")],
+    )
+    previous_manifest = build_manifest(initial_plan)
+    FilesystemWriter().write(initial_plan, output_root)
+
+    target = output_root / "index.html"
+    original_prepare = transaction_module.FilesystemTransaction.prepare_file
+    mutated = False
+
+    def race_prepare(
+        transaction: transaction_module.FilesystemTransaction,
+        destination: Path,
+        *,
+        backup_existing: bool,
+        require_existing: bool = False,
+    ) -> Path | None:
+        nonlocal mutated
+        if destination == target and require_existing and not mutated:
+            mutated = True
+            destination.write_text("concurrent edit", encoding="utf-8")
+        return original_prepare(
+            transaction,
+            destination,
+            backup_existing=backup_existing,
+            require_existing=require_existing,
+        )
+
+    monkeypatch.setattr(
+        transaction_module.FilesystemTransaction,
+        "prepare_file",
+        race_prepare,
+    )
+
+    with pytest.raises(
+        IncrementalOutputDriftError,
+        match="changed immediately before mutation",
+    ):
+        FilesystemWriter().write_incremental(
+            BuildPlan(pages=[page_entry("index.html", "after")]),
+            previous_manifest,
+            output_root,
+        )
+
+    assert target.read_text(encoding="utf-8") == "concurrent edit"
+    assert not tuple(output_root.glob(".pypagekit-backup-*"))
+
+
+def test_incremental_writer_detects_disappearance_between_preflight_and_backup(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    output_root = tmp_path / "dist"
+    initial_plan = BuildPlan(
+        pages=[page_entry("index.html", "before")],
+    )
+    previous_manifest = build_manifest(initial_plan)
+    FilesystemWriter().write(initial_plan, output_root)
+
+    target = output_root / "index.html"
+    original_prepare = transaction_module.FilesystemTransaction.prepare_file
+    removed = False
+
+    def race_prepare(
+        transaction: transaction_module.FilesystemTransaction,
+        destination: Path,
+        *,
+        backup_existing: bool,
+        require_existing: bool = False,
+    ) -> Path | None:
+        nonlocal removed
+        if destination == target and require_existing and not removed:
+            removed = True
+            destination.unlink()
+        return original_prepare(
+            transaction,
+            destination,
+            backup_existing=backup_existing,
+            require_existing=require_existing,
+        )
+
+    monkeypatch.setattr(
+        transaction_module.FilesystemTransaction,
+        "prepare_file",
+        race_prepare,
+    )
+
+    with pytest.raises(
+        IncrementalOutputDriftError,
+        match="disappeared before mutation",
+    ):
+        FilesystemWriter().write_incremental(
+            BuildPlan(pages=[page_entry("index.html", "after")]),
+            previous_manifest,
+            output_root,
+        )
+
+    assert not target.exists()

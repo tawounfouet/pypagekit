@@ -33,16 +33,20 @@ from pypagekit.build import (
     AssetBuildEntry,
     BuildFingerprint,
     BuildManifest,
+    BuildManifestDiff,
     BuildManifestEntry,
     BuildPlan,
     BuildPlanner,
     BuildPlannerProtocol,
     FilesystemWriter,
     FilesystemWriteResult,
+    IncrementalFilesystemWriteResult,
+    IncrementalStaticSiteGenerationResult,
     PageBuildEntry,
     StaticSiteGenerationResult,
     StaticSiteGenerator,
     build_manifest,
+    diff_build_manifests,
     route_output_target,
 )
 from pypagekit.components import Card, ComponentRegistry, ComponentRuntime, Hero, Section
@@ -71,6 +75,7 @@ from pypagekit.exceptions import (
     FilesystemOutputError,
     FilesystemRollbackError,
     FilesystemWriteError,
+    IncrementalOutputDriftError,
     InvalidAssetError,
     InvalidAssetSourceForOutputError,
     InvalidAttributeError,
@@ -159,8 +164,29 @@ def test_package_imports() -> None:
         "page",
         fingerprint,
     )
-    assert isinstance(BuildManifest([manifest_entry]), BuildManifest)
-    assert isinstance(build_manifest(BuildPlan()), BuildManifest)
+    manifest = BuildManifest([manifest_entry])
+    assert isinstance(manifest, BuildManifest)
+    empty_manifest = build_manifest(BuildPlan())
+    assert isinstance(empty_manifest, BuildManifest)
+    diff = diff_build_manifests(empty_manifest, empty_manifest)
+    assert isinstance(diff, BuildManifestDiff)
+    incremental_write_result = IncrementalFilesystemWriteResult(
+        Path("dist"),
+        empty_manifest,
+        diff,
+        (),
+        (),
+        (),
+        (),
+    )
+    assert isinstance(incremental_write_result, IncrementalFilesystemWriteResult)
+    assert isinstance(
+        IncrementalStaticSiteGenerationResult(
+            BuildPlan(),
+            incremental_write_result,
+        ),
+        IncrementalStaticSiteGenerationResult,
+    )
     planner: BuildPlannerProtocol = BuildPlanner()
     assert isinstance(planner, BuildPlanner)
     assert isinstance(FilesystemWriter(), FilesystemWriter)
@@ -279,6 +305,7 @@ def test_package_imports() -> None:
     assert issubclass(InvalidBuildPlanError, BuildError)
     assert issubclass(InvalidAssetSourceForOutputError, FilesystemOutputError)
     assert issubclass(InvalidBuildTargetError, BuildError)
+    assert issubclass(IncrementalOutputDriftError, FilesystemOutputError)
     assert issubclass(InvalidOutputRootError, FilesystemOutputError)
     assert issubclass(OutputPathConflictError, FilesystemOutputError)
     assert issubclass(OutputSymlinkError, FilesystemOutputError)
@@ -322,4 +349,4 @@ def test_package_imports() -> None:
 
 
 def test_current_version() -> None:
-    assert __version__ == "1.1.0a2"
+    assert __version__ == "1.1.0a3"
