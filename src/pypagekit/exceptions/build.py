@@ -51,6 +51,10 @@ class FilesystemOutputError(BuildError):
     """Base exception for filesystem materialization failures."""
 
 
+class IncrementalOutputDriftError(FilesystemOutputError):
+    """Raised when tracked output no longer matches the previous build manifest."""
+
+
 class InvalidOutputRootError(FilesystemOutputError):
     """Raised when an output root is not a usable directory path."""
 
