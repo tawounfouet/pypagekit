@@ -42,6 +42,7 @@
 | LOT-38 | Post-1.0 Compatibility Baseline Gate | QUALIFIED | `1.1.0a1` |
 | LOT-39 | Build Fingerprints & Manifest | QUALIFIED | `1.1.0a2` |
 | LOT-40 | Incremental Build Diff & Materialization | QUALIFIED | `1.1.0a3` |
+| LOT-41 | Watch Service & Change Detection | IN QUALIFICATION | `1.1.0b1` |
 
 ## LOT-07 exit criteria
 
@@ -1167,3 +1168,43 @@ Next after qualification: **LOT-40 — Incremental Build Diff & Materialization*
 - [x] GitHub pull-request CI is fully green
 
 Next after qualification: **LOT-41 — Watch Service & Change Detection** (`1.1.0b1`).
+
+
+## LOT-41 exit criteria
+
+- [x] public synchronous `DevelopmentWatcher` exists
+- [x] constructing a watcher starts no thread and performs no recursive scan
+- [x] watch root must exist and be a safe non-symlink directory
+- [x] public immutable `WatchSnapshotEntry` exists
+- [x] public immutable deterministic `WatchSnapshot` exists
+- [x] regular files are fingerprinted from exact bytes with SHA-256
+- [x] same-size file content changes are detectable
+- [x] file descriptors are read without following symlinks when `O_NOFOLLOW` is available
+- [x] file state is checked before/after read and against final path state
+- [x] symlinks are represented explicitly and are never traversed
+- [x] symlink target text is fingerprinted
+- [x] symlink state is checked across snapshotting
+- [x] empty directories alone do not create watch entries
+- [x] ignored relative path prefixes exclude complete subtrees
+- [x] nested ignore prefixes are normalized deterministically
+- [x] public `WatchChangeKind` exposes created/modified/deleted states
+- [x] public immutable `WatchChange` exists
+- [x] public immutable `WatchChangeBatch` exists
+- [x] public pure `diff_watch_snapshots()` exists
+- [x] snapshot diff ordering is deterministic by relative path
+- [x] file/symlink kind changes count as modifications
+- [x] public `poll()` performs one explicit snapshot+diff cycle
+- [x] public blocking `wait_for_changes()` exists
+- [x] debounce batches successive filesystem states until settled
+- [x] timeout can return without changes
+- [x] zero debounce returns the first detected state immediately
+- [x] invalid polling/debounce/timeout intervals fail explicitly
+- [x] watcher introduces no callback executor or hidden rebuild
+- [x] watcher remains independent from the development HTTP server
+- [x] no third-party filesystem watcher dependency is introduced
+- [x] frozen `API_CONTRACT_1_0.json` remains unchanged
+- [x] LOT-38 compatibility gate accepts LOT-41 as compatible 1.x evolution
+- [x] package version advances to `1.1.0b1`
+- [ ] GitHub pull-request CI is fully green
+
+Next after qualification: **LOT-42 — Serve Watch Mode & Live Reload** (`1.1.0b2`).
