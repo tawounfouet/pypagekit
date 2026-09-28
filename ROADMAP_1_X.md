@@ -46,7 +46,7 @@ serve --watch + live reload
 ```text
 LOT-38  1.1.0a1  compatibility baseline gate   ✅ qualified
 LOT-39  1.1.0a2  build fingerprints + manifest ✅ qualified
-LOT-40  1.1.0a3  incremental build diff         ← next
+LOT-40  1.1.0a3  incremental build diff         ← in qualification
 ```
 
 ## LOT-38 — Post-1.0 Compatibility Baseline Gate
@@ -147,7 +147,29 @@ removed
 minimal materialization plan
 ```
 
+The implementation also verifies the actual previous output before mutating it:
+
+```text
+previous BuildManifest
+       +
+current files under output_root
+       ↓
+fingerprint verification
+       │
+       ├── drift → fail closed
+       └── intact
+             +
+        next BuildManifest
+             ↓
+       one transaction
+```
+
+Only added/changed targets are written. Removed targets are backed up transactionally before deletion,
+so a later failure restores them together with changed files and removes newly added files.
+Unchanged targets are not rewritten, and unplanned output files remain untouched.
+
 Existing rollback, symlink, hard-link, collision, and filesystem safety guarantees remain mandatory.
+LOT-40 deliberately leaves empty-directory pruning out of scope.
 
 ## LOT-41 — Watch Service & Change Detection
 
