@@ -50,7 +50,7 @@ LOT-40  1.1.0a3  incremental build diff         ✅ qualified
 LOT-41  1.1.0b1  watch service + change detection ✅ qualified
 LOT-42  1.1.0b2  serve --watch + live reload     ✅ qualified
 LOT-43  1.1.0rc1  1.1 public contract snapshot   ✅ qualified
-LOT-44  1.1.0     release qualification           ← next
+LOT-44  1.1.0     release qualification           ← in qualification
 ```
 
 ## LOT-38 — Post-1.0 Compatibility Baseline Gate
@@ -292,6 +292,42 @@ Final qualification mirrors the 1.0 discipline:
 - generated-project smoke;
 - 1.0 backward-compatibility gate;
 - exact 1.1 RC contract gate.
+
+Target: `1.1.0`.
+
+## LOT-44 — 1.1 Release Qualification
+
+Promote the frozen `1.1.0rc1` contract to stable `1.1.0` without adding feature surface.
+
+The release gate is deliberately stronger than ordinary minor-line compatibility:
+
+```text
+API_CONTRACT_1_0.json
+        ↓ immutable blob + compatibility floor
+API_CONTRACT_1_1.json
+        ↓ immutable blob + exact runtime contract
+1.1.0 runtime
+        ↓
+wheel / sdist / installed CLI / generated project
+        ↓
+stable qualification
+```
+
+Expected frozen contract Git blob identities:
+
+```text
+1.0: d417cf778b0a767c3c0016633ec0d7f3c69e191a
+1.1: b9c752264ab623e570e70ea19433a60806e2df78
+```
+
+Generated projects must move from the RC dependency to the stable compatible line:
+
+```text
+pypagekit>=1.1.0,<1.2
+```
+
+No new API, CLI option, watcher behavior, live-reload behavior, build semantic, or plugin contract may
+be introduced in this LOT.
 
 Target: `1.1.0`.
 
