@@ -4,6 +4,35 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.0b1]
+
+### Added
+
+- Public synchronous `DevelopmentWatcher` with explicit `snapshot()`, `poll()`, and `wait_for_changes()` operations.
+- Immutable `WatchSnapshotEntry`, `WatchSnapshot`, `WatchChange`, and `WatchChangeBatch` models.
+- Public `WatchPathKind` and `WatchChangeKind` enums.
+- Public pure `diff_watch_snapshots()` comparison operation.
+- Public `DevelopmentWatchError`, `InvalidWatchRootError`, and `WatchSnapshotError` failure hierarchy.
+- Relative subtree ignore support for future output-directory exclusion.
+
+### Watch semantics
+
+- Watcher construction validates the root but performs no recursive scan.
+- Snapshots contain regular files and symlinks only; empty directories alone do not produce changes.
+- Regular files use SHA-256 content identity rather than timestamp-only detection.
+- File bytes are read from a no-follow descriptor when the platform provides `O_NOFOLLOW`.
+- File descriptor state and final path state are compared to reject mutation/replacement during snapshotting.
+- Symlinks are never traversed; their link target text is fingerprinted and their own inode state is verified.
+- Snapshot entries are normalized into deterministic lexical relative-path order.
+- Snapshot diffing is pure and classifies `created`, `modified`, and `deleted` paths.
+- File↔symlink kind transitions are classified as modifications even when fingerprints happen to match.
+- `wait_for_changes()` is explicitly blocking and polling-based; it batches changes until the filesystem settles for the debounce interval.
+- No import-time watcher, background global thread, callback executor, build trigger, HTTP-server coupling, or third-party watch dependency is introduced.
+
+### Release
+
+- Advance the development version to `1.1.0b1`.
+
 ## [1.1.0a3]
 
 ### Added
