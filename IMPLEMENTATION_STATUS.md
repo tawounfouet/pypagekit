@@ -44,6 +44,7 @@
 | LOT-40 | Incremental Build Diff & Materialization | QUALIFIED | `1.1.0a3` |
 | LOT-41 | Watch Service & Change Detection | QUALIFIED | `1.1.0b1` |
 | LOT-42 | Serve Watch Mode & Live Reload | QUALIFIED | `1.1.0b2` |
+| LOT-43 | 1.1 Public Contract Snapshot & Release Candidate | IN QUALIFICATION | `1.1.0rc1` |
 
 ## LOT-07 exit criteria
 
@@ -1251,3 +1252,44 @@ Next after qualification: **LOT-42 — Serve Watch Mode & Live Reload** (`1.1.0b
 - [x] GitHub pull-request CI is fully green
 
 Next after qualification: **LOT-43 — 1.1 Public Contract Snapshot & Release Candidate** (`1.1.0rc1`).
+
+
+## LOT-43 exit criteria
+
+- [x] package version advances to `1.1.0rc1`
+- [x] public API, compatibility, and deprecation metadata track `1.1.0rc1`
+- [x] canonical machine-readable `API_CONTRACT_1_1.json` exists
+- [x] human-readable `API_CONTRACT_1_1.md` exists
+- [x] 1.1 snapshot target release is `1.1.0`
+- [x] 1.1 snapshot schema remains version 1
+- [x] 1.1 snapshot starts with zero active public deprecations
+- [x] 1.1 snapshot is canonical sorted JSON
+- [x] 1.1 snapshot is generated from the RC runtime rather than hand-authored
+- [x] exact runtime-to-1.1 snapshot gate exists
+- [x] exact 1.1 gate runs on Python 3.11
+- [x] exact 1.1 gate runs on Python 3.12
+- [x] exact 1.1 gate runs on Python 3.13
+- [x] exact 1.1 gate runs on Python 3.14
+- [x] 1.1 snapshot remains compatible with frozen `API_CONTRACT_1_0.json`
+- [x] frozen `API_CONTRACT_1_0.json` remains unchanged
+- [x] LOT-39 build fingerprint/manifest additions are captured
+- [x] LOT-40 incremental build additions are captured
+- [x] LOT-41 watcher additions are captured
+- [x] LOT-42 live-reload public additions are captured
+- [x] CLI command arguments are machine-inventoried
+- [x] CLI command options are machine-inventoried
+- [x] `serve --watch` options are frozen in the 1.1 operational contract
+- [x] `DevelopmentServer.create(..., live_reload=False)` is captured
+- [x] `DevelopmentServerSession.live_reload` is captured
+- [x] `DevelopmentServerSession.notify_reload()` is captured
+- [x] frozen `DevelopmentServerSession` constructor remains compatible with 1.0
+- [x] Python/Typer `pypagekit.cli` facade remains provisional
+- [x] extension API remains `0.7`
+- [x] minimum supported Python remains 3.11
+- [x] PEP 561 typing contract remains active
+- [x] dedicated `release_1_1_freeze` policy metadata exists
+- [x] CI bootstrap write permission used to generate the snapshot has been removed
+- [x] normal CI permissions are restored to read-only contents
+- [ ] GitHub pull-request CI is fully green on the final documentation head
+
+Next after qualification: **LOT-44 — 1.1 Release Qualification** (`1.1.0`).
