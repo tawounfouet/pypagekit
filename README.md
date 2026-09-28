@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-**PyPageKit 1.0.0 remains the qualified stable baseline.** LOT-39 is qualified at `1.1.0a2` with deterministic build fingerprints and immutable manifests. The frozen `API_CONTRACT_1_0.json` remains the backward-compatibility floor. Next: LOT-40 — Incremental Build Diff & Materialization.
+**PyPageKit 1.0.0 remains the qualified stable baseline.** Development is now on `1.1.0a3` with LOT-40 — Incremental Build Diff & Materialization. The frozen `API_CONTRACT_1_0.json` remains the backward-compatibility floor.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -44,6 +44,7 @@ Implemented so far:
 - declarative static assets with validated publish targets and no filesystem I/O;
 - deterministic in-memory build planning for pages and assets;
 - deterministic SHA-256 build fingerprints and immutable build manifests;
+- drift-safe incremental build diffs and minimal filesystem materialization;
 - safe filesystem materialization of qualified build plans;
 - end-to-end static-site generation through a thin orchestration facade;
 - Typer + Rich CLI foundations with installed shell and module entry points;
@@ -189,6 +190,52 @@ actually changed.
 
 `build_manifest()` may read declared asset files when explicitly called, but it performs no output
 writes and starts no watcher or background service.
+
+## Incremental builds
+
+LOT-40 turns manifests into an explicit transition:
+
+```python
+from pypagekit.build import StaticSiteGenerator, build_manifest
+
+generator = StaticSiteGenerator()
+
+first = generator.generate(site, output_root, assets=assets)
+previous = build_manifest(first.plan)
+
+second = generator.generate_incremental(
+    updated_site,
+    previous,
+    output_root,
+    assets=updated_assets,
+)
+
+print(second.diff.added_targets)
+print(second.diff.changed_targets)
+print(second.diff.unchanged_targets)
+print(second.diff.removed_targets)
+```
+
+The filesystem contract is conservative:
+
+```text
+previous manifest
+       +
+actual output verification
+       +
+next manifest
+       ↓
+added / changed / unchanged / removed
+       ↓
+single rollback-capable transaction
+```
+
+PyPageKit verifies every previously tracked output before mutation. A manual edit or missing tracked
+file raises `IncrementalOutputDriftError` rather than being silently overwritten.
+
+Only added and changed files are written; removed files are transactionally deleted; unchanged files
+are left untouched. Unplanned output files remain outside the transition. Empty directories are not
+pruned by LOT-40.
 
 ## Post-1.0 roadmap
 
