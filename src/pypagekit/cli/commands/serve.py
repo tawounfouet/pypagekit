@@ -185,9 +185,7 @@ def _serve_with_watch(
                     )
                     if batch is None:
                         if not server_thread.is_alive():
-                            raise DevelopmentServerError(
-                                "Development server stopped unexpectedly."
-                            )
+                            raise DevelopmentServerError("Development server stopped unexpectedly.")
                         continue
 
                     source_snapshot = batch.current
@@ -252,12 +250,9 @@ def _load_project_plan(
     if completed.returncode != 0:
         details = completed.stderr.strip()
         if details:
-            raise _ProjectPlanLoadError(
-                f"Project entry '{entry_path.name}' failed:\n{details}"
-            )
+            raise _ProjectPlanLoadError(f"Project entry '{entry_path.name}' failed:\n{details}")
         raise _ProjectPlanLoadError(
-            f"Project entry '{entry_path.name}' failed with exit code "
-            f"{completed.returncode}."
+            f"Project entry '{entry_path.name}' failed with exit code {completed.returncode}."
         )
 
     try:
@@ -351,13 +346,9 @@ def _validated_project_entry(
             )
 
     if not candidate.exists():
-        raise _ProjectPlanLoadError(
-            f"Watch project entry '{candidate}' does not exist."
-        )
+        raise _ProjectPlanLoadError(f"Watch project entry '{candidate}' does not exist.")
     if not candidate.is_file():
-        raise _ProjectPlanLoadError(
-            f"Watch project entry '{candidate}' must be a regular file."
-        )
+        raise _ProjectPlanLoadError(f"Watch project entry '{candidate}' must be a regular file.")
 
     return candidate
 
@@ -375,9 +366,7 @@ def _watch_ignored_paths(
 
     if output_relative is not None:
         if not output_relative.parts:
-            raise _ProjectPlanLoadError(
-                "Watch output root must not be the project root itself."
-            )
+            raise _ProjectPlanLoadError("Watch output root must not be the project root itself.")
         ignored.append(PurePosixPath(*output_relative.parts))
 
     return tuple(ignored)
