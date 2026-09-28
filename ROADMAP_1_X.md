@@ -49,7 +49,7 @@ LOT-39  1.1.0a2  build fingerprints + manifest ✅ qualified
 LOT-40  1.1.0a3  incremental build diff         ✅ qualified
 LOT-41  1.1.0b1  watch service + change detection ✅ qualified
 LOT-42  1.1.0b2  serve --watch + live reload     ✅ qualified
-LOT-43  1.1.0rc1  1.1 public contract snapshot   ← next
+LOT-43  1.1.0rc1  1.1 public contract snapshot   ← in qualification
 ```
 
 ## LOT-38 — Post-1.0 Compatibility Baseline Gate
@@ -255,8 +255,25 @@ The 1.0 contract remains the compatibility floor:
 
 ```text
 API_CONTRACT_1_0.json   immutable historical floor
-API_CONTRACT_1_1.json   1.1 release snapshot
+API_CONTRACT_1_1.json   exact 1.1 release snapshot
 ```
+
+The release-candidate gate is intentionally dual:
+
+```text
+API_CONTRACT_1_0.json
+        ↓ compatible-superset comparator
+API_CONTRACT_1_1.json
+        ↓ exact runtime equality
+1.1.0rc1 runtime
+```
+
+The 1.1 snapshot captures the additive build-manifest, incremental materialization, filesystem-watch,
+live-reload, and `serve --watch` surfaces. Command arguments/options are now part of the
+machine-readable operational CLI inventory.
+
+The Python/Typer facade remains provisional, extension API compatibility remains `0.7`, minimum
+Python remains 3.11, and active public deprecations remain empty.
 
 Target: `1.1.0rc1`.
 
