@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-**PyPageKit 1.0.0 remains the qualified stable baseline.** LOT-38 is qualified at `1.1.0a1`: the RC-era exact contract gate is now a post-1.0 backward-compatibility gate, while `API_CONTRACT_1_0.json` remains immutable. Next: LOT-39 — Build Fingerprints & Manifest.
+**PyPageKit 1.0.0 remains the qualified stable baseline.** Development is now on `1.1.0a2` with LOT-39 — Build Fingerprints & Manifest. The frozen `API_CONTRACT_1_0.json` remains the backward-compatibility floor.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -43,6 +43,7 @@ Implemented so far:
 - a canonical Site aggregate with deterministic Sitemap projection;
 - declarative static assets with validated publish targets and no filesystem I/O;
 - deterministic in-memory build planning for pages and assets;
+- deterministic SHA-256 build fingerprints and immutable build manifests;
 - safe filesystem materialization of qualified build plans;
 - end-to-end static-site generation through a thin orchestration facade;
 - Typer + Rich CLI foundations with installed shell and module entry points;
@@ -155,6 +156,39 @@ LOT-08 does not yet introduce:
 ## Requirements
 
 - Python 3.11+
+
+## Build fingerprints and manifests
+
+LOT-39 adds content identity without changing materialization:
+
+```python
+from pypagekit.build import BuildPlanner, build_manifest
+
+plan = BuildPlanner().plan(site, assets)
+manifest = build_manifest(plan)
+
+for entry in manifest:
+    print(entry.target, entry.kind, entry.fingerprint)
+```
+
+The contract is intentionally content-based:
+
+```text
+page content
+    ↓ UTF-8
+SHA-256
+
+asset source
+    ↓ streamed bytes
+SHA-256
+```
+
+Targets and timestamps are not part of the fingerprint. The target lives in the manifest entry;
+LOT-40 can therefore compare the same target across two manifests and decide whether its content
+actually changed.
+
+`build_manifest()` may read declared asset files when explicitly called, but it performs no output
+writes and starts no watcher or background service.
 
 ## Post-1.0 roadmap
 
