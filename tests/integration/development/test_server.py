@@ -180,7 +180,6 @@ def test_bind_conflict_raises_framework_error(tmp_path: Path) -> None:
         first.close()
 
 
-
 def test_default_server_does_not_inject_live_reload(tmp_path: Path) -> None:
     root = tmp_path / "dist"
     root.mkdir()
@@ -218,7 +217,7 @@ def test_live_reload_server_injects_external_script_without_mutating_file(
         csp = response.headers["Content-Security-Policy"]
 
     assert session.live_reload is True
-    assert b'data-pypagekit-live-reload' in body
+    assert b"data-pypagekit-live-reload" in body
     assert b'src="/.pypagekit/live-reload.js"' in body
     assert body.index(b"data-pypagekit-live-reload") < body.index(b"</body>")
     assert target.read_bytes() == original
