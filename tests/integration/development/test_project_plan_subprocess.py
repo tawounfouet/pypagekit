@@ -3,8 +3,8 @@ from pathlib import Path
 import pytest
 
 from pypagekit.cli.commands.serve import (
-    _ProjectPlanLoadError,
     _load_project_plan,
+    _ProjectPlanLoadError,
 )
 
 
