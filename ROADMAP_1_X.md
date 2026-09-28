@@ -47,7 +47,7 @@ serve --watch + live reload
 LOT-38  1.1.0a1  compatibility baseline gate   ✅ qualified
 LOT-39  1.1.0a2  build fingerprints + manifest ✅ qualified
 LOT-40  1.1.0a3  incremental build diff         ✅ qualified
-LOT-41  1.1.0b1  watch service + change detection ← next
+LOT-41  1.1.0b1  watch service + change detection ← in qualification
 ```
 
 ## LOT-38 — Post-1.0 Compatibility Baseline Gate
@@ -176,19 +176,31 @@ LOT-40 deliberately leaves empty-directory pruning out of scope.
 
 Add an explicit development watch service.
 
-The watch layer must remain separate from the HTTP server:
+The watch layer remains separate from the HTTP server:
 
 ```text
-filesystem changes
-      ↓
-watch service
-      ↓
-change batch
-      ↓
-build/rebuild decision
+filesystem
+   ↓ explicit snapshot
+WatchSnapshot
+   ↓ polling comparison
+WatchChangeBatch
+   ├── created
+   ├── modified
+   └── deleted
+   ↓
+application-owned decision
 ```
 
-No import-time watcher, background global thread, or implicit project execution is allowed.
+The implementation uses standard-library polling rather than a third-party watcher dependency.
+Regular files are SHA-256 content fingerprinted. Symlinks are recorded by link-target identity and
+never followed. Relative ignore prefixes allow callers to exclude output trees such as `dist/`.
+
+`wait_for_changes()` is synchronous and explicitly blocking. It polls until a first change is
+observed, then continues until no further snapshot change occurs during the configured debounce
+window, returning one deterministic batch against the original snapshot.
+
+No import-time watcher, background global thread, callback executor, implicit project execution, or
+HTTP-server integration is introduced.
 
 ## LOT-42 — Serve Watch Mode & Live Reload
 
