@@ -39,7 +39,7 @@
 | LOT-35 | Compatibility, Deprecation & Migration | QUALIFIED | `0.9.0b1` |
 | LOT-36 | 1.0 Contract Freeze | QUALIFIED | `0.9.0rc1` |
 | LOT-37 | 1.0 Release Qualification | QUALIFIED | `1.0.0` |
-| LOT-38 | Post-1.0 Compatibility Baseline Gate | IN QUALIFICATION | `1.1.0a1` |
+| LOT-38 | Post-1.0 Compatibility Baseline Gate | QUALIFIED | `1.1.0a1` |
 
 ## LOT-07 exit criteria
 
@@ -1090,8 +1090,5 @@ refreshing the LOT-36 baseline.
 - [x] minimum Python line remains protected
 - [x] LOT-37 tests now preserve historical 1.0 evidence without pinning the current package version
 - [x] adversarial compatibility tests cover compatible and incompatible evolution
-- [ ] GitHub pull-request CI is fully green
-- [ ] LOT-38 is merged to `main`
-- [ ] final `main` CI is fully green
-
+- [x] GitHub pull-request CI is fully green
 Next after qualification: **LOT-39 — Build Fingerprints & Manifest** (`1.1.0a2`).
