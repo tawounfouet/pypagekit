@@ -1,4 +1,4 @@
-"""Generate the canonical PyPageKit 1.0 public contract snapshot."""
+"""Generate the canonical PyPageKit public contract snapshot for the current freeze."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ from typing import Any, get_args, get_origin
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 PUBLIC_API_PATH = REPOSITORY_ROOT / "PUBLIC_API.toml"
 DEPRECATIONS_PATH = REPOSITORY_ROOT / "DEPRECATIONS.toml"
-TARGET_RELEASE = "1.0.0"
+TARGET_RELEASE = "1.1.0"
 CONTRACT_SCHEMA_VERSION = 1
 
 
