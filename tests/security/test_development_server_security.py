@@ -134,7 +134,6 @@ def test_development_server_emits_defensive_headers(tmp_path: Path) -> None:
         session.close()
 
 
-
 def test_live_reload_mode_does_not_serve_symlinked_html(tmp_path: Path) -> None:
     root = tmp_path / "dist"
     root.mkdir()
