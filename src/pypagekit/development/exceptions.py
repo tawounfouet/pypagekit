@@ -38,9 +38,9 @@ class WatchSnapshotError(DevelopmentWatchError):
 __all__ = [
     "DevelopmentServerBindError",
     "DevelopmentServerError",
+    "DevelopmentWatchError",
     "InvalidDevelopmentHostError",
     "InvalidDevelopmentPortError",
-    "DevelopmentWatchError",
     "InvalidDevelopmentRootError",
     "InvalidWatchRootError",
     "WatchSnapshotError",
