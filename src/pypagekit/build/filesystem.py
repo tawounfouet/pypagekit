@@ -210,17 +210,35 @@ class FilesystemWriter:
 
             for entry in diff.removed:
                 destination = _destination(output_root, entry.target)
-                transaction.prepare_file(destination, backup_existing=True)
+                backup = transaction.prepare_file(
+                    destination,
+                    backup_existing=True,
+                    require_existing=True,
+                )
+                _verify_transaction_backup(entry, backup, destination)
 
             for page_entry in plan.pages:
                 if page_entry.target not in write_targets:
                     continue
 
                 destination = _destination(output_root, page_entry.target)
-                transaction.prepare_file(
+                is_changed = page_entry.target in changed_targets
+                backup = transaction.prepare_file(
                     destination,
-                    backup_existing=page_entry.target in changed_targets,
+                    backup_existing=is_changed,
+                    require_existing=is_changed,
                 )
+                if is_changed:
+                    previous_entry = previous_manifest.get(page_entry.target)
+                    if previous_entry is None:
+                        raise RuntimeError(
+                            "Changed page target is missing from previous manifest."
+                        )
+                    _verify_transaction_backup(
+                        previous_entry,
+                        backup,
+                        destination,
+                    )
                 with destination.open(
                     "x",
                     encoding="utf-8",
@@ -233,10 +251,23 @@ class FilesystemWriter:
                     continue
 
                 destination = _destination(output_root, asset_entry.target)
-                transaction.prepare_file(
+                is_changed = asset_entry.target in changed_targets
+                backup = transaction.prepare_file(
                     destination,
-                    backup_existing=asset_entry.target in changed_targets,
+                    backup_existing=is_changed,
+                    require_existing=is_changed,
                 )
+                if is_changed:
+                    previous_entry = previous_manifest.get(asset_entry.target)
+                    if previous_entry is None:
+                        raise RuntimeError(
+                            "Changed asset target is missing from previous manifest."
+                        )
+                    _verify_transaction_backup(
+                        previous_entry,
+                        backup,
+                        destination,
+                    )
                 with (
                     asset_entry.asset.source.open("rb") as source_file,
                     destination.open("xb") as output_file,
@@ -357,6 +388,33 @@ class FilesystemWriter:
         )
 
 
+def _verify_transaction_backup(
+    previous_entry: object,
+    backup: Path | None,
+    destination: Path,
+) -> None:
+    from .manifest import BuildManifestEntry
+
+    if not isinstance(previous_entry, BuildManifestEntry):
+        raise TypeError("Previous build entry must be a BuildManifestEntry object.")
+    if backup is None:
+        raise IncrementalOutputDriftError(
+            f"Tracked output '{destination}' disappeared before mutation."
+        )
+
+    try:
+        actual = _fingerprint_materialized_file(backup)
+    except OSError as exc:
+        raise IncrementalOutputDriftError(
+            f"Tracked output '{destination}' could not be verified after backup."
+        ) from exc
+
+    if actual != previous_entry.fingerprint:
+        raise IncrementalOutputDriftError(
+            f"Tracked output '{destination}' changed immediately before mutation."
+        )
+
+
 def _rollback_or_raise(
     transaction: FilesystemTransaction,
     output_root: Path,
@@ -369,6 +427,9 @@ def _rollback_or_raise(
             f"Filesystem rollback failed under '{output_root}' after "
             f"{type(exc).__name__}."
         ) from rollback_exc
+
+    if isinstance(exc, IncrementalOutputDriftError):
+        raise exc
 
     raise FilesystemWriteError(
         f"Filesystem output failed under '{output_root}'."
