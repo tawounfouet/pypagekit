@@ -30,6 +30,17 @@ def test_compatibility_artifacts_track_current_package_version() -> None:
     assert _load(DEPRECATIONS_PATH)["package_version"] == __version__
 
 
+def test_post_1_0_gate_uses_the_frozen_1_0_compatibility_floor() -> None:
+    policy = _load(COMPATIBILITY_PATH)
+    gate = policy["post_1_0_gate"]
+    assert isinstance(gate, dict)
+
+    assert gate["baseline"] == "API_CONTRACT_1_0.json"
+    assert gate["mode"] == "compatible_superset"
+    assert gate["comparator"] == "tools/api_contract_compatibility.py"
+    assert gate["introduced"] == "1.1.0a1"
+
+
 def test_compatibility_policy_forbids_silent_removal() -> None:
     policy = _load(COMPATIBILITY_PATH)
     deprecation = policy["deprecation"]
