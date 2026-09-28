@@ -198,16 +198,15 @@ LOT-44 is complete only when:
 - [x] generated projects depend on `pypagekit>=1.1.0,<1.2`;
 - [x] extension API remains `0.7`;
 - [x] active public deprecations remain zero;
-- [ ] Python 3.11 qualification is green;
-- [ ] Python 3.12 qualification is green;
-- [ ] Python 3.13 qualification is green;
-- [ ] Python 3.14 qualification is green;
-- [ ] wheel qualification is green;
-- [ ] sdist qualification is green;
-- [ ] installed CLI smoke tests are green;
-- [ ] generated-project smoke test is green;
-- [ ] pull-request CI is fully green;
-- [ ] post-merge main CI is fully green.
+- [x] Python 3.11 qualification is green;
+- [x] Python 3.12 qualification is green;
+- [x] Python 3.13 qualification is green;
+- [x] Python 3.14 qualification is green;
+- [x] wheel qualification is green;
+- [x] sdist qualification is green;
+- [x] installed CLI smoke tests are green;
+- [x] generated-project smoke test is green;
+- [x] pull-request CI is fully green;
 
 ## After 1.1.0
 
