@@ -72,6 +72,7 @@ class _LiveReloadState:
 class _DevelopmentHTTPServer(ThreadingHTTPServer):
     daemon_threads = True
     allow_reuse_address = True
+    live_reload_state: _LiveReloadState | None = None
 
 
 class _StaticRequestHandler(SimpleHTTPRequestHandler):
@@ -252,11 +253,10 @@ class DevelopmentServerSession:
         self,
         server: _DevelopmentHTTPServer,
         info: DevelopmentServerInfo,
-        live_reload_state: _LiveReloadState | None = None,
     ) -> None:
         self._server = server
         self._info = info
-        self._live_reload_state = live_reload_state
+        self._live_reload_state = server.live_reload_state
 
     @property
     def info(self) -> DevelopmentServerInfo:
@@ -339,11 +339,8 @@ class DevelopmentServer:
             host=bound_host,
             port=bound_port,
         )
-        return DevelopmentServerSession(
-            server,
-            info,
-            live_reload_state=live_reload_state,
-        )
+        server.live_reload_state = live_reload_state
+        return DevelopmentServerSession(server, info)
 
     def serve(
         self,
