@@ -129,6 +129,34 @@ release, while removal or incompatible mutation of the frozen 1.0 surface remain
 
 The 1.0 JSON file itself remains immutable and its Git blob identity continues to be checked.
 
+## 1.1 release-candidate freeze
+
+LOT-43 adds a second, release-specific contract artifact:
+
+```text
+API_CONTRACT_1_0.json  → historical 1.x compatibility floor
+API_CONTRACT_1_1.json  → exact 1.1.0 release snapshot
+```
+
+The two gates serve different purposes:
+
+```text
+1.0 baseline
+    ↓ compatible-superset comparison
+1.1 snapshot
+    ↓ exact RC comparison
+current 1.1 runtime
+```
+
+During `1.1.0rc1 → 1.1.0`, CI requires both conditions to pass. This allows 1.1 to contain
+compatible minor additions while preventing unreviewed drift after the 1.1 release candidate is
+declared.
+
+The Python/Typer facade remains provisional. The shell CLI remains frozen operationally, and the
+1.1 snapshot additionally records command arguments/options including the `serve --watch` surface.
+
+See `API_CONTRACT_1_1.md` for the human-readable freeze decision.
+
 ## Deprecation lifecycle
 
 A future public deprecation follows:
