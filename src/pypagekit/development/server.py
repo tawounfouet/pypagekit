@@ -20,10 +20,7 @@ _PERCENT_ESCAPE_RE = re.compile(r"%(?![0-9A-Fa-f]{2})")
 _LIVE_RELOAD_SCRIPT_PATH = "/.pypagekit/live-reload.js"
 _LIVE_RELOAD_REVISION_PATH = "/.pypagekit/live-reload/revision"
 _LIVE_RELOAD_MARKER = b"data-pypagekit-live-reload"
-_LIVE_RELOAD_TAG = (
-    b'<script src="/.pypagekit/live-reload.js" '
-    b"data-pypagekit-live-reload></script>"
-)
+_LIVE_RELOAD_TAG = b'<script src="/.pypagekit/live-reload.js" data-pypagekit-live-reload></script>'
 _LIVE_RELOAD_SCRIPT = b"""(() => {
   let revision = null;
 
