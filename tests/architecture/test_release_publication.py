@@ -49,10 +49,7 @@ def test_release_workflow_publishes_only_after_distribution_qualification() -> N
         "github-release:\n    name: Publish GitHub Release\n"
         "    needs: [prepare, qualify]" in content
     )
-    assert (
-        "pypi:\n    name: Publish to PyPI\n"
-        "    needs: [prepare, github-release]" in content
-    )
+    assert "pypi:\n    name: Publish to PyPI\n    needs: [prepare, github-release]" in content
     assert "actions/upload-artifact@v4" in content
     assert "actions/download-artifact@v4" in content
     assert 'gh release upload "$tag" dist/* --clobber' in content
