@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-**PyPageKit 1.0.0 remains the qualified stable baseline.** LOT-40 is qualified at `1.1.0a3` with drift-safe incremental build diff and transactional materialization. The frozen `API_CONTRACT_1_0.json` remains the backward-compatibility floor. Next: LOT-41 — Watch Service & Change Detection.
+**PyPageKit 1.0.0 remains the qualified stable baseline.** Development is now on `1.1.0b1` with LOT-41 — Watch Service & Change Detection. The frozen `API_CONTRACT_1_0.json` remains the backward-compatibility floor.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
@@ -45,6 +45,7 @@ Implemented so far:
 - deterministic in-memory build planning for pages and assets;
 - deterministic SHA-256 build fingerprints and immutable build manifests;
 - drift-safe incremental build diffs and minimal filesystem materialization;
+- explicit deterministic filesystem snapshots and debounced change batches;
 - safe filesystem materialization of qualified build plans;
 - end-to-end static-site generation through a thin orchestration facade;
 - Typer + Rich CLI foundations with installed shell and module entry points;
@@ -236,6 +237,52 @@ file raises `IncrementalOutputDriftError` rather than being silently overwritten
 Only added and changed files are written; removed files are transactionally deleted; unchanged files
 are left untouched. Unplanned output files remain outside the transition. Empty directories are not
 pruned by LOT-40.
+
+## Filesystem watching
+
+LOT-41 adds a development watcher without coupling it to the HTTP server:
+
+```python
+from pathlib import Path, PurePosixPath
+
+from pypagekit.development import DevelopmentWatcher
+
+watcher = DevelopmentWatcher(
+    Path("."),
+    ignored_paths=(PurePosixPath("dist"),),
+)
+
+snapshot = watcher.snapshot()
+
+batch = watcher.wait_for_changes(
+    snapshot,
+    poll_interval=0.1,
+    debounce_interval=0.05,
+)
+
+if batch is not None:
+    print(batch.created)
+    print(batch.modified)
+    print(batch.deleted)
+```
+
+The loop remains explicit:
+
+```text
+snapshot()
+   ↓
+wait_for_changes(previous)
+   ↓
+WatchChangeBatch
+   ↓
+application decides what happens next
+```
+
+LOT-41 does **not** rebuild a project and does **not** start the development server. That integration
+belongs to LOT-42.
+
+Symlinks are observed as symlinks and are never followed. Regular files are content-hashed, so a
+same-size edit is still detected even when metadata alone would be ambiguous.
 
 ## Post-1.0 roadmap
 
