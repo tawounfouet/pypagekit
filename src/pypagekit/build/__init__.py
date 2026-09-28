@@ -6,7 +6,11 @@ from .filesystem import (
     FilesystemWriter,
     IncrementalFilesystemWriteResult,
 )
-from .generator import StaticSiteGenerationResult, StaticSiteGenerator
+from .generator import (
+    IncrementalStaticSiteGenerationResult,
+    StaticSiteGenerationResult,
+    StaticSiteGenerator,
+)
 from .manifest import (
     BuildFingerprint,
     BuildManifest,
@@ -30,6 +34,7 @@ __all__ = [
     "FilesystemWriteResult",
     "FilesystemWriter",
     "IncrementalFilesystemWriteResult",
+    "IncrementalStaticSiteGenerationResult",
     "PageBuildEntry",
     "StaticSiteGenerationResult",
     "StaticSiteGenerator",
