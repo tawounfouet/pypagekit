@@ -505,6 +505,7 @@ def _snapshot_symlink(
     relative_path: PurePosixPath,
 ) -> WatchSnapshotEntry:
     try:
+        before = path.lstat()
         target = os.readlink(path)
         after = path.lstat()
     except OSError as exc:
@@ -512,7 +513,11 @@ def _snapshot_symlink(
             f"Watched symlink '{path}' changed while being snapshotted."
         ) from exc
 
-    if not stat.S_ISLNK(after.st_mode):
+    if (
+        not stat.S_ISLNK(before.st_mode)
+        or not stat.S_ISLNK(after.st_mode)
+        or _stat_identity(before) != _stat_identity(after)
+    ):
         raise WatchSnapshotError(
             f"Watched symlink '{path}' changed while being snapshotted."
         )
