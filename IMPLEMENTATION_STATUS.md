@@ -42,7 +42,7 @@
 | LOT-38 | Post-1.0 Compatibility Baseline Gate | QUALIFIED | `1.1.0a1` |
 | LOT-39 | Build Fingerprints & Manifest | QUALIFIED | `1.1.0a2` |
 | LOT-40 | Incremental Build Diff & Materialization | QUALIFIED | `1.1.0a3` |
-| LOT-41 | Watch Service & Change Detection | IN QUALIFICATION | `1.1.0b1` |
+| LOT-41 | Watch Service & Change Detection | QUALIFIED | `1.1.0b1` |
 
 ## LOT-07 exit criteria
 
@@ -1205,6 +1205,6 @@ Next after qualification: **LOT-41 — Watch Service & Change Detection** (`1.1.
 - [x] frozen `API_CONTRACT_1_0.json` remains unchanged
 - [x] LOT-38 compatibility gate accepts LOT-41 as compatible 1.x evolution
 - [x] package version advances to `1.1.0b1`
-- [ ] GitHub pull-request CI is fully green
+- [x] GitHub pull-request CI is fully green
 
 Next after qualification: **LOT-42 — Serve Watch Mode & Live Reload** (`1.1.0b2`).
