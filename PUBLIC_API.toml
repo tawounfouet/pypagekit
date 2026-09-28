@@ -1,5 +1,5 @@
 schema_version = 1
-package_version = "1.1.0a1"
+package_version = "1.1.0a2"
 
 [classifications]
 stable = "Frozen public Python surface covered by the PyPageKit 1.0 compatibility contract."
@@ -103,6 +103,9 @@ name = "pypagekit.build"
 classification = "stable"
 exports = [
   "AssetBuildEntry",
+  "BuildFingerprint",
+  "BuildManifest",
+  "BuildManifestEntry",
   "BuildPlan",
   "BuildPlanner",
   "BuildPlannerProtocol",
@@ -111,6 +114,7 @@ exports = [
   "PageBuildEntry",
   "StaticSiteGenerationResult",
   "StaticSiteGenerator",
+  "build_manifest",
   "route_output_target",
 ]
 
@@ -205,6 +209,8 @@ classification = "stable"
 exports = [
   "AssetSourceOutputConflictError",
   "BuildError",
+  "BuildManifestError",
+  "BuildManifestSourceError",
   "BuildRenderError",
   "BuildTargetCollisionError",
   "ComponentCycleError",
@@ -233,7 +239,9 @@ exports = [
   "InvalidAssetTargetError",
   "InvalidAttributeError",
   "InvalidBuildContentError",
+  "InvalidBuildFingerprintError",
   "InvalidBuildInputError",
+  "InvalidBuildManifestError",
   "InvalidBuildPlanError",
   "InvalidBuildPlannerExtensionError",
   "InvalidBuildTargetError",
