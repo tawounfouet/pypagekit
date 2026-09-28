@@ -63,9 +63,14 @@ class IncrementalFilesystemWriteResult:
 
     @property
     def written_files(self) -> tuple[Path, ...]:
-        """Return files physically written during this incremental update."""
+        """Return physically written files in resulting build-plan order."""
 
-        return self.added_files + self.changed_files
+        written_targets = set(self.diff.added_targets) | set(self.diff.changed_targets)
+        return tuple(
+            _destination(self.output_root, entry.target)
+            for entry in self.manifest.entries
+            if entry.target in written_targets
+        )
 
     @property
     def files(self) -> tuple[Path, ...]:
