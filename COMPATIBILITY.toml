@@ -1,5 +1,5 @@
 schema_version = 1
-package_version = "1.1.0b2"
+package_version = "1.1.0rc1"
 
 [release_policy]
 pre_1_0_freeze_line = "0.9"
@@ -20,6 +20,16 @@ baseline = "API_CONTRACT_1_0.json"
 mode = "compatible_superset"
 comparator = "tools/api_contract_compatibility.py"
 introduced = "1.1.0a1"
+
+[release_1_1_freeze]
+frozen = true
+baseline = "API_CONTRACT_1_1.json"
+target_release = "1.1.0"
+release_candidate = "1.1.0rc1"
+compatibility_floor = "API_CONTRACT_1_0.json"
+extension_api_version = "0.7"
+python_cli_facade_frozen = false
+shell_cli_frozen = true
 
 [stable_candidate]
 compatible_changes = [
