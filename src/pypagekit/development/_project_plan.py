@@ -67,9 +67,7 @@ def main(argv: list[str] | None = None) -> int:
 
         assets = namespace.get("assets")
         if assets is not None and not isinstance(assets, Assets):
-            raise TypeError(
-                "Watch entry module-level 'assets' value must be Assets or omitted."
-            )
+            raise TypeError("Watch entry module-level 'assets' value must be Assets or omitted.")
 
         plan = BuildPlanner().plan(site, assets)
         json.dump(_serialize_plan(plan), sys.stdout, ensure_ascii=False)
