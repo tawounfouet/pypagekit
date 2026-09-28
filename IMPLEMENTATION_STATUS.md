@@ -45,6 +45,7 @@
 | LOT-41 | Watch Service & Change Detection | QUALIFIED | `1.1.0b1` |
 | LOT-42 | Serve Watch Mode & Live Reload | QUALIFIED | `1.1.0b2` |
 | LOT-43 | 1.1 Public Contract Snapshot & Release Candidate | QUALIFIED | `1.1.0rc1` |
+| LOT-44 | 1.1 Release Qualification | QUALIFIED | `1.1.0` |
 
 ## LOT-07 exit criteria
 
@@ -1293,3 +1294,37 @@ Next after qualification: **LOT-43 — 1.1 Public Contract Snapshot & Release Ca
 - [x] GitHub pull-request CI is fully green on the final documentation head
 
 Next after qualification: **LOT-44 — 1.1 Release Qualification** (`1.1.0`).
+
+
+## LOT-44 exit criteria
+
+- [x] package version advances from `1.1.0rc1` to exactly `1.1.0`
+- [x] public API metadata tracks `1.1.0`
+- [x] compatibility metadata tracks `1.1.0`
+- [x] deprecation metadata tracks `1.1.0`
+- [x] `API_CONTRACT_1_0.json` remains byte-for-byte unchanged
+- [x] `API_CONTRACT_1_0.json` Git blob remains `d417cf778b0a767c3c0016633ec0d7f3c69e191a`
+- [x] `API_CONTRACT_1_1.json` remains byte-for-byte unchanged
+- [x] `API_CONTRACT_1_1.json` Git blob remains `b9c752264ab623e570e70ea19433a60806e2df78`
+- [x] runtime still matches the exact 1.1 contract
+- [x] frozen 1.1 contract still passes the 1.0 compatibility floor
+- [x] 1.1 freeze metadata still records RC `1.1.0rc1` as snapshot provenance
+- [x] Python/Typer `pypagekit.cli` facade remains provisional
+- [x] shell CLI remains frozen
+- [x] extension API remains `0.7`
+- [x] minimum supported Python remains 3.11
+- [x] PEP 561 typing marker remains packaged
+- [x] active public deprecations remain zero
+- [x] generated projects require exactly `pypagekit>=1.1.0,<1.2`
+- [x] wheel qualification asserts installed version exactly `1.1.0`
+- [x] sdist qualification asserts installed version exactly `1.1.0`
+- [x] release qualification documentation exists in `RELEASE_1_1.md`
+- [x] LOT-44 introduces no new public feature surface
+- [x] Python 3.11 pull-request qualification is green
+- [x] Python 3.12 pull-request qualification is green
+- [x] Python 3.13 pull-request qualification is green
+- [x] Python 3.14 pull-request qualification is green
+- [x] release package pull-request qualification is green
+- [x] final pull-request CI is fully green
+
+After qualification, the complete **1.1.x — Incremental Developer Experience** implementation line is closed.

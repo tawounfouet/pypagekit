@@ -4,6 +4,23 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.0]
+
+### Release qualification
+
+- Promote the qualified 1.1 release candidate to stable `1.1.0`.
+- Preserve `API_CONTRACT_1_1.json` byte-for-byte from LOT-43.
+- Preserve `API_CONTRACT_1_0.json` byte-for-byte as the historical 1.x compatibility floor.
+- Add stable-release qualification that pins both contract Git blob identities.
+- Require exact installed wheel and source-distribution version `1.1.0`.
+- Require generated projects to depend on `pypagekit>=1.1.0,<1.2`.
+- Retain extension compatibility API `0.7`.
+- Start the stable 1.1 release with zero active public deprecations.
+
+### Release
+
+- LOT-44 is a qualification-only lot and introduces no new public feature surface.
+
 ## [1.1.0rc1]
 
 ### Contract freeze
