@@ -4,6 +4,26 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.0rc1]
+
+### Contract freeze
+
+- Add canonical machine-readable `API_CONTRACT_1_1.json` generated from the release-candidate runtime.
+- Add human-readable `API_CONTRACT_1_1.md`.
+- Preserve `API_CONTRACT_1_0.json` as the immutable historical compatibility floor.
+- Add exact runtime-to-`API_CONTRACT_1_1.json` architecture gating across the supported Python matrix.
+- Require the frozen 1.1 snapshot itself to remain a compatible superset of the 1.0 baseline.
+- Record the dedicated `release_1_1_freeze` policy in `COMPATIBILITY.toml`.
+- Expand machine-readable CLI inventory with command arguments and explicit command options, including `serve --watch`.
+- Keep the Python/Typer `pypagekit.cli` facade provisional.
+- Keep extension compatibility API `0.7` unchanged.
+- Confirm zero active public deprecations at the 1.1 freeze.
+
+### Release
+
+- Advance the development version to `1.1.0rc1`.
+- LOT-44 may qualify `1.1.0` but must not silently change the frozen 1.1 contract.
+
 ## [1.1.0b2]
 
 ### Added

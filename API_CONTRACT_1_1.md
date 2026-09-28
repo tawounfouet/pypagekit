@@ -1,0 +1,310 @@
+# PyPageKit 1.1 Contract Freeze
+
+This document records the human-readable decisions behind the **PyPageKit 1.1 public contract**.
+
+The exact machine-readable release snapshot is:
+
+```text
+API_CONTRACT_1_1.json
+```
+
+It is generated from the `1.1.0rc1` runtime by:
+
+```text
+tools/api_contract_snapshot.py
+```
+
+and enforced by:
+
+```text
+tests/architecture/test_1_1_contract_freeze.py
+```
+
+## Two simultaneous contracts
+
+PyPageKit 1.1 keeps two distinct contract artifacts:
+
+```text
+API_CONTRACT_1_0.json
+        │
+        └── immutable historical compatibility floor for the complete 1.x major line
+
+API_CONTRACT_1_1.json
+        │
+        └── exact release snapshot for the 1.1.0 RC → 1.1.0 qualification interval
+```
+
+LOT-43 does **not** replace or refresh the 1.0 file.
+
+The 1.1 snapshot must first pass the existing compatibility comparator against the 1.0 baseline,
+then match the current RC runtime exactly.
+
+## 1.1 release additions now frozen
+
+The 1.1 snapshot captures the compatible public additions introduced after 1.0.
+
+### Build fingerprints and manifests
+
+```text
+BuildFingerprint
+BuildManifestEntry
+BuildManifest
+build_manifest
+```
+
+These additions establish deterministic SHA-256 content identity for planned build artifacts.
+
+### Incremental materialization
+
+```text
+BuildManifestDiff
+diff_build_manifests
+IncrementalFilesystemWriteResult
+IncrementalStaticSiteGenerationResult
+FilesystemWriter.write_incremental
+StaticSiteGenerator.generate_incremental
+IncrementalOutputDriftError
+```
+
+The resulting contract includes the drift-safe and rollback-aware incremental build surface.
+
+### Filesystem watching
+
+```text
+DevelopmentWatcher
+WatchSnapshotEntry
+WatchSnapshot
+WatchPathKind
+WatchChangeKind
+WatchChange
+WatchChangeBatch
+diff_watch_snapshots
+DevelopmentWatchError
+InvalidWatchRootError
+WatchSnapshotError
+```
+
+The watcher remains synchronous and explicit. No background global watcher becomes part of the
+contract.
+
+### Development live reload
+
+The existing public server API gains compatible additions:
+
+```python
+DevelopmentServer.create(
+    config,
+    *,
+    live_reload=False,
+)
+```
+
+and live-reload sessions expose:
+
+```text
+DevelopmentServerSession.live_reload
+DevelopmentServerSession.notify_reload()
+```
+
+The frozen `DevelopmentServerSession` constructor itself remains unchanged from 1.0.
+
+## Shell CLI contract
+
+The shell CLI remains an operational contract while the Python/Typer facade remains provisional.
+
+LOT-43 now records command argument and command option inventories explicitly.
+
+Frozen commands:
+
+```text
+doctor
+inspect
+new
+serve
+```
+
+Frozen arguments:
+
+```text
+doctor  root
+inspect root
+new     target
+serve   root
+```
+
+Frozen explicit command options include:
+
+```text
+new:
+  --force
+
+serve:
+  --host
+  --port
+  -p
+  --watch
+  --entry
+  --poll-interval
+  --debounce-interval
+```
+
+The following invocation forms remain stable:
+
+```text
+pypagekit
+python -m pypagekit
+```
+
+Process exit semantics remain:
+
+```text
+0  success
+1  framework/runtime execution failure
+2  usage/argument validation failure
+```
+
+## Python facade classification
+
+Stable facades remain:
+
+```text
+pypagekit
+pypagekit.domain
+pypagekit.components
+pypagekit.rendering
+pypagekit.build
+pypagekit.project
+pypagekit.development
+pypagekit.diagnostics
+pypagekit.extensions
+pypagekit.exceptions
+```
+
+The Python/Typer adapter remains explicitly provisional:
+
+```text
+pypagekit.cli
+```
+
+This means its concrete Typer object is still not promoted to the stable Python compatibility
+contract, even though the shell CLI behavior is frozen operationally.
+
+## Extension compatibility
+
+The package release advances to 1.1 without changing the independent plugin compatibility line:
+
+```text
+PYPAGEKIT_EXTENSION_API_VERSION = "0.7"
+```
+
+Frozen entry-point groups and built-in extension IDs remain unchanged from the 1.0 contract.
+
+No plugin migration is required for the 1.1 release candidate.
+
+## Python and typing
+
+Minimum supported Python remains:
+
+```text
+3.11
+```
+
+The release qualification matrix remains:
+
+```text
+3.11
+3.12
+3.13
+3.14
+```
+
+The package remains PEP 561 typed through `py.typed`.
+
+The exact 1.1 snapshot must render identically on every supported Python version in CI.
+
+## Deprecation state
+
+At the 1.1 release freeze:
+
+```text
+active public deprecations = 0
+```
+
+No stable 1.x compatibility alias is required for this release.
+
+## Exact RC gate
+
+During the `1.1.0rc1 → 1.1.0` interval:
+
+```text
+current runtime
+      ↓
+tools/api_contract_snapshot.py
+      ↓
+canonical JSON
+      ↓ exact equality
+API_CONTRACT_1_1.json
+      ↓
+PASS / FAIL
+```
+
+At the same time:
+
+```text
+API_CONTRACT_1_0.json
+      ↓
+tools/api_contract_compatibility.py
+      ↑
+API_CONTRACT_1_1.json
+      ↓
+compatible superset required
+```
+
+Therefore a release candidate can fail either because it drifts from the accepted 1.1 snapshot or
+because the accepted 1.1 snapshot would break the original 1.0 compatibility floor.
+
+## Snapshot provenance
+
+The canonical `API_CONTRACT_1_1.json` file was generated by GitHub Actions from the LOT-43 release
+candidate runtime rather than reconstructed manually.
+
+Its Git blob SHA at freeze creation is:
+
+```text
+b9c752264ab623e570e70ea19433a60806e2df78
+```
+
+LOT-44 may pin that identity as release evidence while advancing the package version from
+`1.1.0rc1` to `1.1.0`.
+
+## Freeze discipline
+
+LOT-43 is a contract-freeze lot, not a feature lot.
+
+After this snapshot is accepted:
+
+- no new 1.1 feature is added silently;
+- no frozen 1.1 signature or member changes silently;
+- no CLI contract addition is smuggled into LOT-44;
+- `API_CONTRACT_1_0.json` remains immutable;
+- any necessary RC contract change requires an explicit reviewed snapshot refresh.
+
+LOT-44 is limited to release qualification and stable release metadata.
+
+## Release-train position
+
+```text
+1.1.0a1   post-1.0 compatibility gate
+    ↓
+1.1.0a2   build fingerprints + manifest
+    ↓
+1.1.0a3   incremental materialization
+    ↓
+1.1.0b1   watch service
+    ↓
+1.1.0b2   serve --watch + live reload
+    ↓
+1.1.0rc1  exact 1.1 contract freeze
+    ↓
+1.1.0     release qualification
+```

@@ -1,5 +1,5 @@
 schema_version = 1
-package_version = "1.1.0b2"
+package_version = "1.1.0rc1"
 
 [classifications]
 stable = "Stable public Python surface covered by the current PyPageKit major-version compatibility contract."
@@ -354,6 +354,26 @@ root_options = [
 success_exit_code = 0
 execution_error_exit_code = 1
 usage_error_exit_code = 2
+
+[cli.command_arguments]
+doctor = ["root"]
+inspect = ["root"]
+new = ["target"]
+serve = ["root"]
+
+[cli.command_options]
+doctor = []
+inspect = []
+new = ["--force"]
+serve = [
+  "--host",
+  "--port",
+  "-p",
+  "--watch",
+  "--entry",
+  "--poll-interval",
+  "--debounce-interval",
+]
 
 [extensions]
 classification = "operational_contract"

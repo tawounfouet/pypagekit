@@ -17,7 +17,7 @@ Before `1.0.0`, the project must distinguish:
 - operational contracts such as CLI commands and entry-point group names;
 - implementation modules that happen to be importable but are not compatibility promises.
 
-LOT-34 created that boundary, LOT-35 defined compatibility rules, and LOT-36 has now frozen the exact 1.0 contract in `API_CONTRACT_1_0.json`.
+LOT-34 created that boundary, LOT-35 defined compatibility rules, and LOT-36 froze the exact 1.0 contract in `API_CONTRACT_1_0.json`. LOT-43 now freezes the accepted 1.1 additive surface in `API_CONTRACT_1_1.json` without replacing the 1.0 floor.
 
 ## Stability classes
 
@@ -39,7 +39,8 @@ from pypagekit.extensions import ExtensionDescriptor, RendererRegistry
 
 ### `provisional_public`
 
-A deliberately public surface that is still allowed to be refined during the 0.9 freeze cycle.
+A deliberately public surface that remains outside the stable Python compatibility contract and may
+still be refined with explicit documentation and migration consideration.
 
 The Python-level Typer adapter is currently the only facade in this class:
 
@@ -50,6 +51,9 @@ from pypagekit.cli import app, main
 The shell CLI contract is classified separately as an operational contract. Application code
 should prefer invoking the installed CLI rather than depending on the concrete Typer application
 object.
+
+At the 1.1 freeze, `pypagekit.cli` remains provisional; it is not silently promoted by the new
+minor-release snapshot.
 
 ### `operational_contract`
 

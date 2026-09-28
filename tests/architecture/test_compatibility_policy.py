@@ -41,6 +41,21 @@ def test_post_1_0_gate_uses_the_frozen_1_0_compatibility_floor() -> None:
     assert gate["introduced"] == "1.1.0a1"
 
 
+def test_1_1_release_freeze_preserves_1_0_as_compatibility_floor() -> None:
+    policy = _load(COMPATIBILITY_PATH)
+    freeze = policy["release_1_1_freeze"]
+    assert isinstance(freeze, dict)
+
+    assert freeze["frozen"] is True
+    assert freeze["baseline"] == "API_CONTRACT_1_1.json"
+    assert freeze["target_release"] == "1.1.0"
+    assert freeze["release_candidate"] == "1.1.0rc1"
+    assert freeze["compatibility_floor"] == "API_CONTRACT_1_0.json"
+    assert freeze["extension_api_version"] == "0.7"
+    assert freeze["python_cli_facade_frozen"] is False
+    assert freeze["shell_cli_frozen"] is True
+
+
 def test_compatibility_policy_forbids_silent_removal() -> None:
     policy = _load(COMPATIBILITY_PATH)
     deprecation = policy["deprecation"]
