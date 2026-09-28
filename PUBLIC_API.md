@@ -187,20 +187,24 @@ Public static-build boundary:
 AssetBuildEntry
 BuildFingerprint
 BuildManifest
+BuildManifestDiff
 BuildManifestEntry
 BuildPlan
 BuildPlanner
 BuildPlannerProtocol
 FilesystemWriteResult
 FilesystemWriter
+IncrementalFilesystemWriteResult
+IncrementalStaticSiteGenerationResult
 PageBuildEntry
 StaticSiteGenerationResult
 StaticSiteGenerator
 build_manifest
+diff_build_manifests
 route_output_target
 ```
 
-`BuildPlannerProtocol` is a public structural contract. LOT-39 adds immutable SHA-256 build fingerprints and manifests as compatible `1.1.x` additions; `build_manifest()` reads declared asset source bytes explicitly but performs no output writes.
+`BuildPlannerProtocol` is a public structural contract. LOT-39 adds immutable SHA-256 build fingerprints and manifests as compatible `1.1.x` additions. LOT-40 adds deterministic manifest diffs plus drift-safe incremental materialization through `FilesystemWriter.write_incremental()` and `StaticSiteGenerator.generate_incremental()`.
 
 ### `pypagekit.project`
 
