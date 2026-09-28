@@ -214,11 +214,30 @@ The entire explicit `pypagekit.project.__all__` surface is a stable API.
 
 ### `pypagekit.development`
 
-Public local-development server service, configuration/result models, session object, and
-development-server errors.
+Public local-development server and explicit filesystem-watch services.
 
-The local server remains a development tool; stability classification does not turn it into a
-production HTTP-server claim.
+In addition to the existing server configuration/session API, LOT-41 adds:
+
+```text
+DevelopmentWatcher
+WatchSnapshotEntry
+WatchSnapshot
+WatchPathKind
+WatchChangeKind
+WatchChange
+WatchChangeBatch
+diff_watch_snapshots
+DevelopmentWatchError
+InvalidWatchRootError
+WatchSnapshotError
+```
+
+The watcher is polling-based, explicit, and synchronous: constructing it starts no thread and scans
+nothing. A snapshot reads regular-file bytes and symlink targets without following symlinks. Empty
+directories alone do not create watch entries.
+
+The local server and watcher remain development tools; stability classification does not turn either
+into a production runtime claim.
 
 ### `pypagekit.diagnostics`
 
