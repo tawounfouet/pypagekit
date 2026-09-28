@@ -4,6 +4,7 @@ import hashlib
 import shutil
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
+from typing import Never
 
 from pypagekit._filesystem_transaction import (
     FilesystemTransaction,
@@ -355,7 +356,7 @@ def _rollback_or_raise(
     transaction: FilesystemTransaction,
     output_root: Path,
     exc: Exception,
-) -> None:
+) -> Never:
     try:
         transaction.rollback()
     except FilesystemTransactionRollbackError as rollback_exc:
