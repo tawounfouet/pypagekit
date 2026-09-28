@@ -43,7 +43,7 @@
 | LOT-39 | Build Fingerprints & Manifest | QUALIFIED | `1.1.0a2` |
 | LOT-40 | Incremental Build Diff & Materialization | QUALIFIED | `1.1.0a3` |
 | LOT-41 | Watch Service & Change Detection | QUALIFIED | `1.1.0b1` |
-| LOT-42 | Serve Watch Mode & Live Reload | IN QUALIFICATION | `1.1.0b2` |
+| LOT-42 | Serve Watch Mode & Live Reload | QUALIFIED | `1.1.0b2` |
 
 ## LOT-07 exit criteria
 
@@ -1248,6 +1248,6 @@ Next after qualification: **LOT-42 — Serve Watch Mode & Live Reload** (`1.1.0b
 - [x] package version advances to `1.1.0b2`
 - [x] frozen `API_CONTRACT_1_0.json` remains unchanged
 - [x] LOT-38 compatibility gate accepts LOT-42 as compatible 1.x evolution
-- [ ] GitHub pull-request CI is fully green
+- [x] GitHub pull-request CI is fully green
 
 Next after qualification: **LOT-43 — 1.1 Public Contract Snapshot & Release Candidate** (`1.1.0rc1`).
