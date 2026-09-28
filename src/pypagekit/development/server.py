@@ -212,6 +212,8 @@ class _StaticRequestHandler(SimpleHTTPRequestHandler):
     def _html_target(self) -> Path | None:
         translated = Path(self.translate_path(self.path))
         if translated.is_dir():
+            if not urlsplit(self.path).path.endswith("/"):
+                return None
             translated = translated / "index.html"
 
         if translated.suffix.lower() != ".html":
