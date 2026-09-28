@@ -156,6 +156,24 @@ LOT-08 does not yet introduce:
 
 - Python 3.11+
 
+## Release and publication
+
+The stable package release process is documented in [RELEASING.md](RELEASING.md).
+
+Publication is intentionally separated from release qualification:
+
+```text
+qualified main
+    ↓
+vX.Y.Z tag
+    ↓
+GitHub Release
+    ↓
+PyPI Trusted Publishing
+```
+
+The publication workflow never changes the frozen 1.0 compatibility baseline.
+
 ## Local development
 
 ```bash
