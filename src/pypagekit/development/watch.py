@@ -502,9 +502,7 @@ def _snapshot_symlink(
         or not stat.S_ISLNK(after.st_mode)
         or _stat_identity(before) != _stat_identity(after)
     ):
-        raise WatchSnapshotError(
-            f"Watched symlink '{path}' changed while being snapshotted."
-        )
+        raise WatchSnapshotError(f"Watched symlink '{path}' changed while being snapshotted.")
 
     digest = hashlib.sha256(os.fsencode(target)).hexdigest()
     return WatchSnapshotEntry(
