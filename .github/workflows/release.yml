@@ -4,6 +4,14 @@ on:
   push:
     tags:
       - "v*"
+    branches:
+      - "release/v*"
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Git ref to release (defaults to main)."
+        required: false
+        default: "main"
 
 permissions:
   contents: read
@@ -13,13 +21,91 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  prepare:
+    name: Prepare release tag
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
+      version: ${{ steps.release.outputs.version }}
+
+    steps:
+      - name: Checkout release source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref }}
+          fetch-depth: 0
+
+      - name: Validate release request and ensure tag exists
+        id: release
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          version="$(
+            python - <<'PY'
+          import re
+          from pathlib import Path
+
+          source = Path("src/pypagekit/__init__.py").read_text(encoding="utf-8")
+          match = re.search(r'^__version__ = "(?P<version>[^"]+)"$', source, re.MULTILINE)
+          if match is None:
+              raise SystemExit("Unable to read PyPageKit version from src/pypagekit/__init__.py.")
+
+          version = match.group("version")
+          if re.fullmatch(r"\d+\.\d+\.\d+", version) is None:
+              raise SystemExit(f"Release source must contain a stable SemVer version, got {version!r}.")
+
+          print(version)
+          PY
+          )"
+          tag="v$version"
+
+          if [[ "${GITHUB_REF_TYPE:-}" == "tag" ]]; then
+            if [[ "$GITHUB_REF_NAME" != "$tag" ]]; then
+              echo "Tag $GITHUB_REF_NAME does not match package version $version (expected $tag)." >&2
+              exit 1
+            fi
+          elif [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
+            expected_branch="release/$tag"
+            if [[ "$GITHUB_REF_NAME" != "$expected_branch" ]]; then
+              echo "Release branch $GITHUB_REF_NAME does not match package version $version (expected $expected_branch)." >&2
+              exit 1
+            fi
+          fi
+
+          target_commit="$(git rev-parse HEAD)"
+
+          if git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null 2>&1; then
+            git fetch --force origin "refs/tags/$tag:refs/tags/$tag"
+            tagged_commit="$(git rev-list -n 1 "$tag")"
+            if [[ "$tagged_commit" != "$target_commit" ]]; then
+              echo "Existing tag $tag points to $tagged_commit, not release commit $target_commit." >&2
+              exit 1
+            fi
+            echo "Tag $tag already exists on the selected release commit."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -a "$tag" "$target_commit" -m "PyPageKit $version"
+            git push origin "refs/tags/$tag"
+            echo "Created annotated tag $tag at $target_commit."
+          fi
+
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
   qualify:
     name: Qualify tagged distribution
+    needs: prepare
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout tagged source
         uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.tag }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -30,26 +116,33 @@ jobs:
       - name: Install release tooling
         run: python -m pip install -U pip build
 
-      - name: Verify stable tag matches package version
+      - name: Verify stable tag matches source version
+        env:
+          RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
+          RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
         shell: bash
         run: |
           python - <<'PY'
           import os
           import re
+          from pathlib import Path
 
-          from pypagekit import __version__
+          tag = os.environ["RELEASE_TAG"]
+          expected_version = os.environ["RELEASE_VERSION"]
 
-          tag = os.environ["GITHUB_REF_NAME"]
+          source = Path("src/pypagekit/__init__.py").read_text(encoding="utf-8")
+          match = re.search(r'^__version__ = "(?P<version>[^"]+)"$', source, re.MULTILINE)
+          if match is None:
+              raise SystemExit("Unable to read source package version.")
+
+          version = match.group("version")
           if re.fullmatch(r"v\d+\.\d+\.\d+", tag) is None:
-              raise SystemExit(
-                  f"Release tag must be stable SemVer vX.Y.Z, got {tag!r}."
-              )
+              raise SystemExit(f"Release tag must be stable SemVer vX.Y.Z, got {tag!r}.")
 
-          expected = f"v{__version__}"
-          if tag != expected:
+          if version != expected_version or tag != f"v{version}":
               raise SystemExit(
-                  f"Release tag {tag!r} does not match package version {__version__!r}; "
-                  f"expected {expected!r}."
+                  f"Release tag/version mismatch: tag={tag!r}, "
+                  f"source={version!r}, prepared={expected_version!r}."
               )
           PY
 
@@ -60,6 +153,8 @@ jobs:
         run: python -m pip install --force-reinstall dist/*.whl
 
       - name: Verify installed distribution
+        env:
+          RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
         run: |
           python - <<'PY'
           from importlib import metadata, resources
@@ -67,11 +162,11 @@ jobs:
 
           import pypagekit
 
-          tag_version = os.environ["GITHUB_REF_NAME"].removeprefix("v")
+          expected = os.environ["RELEASE_VERSION"]
           distribution = metadata.distribution("pypagekit")
 
-          assert pypagekit.__version__ == tag_version
-          assert distribution.version == tag_version
+          assert pypagekit.__version__ == expected
+          assert distribution.version == expected
           assert distribution.metadata["Requires-Python"] == ">=3.11"
           assert "Development Status :: 5 - Production/Stable" in distribution.metadata.get_all(
               "Classifier"
@@ -84,12 +179,35 @@ jobs:
         run: |
           pypagekit --version
           pypagekit --help
+          pypagekit new --help
+          pypagekit serve --help
+          pypagekit doctor --help
+          pypagekit inspect --help
           python -m pypagekit --version
+          python -m pypagekit --help
 
       - name: Smoke test generated project
+        env:
+          RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
         run: |
           project_root="$(mktemp -d)/release-smoke"
           pypagekit new "$project_root"
+          python - "$project_root" <<'PY'
+          import os
+          import sys
+          import tomllib
+          from pathlib import Path
+
+          version = os.environ["RELEASE_VERSION"]
+          major, minor, _patch = version.split(".")
+          expected_requirement = f"pypagekit>={version},<{major}.{int(minor) + 1}"
+
+          pyproject = Path(sys.argv[1]) / "pyproject.toml"
+          with pyproject.open("rb") as stream:
+              project = tomllib.load(stream)["project"]
+
+          assert project["dependencies"] == [expected_requirement]
+          PY
           (
             cd "$project_root"
             python site.py
@@ -97,6 +215,24 @@ jobs:
             pypagekit doctor
             pypagekit inspect
           )
+
+      - name: Install and smoke test source distribution
+        env:
+          RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          python -m venv /tmp/pypagekit-sdist
+          /tmp/pypagekit-sdist/bin/python -m pip install -U pip
+          /tmp/pypagekit-sdist/bin/python -m pip install dist/*.tar.gz
+          /tmp/pypagekit-sdist/bin/python - <<'PY'
+          from importlib import metadata
+          import os
+          import pypagekit
+
+          expected = os.environ["RELEASE_VERSION"]
+          assert pypagekit.__version__ == expected
+          assert metadata.version("pypagekit") == expected
+          PY
+          /tmp/pypagekit-sdist/bin/pypagekit --version
 
       - name: Upload qualified distributions
         uses: actions/upload-artifact@v4
@@ -108,7 +244,7 @@ jobs:
 
   github-release:
     name: Publish GitHub Release
-    needs: qualify
+    needs: [prepare, qualify]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -123,20 +259,25 @@ jobs:
       - name: Create or update GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
+          RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
         shell: bash
         run: |
-          tag="$GITHUB_REF_NAME"
-          version="${tag#v}"
+          tag="$RELEASE_TAG"
+          version="$RELEASE_VERSION"
 
           if ! gh release view "$tag" >/dev/null 2>&1; then
-            gh release create "$tag"               --verify-tag               --title "PyPageKit $version"               --generate-notes
+            gh release create "$tag" \
+              --verify-tag \
+              --title "PyPageKit $version" \
+              --generate-notes
           fi
 
           gh release upload "$tag" dist/* --clobber
 
   pypi:
     name: Publish to PyPI
-    needs: github-release
+    needs: [prepare, github-release]
     runs-on: ubuntu-latest
     environment:
       name: pypi
