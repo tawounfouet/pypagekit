@@ -41,6 +41,13 @@ serve --watch + live reload
 | LOT-43 | 1.1 Public Contract Snapshot & Release Candidate | `1.1.0rc1` |
 | LOT-44 | 1.1 Release Qualification | `1.1.0` |
 
+## Current position
+
+```text
+LOT-38  1.1.0a1  compatibility baseline gate   ✅ qualified
+LOT-39  1.1.0a2  build fingerprints + manifest ← next
+```
+
 ## LOT-38 — Post-1.0 Compatibility Baseline Gate
 
 LOT-36 used exact runtime equality during the `0.9.0rc1 → 1.0.0` freeze interval. That rule cannot
