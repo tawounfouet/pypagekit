@@ -50,7 +50,7 @@ LOT-40  1.1.0a3  incremental build diff         ✅ qualified
 LOT-41  1.1.0b1  watch service + change detection ✅ qualified
 LOT-42  1.1.0b2  serve --watch + live reload     ✅ qualified
 LOT-43  1.1.0rc1  1.1 public contract snapshot   ✅ qualified
-LOT-44  1.1.0     release qualification           ← in qualification
+LOT-44  1.1.0     release qualification           ✅ qualified
 ```
 
 ## LOT-38 — Post-1.0 Compatibility Baseline Gate
@@ -330,6 +330,29 @@ No new API, CLI option, watcher behavior, live-reload behavior, build semantic, 
 be introduced in this LOT.
 
 Target: `1.1.0`.
+
+## 1.1.x line closure
+
+The complete **1.1.x — Incremental Developer Experience** train is now qualified:
+
+```text
+1.1.0a1  compatibility baseline gate
+    ↓
+1.1.0a2  build fingerprints + manifest
+    ↓
+1.1.0a3  incremental materialization
+    ↓
+1.1.0b1  watch service
+    ↓
+1.1.0b2  serve --watch + live reload
+    ↓
+1.1.0rc1 exact 1.1 contract freeze
+    ↓
+1.1.0    stable release qualification
+```
+
+Future compatible feature work belongs to a separately planned minor line. Patch releases on 1.1.x
+remain limited to compatible fixes under the frozen 1.1 contract.
 
 ## Explicitly outside 1.1.x
 
