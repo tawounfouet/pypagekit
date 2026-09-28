@@ -43,6 +43,7 @@
 | LOT-39 | Build Fingerprints & Manifest | QUALIFIED | `1.1.0a2` |
 | LOT-40 | Incremental Build Diff & Materialization | QUALIFIED | `1.1.0a3` |
 | LOT-41 | Watch Service & Change Detection | QUALIFIED | `1.1.0b1` |
+| LOT-42 | Serve Watch Mode & Live Reload | IN QUALIFICATION | `1.1.0b2` |
 
 ## LOT-07 exit criteria
 
@@ -1208,3 +1209,45 @@ Next after qualification: **LOT-41 — Watch Service & Change Detection** (`1.1.
 - [x] GitHub pull-request CI is fully green
 
 Next after qualification: **LOT-42 — Serve Watch Mode & Live Reload** (`1.1.0b2`).
+
+
+## LOT-42 exit criteria
+
+- [x] plain `pypagekit serve` behavior remains unchanged by default
+- [x] opt-in `pypagekit serve --watch` exists
+- [x] watch mode performs an initial build before binding the HTTP server
+- [x] watch entry defaults to `site.py`
+- [x] watch entry must remain inside the current project root
+- [x] watch entry symlink traversal is rejected
+- [x] watch entry executes in a fresh Python subprocess
+- [x] watch subprocess disables bytecode writes
+- [x] module-level `site` is required for watch planning
+- [x] optional module-level `assets` is supported
+- [x] project stdout cannot corrupt the machine-readable plan payload
+- [x] local module changes are observed across fresh subprocess rebuilds
+- [x] generated output root is excluded from source watching
+- [x] common local cache/environment roots are excluded from source watching
+- [x] rebuilds use LOT-40 incremental materialization
+- [x] rebuild failure preserves the last successful served output
+- [x] rebuild failure does not notify browsers
+- [x] successful rebuild advances a live-reload revision only after commit
+- [x] public optional `DevelopmentServer.create(..., live_reload=False)` exists
+- [x] frozen `DevelopmentServerSession` constructor remains unchanged
+- [x] public `DevelopmentServerSession.live_reload` exists
+- [x] public `DevelopmentServerSession.notify_reload()` exists
+- [x] live reload is disabled by default
+- [x] live-reload HTML injection does not mutate generated files on disk
+- [x] live-reload injection uses an external same-origin script
+- [x] live reload does not require `unsafe-inline`
+- [x] live-reload revision endpoint is no-store
+- [x] binary responses remain byte-for-byte unchanged
+- [x] directory redirect behavior remains unchanged
+- [x] symlink/traversal protections remain active in live-reload mode
+- [x] internal live-reload paths are reserved only while live reload is enabled
+- [x] generated project README documents `pypagekit serve --watch`
+- [x] package version advances to `1.1.0b2`
+- [x] frozen `API_CONTRACT_1_0.json` remains unchanged
+- [x] LOT-38 compatibility gate accepts LOT-42 as compatible 1.x evolution
+- [ ] GitHub pull-request CI is fully green
+
+Next after qualification: **LOT-43 — 1.1 Public Contract Snapshot & Release Candidate** (`1.1.0rc1`).
