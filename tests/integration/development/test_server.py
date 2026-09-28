@@ -17,8 +17,15 @@ from pypagekit.development import (
 
 
 @contextmanager
-def running_server(root: Path) -> Iterator[DevelopmentServerSession]:
-    session = DevelopmentServer().create(DevelopmentServerConfig(root, port=0))
+def running_server(
+    root: Path,
+    *,
+    live_reload: bool = False,
+) -> Iterator[DevelopmentServerSession]:
+    session = DevelopmentServer().create(
+        DevelopmentServerConfig(root, port=0),
+        live_reload=live_reload,
+    )
     thread = Thread(target=session.serve_forever, daemon=True)
     thread.start()
     try:
@@ -171,3 +178,155 @@ def test_bind_conflict_raises_framework_error(tmp_path: Path) -> None:
             )
     finally:
         first.close()
+
+
+
+def test_default_server_does_not_inject_live_reload(tmp_path: Path) -> None:
+    root = tmp_path / "dist"
+    root.mkdir()
+    original = b"<html><body><h1>Home</h1></body></html>"
+    (root / "index.html").write_bytes(original)
+
+    with (
+        running_server(root) as session,
+        urlopen(f"{session.info.url}/", timeout=2) as response,
+    ):
+        body = response.read()
+
+    assert body == original
+    assert b"data-pypagekit-live-reload" not in body
+    assert session.live_reload is False
+
+    with pytest.raises(RuntimeError, match="not enabled"):
+        session.notify_reload()
+
+
+def test_live_reload_server_injects_external_script_without_mutating_file(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "dist"
+    root.mkdir()
+    original = b"<html><body><h1>Home</h1></body></html>"
+    target = root / "index.html"
+    target.write_bytes(original)
+
+    with (
+        running_server(root, live_reload=True) as session,
+        urlopen(f"{session.info.url}/", timeout=2) as response,
+    ):
+        body = response.read()
+        csp = response.headers["Content-Security-Policy"]
+
+    assert session.live_reload is True
+    assert b'data-pypagekit-live-reload' in body
+    assert b'src="/.pypagekit/live-reload.js"' in body
+    assert body.index(b"data-pypagekit-live-reload") < body.index(b"</body>")
+    assert target.read_bytes() == original
+    assert "'unsafe-inline'" not in csp
+
+
+def test_live_reload_revision_endpoint_advances_after_notification(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "dist"
+    root.mkdir()
+    (root / "index.html").write_text("<p>Home</p>", encoding="utf-8")
+
+    with running_server(root, live_reload=True) as session:
+        with urlopen(
+            f"{session.info.url}/.pypagekit/live-reload/revision",
+            timeout=2,
+        ) as response:
+            assert response.read() == b"0"
+            assert response.headers["Cache-Control"] == "no-store"
+
+        assert session.notify_reload() == 1
+        assert session.notify_reload() == 2
+
+        with urlopen(
+            f"{session.info.url}/.pypagekit/live-reload/revision",
+            timeout=2,
+        ) as response:
+            assert response.read() == b"2"
+
+
+def test_live_reload_script_polls_revision_endpoint(tmp_path: Path) -> None:
+    root = tmp_path / "dist"
+    root.mkdir()
+    (root / "index.html").write_text("<p>Home</p>", encoding="utf-8")
+
+    with (
+        running_server(root, live_reload=True) as session,
+        urlopen(
+            f"{session.info.url}/.pypagekit/live-reload.js",
+            timeout=2,
+        ) as response,
+    ):
+        script = response.read().decode("utf-8")
+
+    assert "/.pypagekit/live-reload/revision" in script
+    assert "window.location.reload()" in script
+    assert "window.setInterval(poll, 500)" in script
+
+
+def test_live_reload_resource_is_not_reserved_when_mode_is_disabled(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "dist"
+    resource = root / ".pypagekit" / "live-reload.js"
+    resource.parent.mkdir(parents=True)
+    resource.write_text("user-resource", encoding="utf-8")
+
+    with (
+        running_server(root) as session,
+        urlopen(
+            f"{session.info.url}/.pypagekit/live-reload.js",
+            timeout=2,
+        ) as response,
+    ):
+        body = response.read().decode("utf-8")
+
+    assert body == "user-resource"
+
+
+def test_live_reload_mode_does_not_modify_binary_responses(tmp_path: Path) -> None:
+    root = tmp_path / "dist"
+    asset = root / "asset.bin"
+    asset.parent.mkdir(parents=True, exist_ok=True)
+    payload = b"\x00\x01binary\xff"
+    asset.write_bytes(payload)
+
+    with (
+        running_server(root, live_reload=True) as session,
+        urlopen(f"{session.info.url}/asset.bin", timeout=2) as response,
+    ):
+        body = response.read()
+
+    assert body == payload
+
+
+def test_live_reload_html_head_reports_injected_content_length(tmp_path: Path) -> None:
+    root = tmp_path / "dist"
+    root.mkdir()
+    (root / "index.html").write_text(
+        "<html><body>Home</body></html>",
+        encoding="utf-8",
+    )
+
+    with running_server(root, live_reload=True) as session:
+        connection = HTTPConnection(
+            session.info.host,
+            session.info.port,
+            timeout=2,
+        )
+        connection.request("HEAD", "/index.html")
+        response = connection.getresponse()
+        body = response.read()
+        content_length = int(response.headers["Content-Length"])
+        connection.close()
+
+        with urlopen(f"{session.info.url}/index.html", timeout=2) as get_response:
+            get_body = get_response.read()
+
+    assert body == b""
+    assert content_length == len(get_body)
