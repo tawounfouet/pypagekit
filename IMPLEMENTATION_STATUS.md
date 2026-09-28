@@ -44,7 +44,7 @@
 | LOT-40 | Incremental Build Diff & Materialization | QUALIFIED | `1.1.0a3` |
 | LOT-41 | Watch Service & Change Detection | QUALIFIED | `1.1.0b1` |
 | LOT-42 | Serve Watch Mode & Live Reload | QUALIFIED | `1.1.0b2` |
-| LOT-43 | 1.1 Public Contract Snapshot & Release Candidate | IN QUALIFICATION | `1.1.0rc1` |
+| LOT-43 | 1.1 Public Contract Snapshot & Release Candidate | QUALIFIED | `1.1.0rc1` |
 
 ## LOT-07 exit criteria
 
@@ -1290,6 +1290,6 @@ Next after qualification: **LOT-43 — 1.1 Public Contract Snapshot & Release Ca
 - [x] dedicated `release_1_1_freeze` policy metadata exists
 - [x] CI bootstrap write permission used to generate the snapshot has been removed
 - [x] normal CI permissions are restored to read-only contents
-- [ ] GitHub pull-request CI is fully green on the final documentation head
+- [x] GitHub pull-request CI is fully green on the final documentation head
 
 Next after qualification: **LOT-44 — 1.1 Release Qualification** (`1.1.0`).
