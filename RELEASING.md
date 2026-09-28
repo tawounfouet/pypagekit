@@ -127,24 +127,43 @@ No PyPI API token is required.
 
 Preconditions:
 
-- `main` contains the intended release commit;
-- CI on `main` is fully green;
-- `pypagekit.__version__` equals the intended stable version;
+- the intended release commit has fully green CI;
+- `pypagekit.__version__` at that commit equals the intended stable version;
 - `CHANGELOG.md` contains that version;
 - no unreviewed public-contract drift exists;
 - PyPI Trusted Publisher configuration matches `release.yml` and environment `pypi`.
 
-Then create and push the tag:
+### First public release — 1.0.0
+
+Development on `main` has already advanced to the `1.1.x` line. The `v1.0.0` tag must therefore
+point to the final publishable 1.0 commit, not to the current `main` head.
+
+Canonical 1.0.0 publication commit:
+
+```text
+7860b65631f9f0f077fc6cf4bf86a9f48a07eefa
+```
+
+Create and push the tag explicitly against that commit:
 
 ```bash
-git switch main
-git pull --ff-only
+git fetch origin
 
-git tag -a v1.0.0 -m "PyPageKit 1.0.0"
+git tag -a v1.0.0 7860b65631f9f0f077fc6cf4bf86a9f48a07eefa -m "PyPageKit 1.0.0"
 git push origin v1.0.0
 ```
 
-For future releases, replace `1.0.0` with the package version being published.
+Do not create `v1.0.0` from the current `main` branch once its package version is newer than
+`1.0.0`; the release workflow intentionally rejects a tag/package-version mismatch.
+
+### Future stable releases
+
+For later releases, tag the exact qualified stable commit:
+
+```bash
+git tag -a vX.Y.Z <release-commit-sha> -m "PyPageKit X.Y.Z"
+git push origin vX.Y.Z
+```
 
 The pushed tag starts the publication workflow automatically.
 
