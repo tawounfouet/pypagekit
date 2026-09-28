@@ -143,7 +143,6 @@ def test_serve_delegates_to_development_service(
     assert "http://127.0.0.1:9123" in result.stdout
 
 
-
 def _page_plan(content: str) -> BuildPlan:
     route = Route("/", Page("Home"))
     return BuildPlan(
