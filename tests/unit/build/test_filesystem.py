@@ -805,3 +805,108 @@ def test_incremental_write_result_is_immutable(tmp_path: Path) -> None:
 
     with pytest.raises(FrozenInstanceError):
         result.output_root = tmp_path / "other"  # type: ignore[misc]
+
+
+def test_incremental_writer_detects_drift_between_preflight_and_backup(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    output_root = tmp_path / "dist"
+    initial_plan = BuildPlan(
+        pages=[page_entry("index.html", "before")],
+    )
+    previous_manifest = build_manifest(initial_plan)
+    FilesystemWriter().write(initial_plan, output_root)
+
+    target = output_root / "index.html"
+    original_prepare = transaction_module.FilesystemTransaction.prepare_file
+    mutated = False
+
+    def race_prepare(
+        transaction: transaction_module.FilesystemTransaction,
+        destination: Path,
+        *,
+        backup_existing: bool,
+        require_existing: bool = False,
+    ) -> Path | None:
+        nonlocal mutated
+        if destination == target and require_existing and not mutated:
+            mutated = True
+            destination.write_text("concurrent edit", encoding="utf-8")
+        return original_prepare(
+            transaction,
+            destination,
+            backup_existing=backup_existing,
+            require_existing=require_existing,
+        )
+
+    monkeypatch.setattr(
+        transaction_module.FilesystemTransaction,
+        "prepare_file",
+        race_prepare,
+    )
+
+    with pytest.raises(
+        IncrementalOutputDriftError,
+        match="changed immediately before mutation",
+    ):
+        FilesystemWriter().write_incremental(
+            BuildPlan(pages=[page_entry("index.html", "after")]),
+            previous_manifest,
+            output_root,
+        )
+
+    assert target.read_text(encoding="utf-8") == "concurrent edit"
+    assert not tuple(output_root.glob(".pypagekit-backup-*"))
+
+
+def test_incremental_writer_detects_disappearance_between_preflight_and_backup(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    output_root = tmp_path / "dist"
+    initial_plan = BuildPlan(
+        pages=[page_entry("index.html", "before")],
+    )
+    previous_manifest = build_manifest(initial_plan)
+    FilesystemWriter().write(initial_plan, output_root)
+
+    target = output_root / "index.html"
+    original_prepare = transaction_module.FilesystemTransaction.prepare_file
+    removed = False
+
+    def race_prepare(
+        transaction: transaction_module.FilesystemTransaction,
+        destination: Path,
+        *,
+        backup_existing: bool,
+        require_existing: bool = False,
+    ) -> Path | None:
+        nonlocal removed
+        if destination == target and require_existing and not removed:
+            removed = True
+            destination.unlink()
+        return original_prepare(
+            transaction,
+            destination,
+            backup_existing=backup_existing,
+            require_existing=require_existing,
+        )
+
+    monkeypatch.setattr(
+        transaction_module.FilesystemTransaction,
+        "prepare_file",
+        race_prepare,
+    )
+
+    with pytest.raises(
+        IncrementalOutputDriftError,
+        match="disappeared before mutation",
+    ):
+        FilesystemWriter().write_incremental(
+            BuildPlan(pages=[page_entry("index.html", "after")]),
+            previous_manifest,
+            output_root,
+        )
+
+    assert not target.exists()
