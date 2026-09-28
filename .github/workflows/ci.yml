@@ -45,8 +45,6 @@ jobs:
   package:
     name: Release package qualification
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
       - name: Checkout
@@ -83,34 +81,6 @@ jobs:
           assert resources.files("pypagekit").joinpath("py.typed").is_file()
           PY
           python -m pip check
-
-      - name: Generate 1.1 contract snapshot candidate
-        run: python tools/api_contract_snapshot.py > API_CONTRACT_1_1.generated.json
-
-      - name: Upload 1.1 contract snapshot candidate
-        uses: actions/upload-artifact@v4
-        with:
-          name: api-contract-1-1-candidate
-          path: API_CONTRACT_1_1.generated.json
-          if-no-files-found: error
-
-      - name: Bootstrap canonical 1.1 snapshot onto PR branch
-        if: github.event_name == 'pull_request'
-        env:
-          HEAD_REF: ${{ github.head_ref }}
-        run: |
-          git fetch origin "$HEAD_REF:$HEAD_REF"
-          git checkout "$HEAD_REF"
-          if test -f API_CONTRACT_1_1.json; then
-            echo "API_CONTRACT_1_1.json already exists; bootstrap push not required."
-            exit 0
-          fi
-          python tools/api_contract_snapshot.py > API_CONTRACT_1_1.json
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add API_CONTRACT_1_1.json
-          git commit -m "[LOT-43] Add canonical 1.1 contract snapshot"
-          git push origin "HEAD:$HEAD_REF"
 
       - name: Smoke test installed CLI
         run: |
