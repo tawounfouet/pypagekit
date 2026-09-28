@@ -92,10 +92,7 @@ def test_snapshot_detects_same_size_content_change(tmp_path: Path) -> None:
     assert batch.modified[0].path == PurePosixPath("module.py")
     assert batch.modified[0].before is not None
     assert batch.modified[0].after is not None
-    assert (
-        batch.modified[0].before.fingerprint
-        != batch.modified[0].after.fingerprint
-    )
+    assert batch.modified[0].before.fingerprint != batch.modified[0].after.fingerprint
 
 
 def test_snapshot_records_symlink_target_without_following_it(tmp_path: Path) -> None:
@@ -210,12 +207,8 @@ def test_diff_classifies_created_modified_and_deleted_in_lexical_order(
         PurePosixPath("a.txt"),
         PurePosixPath("c.txt"),
     )
-    assert tuple(change.path for change in batch.modified) == (
-        PurePosixPath("b.txt"),
-    )
-    assert tuple(change.path for change in batch.deleted) == (
-        PurePosixPath("d.txt"),
-    )
+    assert tuple(change.path for change in batch.modified) == (PurePosixPath("b.txt"),)
+    assert tuple(change.path for change in batch.deleted) == (PurePosixPath("d.txt"),)
     assert batch.has_changes is True
 
 
@@ -245,9 +238,7 @@ def test_kind_change_is_modified_even_with_same_fingerprint(tmp_path: Path) -> N
 
     batch = diff_watch_snapshots(previous, current)
 
-    assert tuple(change.kind for change in batch.changes) == (
-        WatchChangeKind.MODIFIED,
-    )
+    assert tuple(change.kind for change in batch.changes) == (WatchChangeKind.MODIFIED,)
 
 
 def test_poll_scans_once_and_returns_change_batch(tmp_path: Path) -> None:
