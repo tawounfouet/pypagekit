@@ -4,7 +4,7 @@ PyPageKit is a Python-first framework for describing pages as structured Python 
 
 ## Status
 
-**PyPageKit 1.0.0 remains the qualified stable baseline.** Development has opened on `1.1.0a1` with LOT-38, which converts the RC-era exact contract gate into a post-1.0 backward-compatibility gate while keeping `API_CONTRACT_1_0.json` immutable.
+**PyPageKit 1.0.0 remains the qualified stable baseline.** LOT-38 is qualified at `1.1.0a1`: the RC-era exact contract gate is now a post-1.0 backward-compatibility gate, while `API_CONTRACT_1_0.json` remains immutable. Next: LOT-39 — Build Fingerprints & Manifest.
 
 PyPageKit can now perform its first complete in-memory transformation:
 
