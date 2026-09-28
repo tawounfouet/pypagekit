@@ -19,12 +19,16 @@ def test_distribution_metadata_exposes_canonical_project_urls() -> None:
     }
 
 
-def test_release_workflow_is_tag_driven_and_not_manually_dispatchable() -> None:
+def test_release_workflow_requires_explicit_tag_or_release_branch() -> None:
     content = RELEASE_WORKFLOW_PATH.read_text(encoding="utf-8")
 
     assert 'tags:\n      - "v*"' in content
+    assert 'branches:\n      - "release/v*"' in content
     assert "workflow_dispatch" not in content
-    assert "Verify stable tag matches package version" in content
+    assert "Prepare release tag" in content
+    assert 'expected_branch="release/$tag"' in content
+    assert "Existing tag $tag points to" in content
+    assert "Verify stable tag matches source version" in content
     assert 're.fullmatch(r"v\\d+\\.\\d+\\.\\d+", tag)' in content
 
 
@@ -41,8 +45,14 @@ def test_release_workflow_uses_least_privilege_trusted_publishing() -> None:
 def test_release_workflow_publishes_only_after_distribution_qualification() -> None:
     content = RELEASE_WORKFLOW_PATH.read_text(encoding="utf-8")
 
-    assert "github-release:\n    name: Publish GitHub Release\n    needs: qualify" in content
-    assert "pypi:\n    name: Publish to PyPI\n    needs: github-release" in content
+    assert (
+        "github-release:\n    name: Publish GitHub Release\n"
+        "    needs: [prepare, qualify]" in content
+    )
+    assert (
+        "pypi:\n    name: Publish to PyPI\n"
+        "    needs: [prepare, github-release]" in content
+    )
     assert "actions/upload-artifact@v4" in content
     assert "actions/download-artifact@v4" in content
     assert 'gh release upload "$tag" dist/* --clobber' in content
