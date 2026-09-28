@@ -45,7 +45,8 @@ serve --watch + live reload
 
 ```text
 LOT-38  1.1.0a1  compatibility baseline gate   ✅ qualified
-LOT-39  1.1.0a2  build fingerprints + manifest ← in qualification
+LOT-39  1.1.0a2  build fingerprints + manifest ✅ qualified
+LOT-40  1.1.0a3  incremental build diff         ← next
 ```
 
 ## LOT-38 — Post-1.0 Compatibility Baseline Gate
