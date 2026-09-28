@@ -107,9 +107,7 @@ def _compare_provisional_facades(
             errors.append(f"{path} disappeared without an explicit promotion/migration decision")
             continue
         if current_descriptor != baseline_descriptor:
-            errors.append(
-                f"{path} changed from {baseline_descriptor!r} to {current_descriptor!r}"
-            )
+            errors.append(f"{path} changed from {baseline_descriptor!r} to {current_descriptor!r}")
 
 
 def _compare_operational_contracts(
@@ -139,8 +137,7 @@ def _compare_operational_contracts(
                 errors.append(f"{path}.{key} was removed")
             elif current_contract[key] != baseline_value:
                 errors.append(
-                    f"{path}.{key} changed from {baseline_value!r} "
-                    f"to {current_contract[key]!r}"
+                    f"{path}.{key} changed from {baseline_value!r} to {current_contract[key]!r}"
                 )
 
 
@@ -170,9 +167,7 @@ def _compare_cli_contract(
                 if item not in current_value:
                     errors.append(f"{item_path} removed {item!r}")
         elif current_value != baseline_value:
-            errors.append(
-                f"{item_path} changed from {baseline_value!r} to {current_value!r}"
-            )
+            errors.append(f"{item_path} changed from {baseline_value!r} to {current_value!r}")
 
 
 def _compare_symbol(
@@ -214,8 +209,7 @@ def _compare_class(
     for key in ("bases", "abstract", "dataclass"):
         if (key in baseline or key in current) and current.get(key) != baseline.get(key):
             errors.append(
-                f"{path}.{key} changed from {baseline.get(key)!r} "
-                f"to {current.get(key)!r}"
+                f"{path}.{key} changed from {baseline.get(key)!r} to {current.get(key)!r}"
             )
 
     if "signature" in baseline:
@@ -253,9 +247,9 @@ def _compare_class(
             continue
 
         for key in ("binding", "abstract"):
-            if (
-                key in baseline_member or key in current_member
-            ) and current_member.get(key) != baseline_member.get(key):
+            if (key in baseline_member or key in current_member) and current_member.get(
+                key
+            ) != baseline_member.get(key):
                 errors.append(
                     f"{member_path}.{key} changed from {baseline_member.get(key)!r} "
                     f"to {current_member.get(key)!r}"
@@ -283,8 +277,7 @@ def _compare_signature(
 
     if current.get("return") != baseline.get("return"):
         errors.append(
-            f"{path}.return changed from {baseline.get('return')!r} "
-            f"to {current.get('return')!r}"
+            f"{path}.return changed from {baseline.get('return')!r} to {current.get('return')!r}"
         )
 
     baseline_parameters = baseline.get("parameters")
@@ -307,8 +300,7 @@ def _compare_signature(
     baseline_positional = [
         parameter.get("name")
         for parameter in baseline_parameters
-        if isinstance(parameter, dict)
-        and parameter.get("kind") in _POSITIONAL_KINDS
+        if isinstance(parameter, dict) and parameter.get("kind") in _POSITIONAL_KINDS
     ]
     current_baseline_positional = [
         parameter.get("name")
@@ -331,9 +323,9 @@ def _compare_signature(
             continue
 
         for key in ("kind", "annotation", "required", "value"):
-            if (
-                key in baseline_parameter or key in current_parameter
-            ) and current_parameter.get(key) != baseline_parameter.get(key):
+            if (key in baseline_parameter or key in current_parameter) and current_parameter.get(
+                key
+            ) != baseline_parameter.get(key):
                 errors.append(
                     f"{parameter_path}.{key} changed from "
                     f"{baseline_parameter.get(key)!r} "
@@ -348,9 +340,7 @@ def _compare_signature(
             current_parameter.get("kind") != "KEYWORD_ONLY"
             or current_parameter.get("required") is not False
         ):
-            errors.append(
-                f"{parameter_path} is a new parameter but is not optional keyword-only"
-            )
+            errors.append(f"{parameter_path} is a new parameter but is not optional keyword-only")
 
 
 __all__ = ["compatibility_errors"]
