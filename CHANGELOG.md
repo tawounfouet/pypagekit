@@ -4,6 +4,18 @@ All notable changes to PyPageKit will be documented in this file.
 
 ## [Unreleased]
 
+### Release Engineering
+
+- Add canonical tag-driven publication workflow in `.github/workflows/release.yml`.
+- Require stable `vX.Y.Z` tags to match `pypagekit.__version__` exactly before publication.
+- Rebuild and smoke-test wheel/sdist from the tagged source before publishing.
+- Create/update GitHub Releases from qualified artifacts.
+- Publish to PyPI through OIDC Trusted Publishing with the dedicated `pypi` environment.
+- Add canonical PyPI project links to package metadata.
+- Document the release procedure in `RELEASING.md`.
+- Add architecture tests guarding publication workflow invariants.
+
+
 ## [1.0.0]
 
 ### Release Qualification
