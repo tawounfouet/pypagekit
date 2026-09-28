@@ -104,8 +104,7 @@ def test_existing_parameter_contract_change_is_rejected() -> None:
     errors = _errors(current)
 
     assert any(
-        ".kind changed" in error or "positional parameter ordering" in error
-        for error in errors
+        ".kind changed" in error or "positional parameter ordering" in error for error in errors
     )
 
 
