@@ -24,6 +24,12 @@ classifiers = [
   "Typing :: Typed",
 ]
 
+[project.urls]
+Homepage = "https://github.com/tawounfouet/pypagekit"
+Repository = "https://github.com/tawounfouet/pypagekit"
+Issues = "https://github.com/tawounfouet/pypagekit/issues"
+Changelog = "https://github.com/tawounfouet/pypagekit/blob/main/CHANGELOG.md"
+
 [project.scripts]
 pypagekit = "pypagekit.cli.app:main"
 
