@@ -1,3 +1,4 @@
+import os
 from dataclasses import FrozenInstanceError
 from pathlib import Path, PurePosixPath
 
@@ -216,6 +217,65 @@ def test_build_manifest_performs_no_output_write(tmp_path: Path) -> None:
 
     assert not output_root.exists()
     assert source.read_text(encoding="utf-8") == "content"
+
+
+def test_build_manifest_rejects_asset_changed_during_hashing(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = tmp_path / "changing.bin"
+    source.write_bytes(b"stable content")
+    plan = BuildPlan(
+        assets=[
+            AssetBuildEntry(
+                Asset(source, PurePosixPath("assets/changing.bin"))
+            )
+        ]
+    )
+    original_open = Path.open
+
+    class MutatingReader:
+        def __init__(self, file_object: object) -> None:
+            self._file_object = file_object
+            self._mutated = False
+
+        def __enter__(self) -> "MutatingReader":
+            self._file_object.__enter__()  # type: ignore[attr-defined]
+            return self
+
+        def __exit__(
+            self,
+            exc_type: object,
+            exc_value: object,
+            traceback: object,
+        ) -> object:
+            return self._file_object.__exit__(  # type: ignore[attr-defined]
+                exc_type,
+                exc_value,
+                traceback,
+            )
+
+        def read(self, size: int = -1) -> bytes:
+            data = self._file_object.read(size)  # type: ignore[attr-defined]
+            if not self._mutated:
+                self._mutated = True
+                state = source.stat()
+                os.utime(
+                    source,
+                    ns=(state.st_atime_ns, state.st_mtime_ns + 1_000_000_000),
+                )
+            return data
+
+    def mutating_open(path: Path, *args: object, **kwargs: object) -> object:
+        file_object = original_open(path, *args, **kwargs)  # type: ignore[arg-type]
+        if path == source and args and args[0] == "rb":
+            return MutatingReader(file_object)
+        return file_object
+
+    monkeypatch.setattr(Path, "open", mutating_open)
+
+    with pytest.raises(BuildManifestSourceError, match="changed while"):
+        build_manifest(plan)
 
 
 def test_build_manifest_rejects_missing_asset_source(tmp_path: Path) -> None:
