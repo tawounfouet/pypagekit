@@ -73,6 +73,8 @@ jobs:
           import pypagekit
 
           distribution = metadata.distribution("pypagekit")
+          assert pypagekit.__version__ == "1.1.0"
+          assert distribution.version == "1.1.0"
           assert distribution.version == pypagekit.__version__
           assert distribution.metadata["Requires-Python"] == ">=3.11"
           assert "Development Status :: 5 - Production/Stable" in distribution.metadata.get_all(
@@ -108,6 +110,8 @@ jobs:
           with pyproject.open("rb") as stream:
               project = tomllib.load(stream)["project"]
 
+          assert pypagekit_requirement() == "pypagekit>=1.1.0,<1.2"
+          assert project["dependencies"] == ["pypagekit>=1.1.0,<1.2"]
           assert project["dependencies"] == [pypagekit_requirement()]
           PY
           (
@@ -127,6 +131,8 @@ jobs:
           from importlib import metadata
           import pypagekit
 
+          assert pypagekit.__version__ == "1.1.0"
+          assert metadata.version("pypagekit") == "1.1.0"
           assert metadata.version("pypagekit") == pypagekit.__version__
           PY
           /tmp/pypagekit-sdist/bin/pypagekit --version
