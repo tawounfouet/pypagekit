@@ -223,21 +223,21 @@ class FilesystemWriter:
 
                 destination = _destination(output_root, page_entry.target)
                 is_changed = page_entry.target in changed_targets
-                backup = transaction.prepare_file(
-                    destination,
-                    backup_existing=is_changed,
-                    require_existing=is_changed,
-                )
                 if is_changed:
                     previous_entry = previous_manifest.get(page_entry.target)
                     if previous_entry is None:
                         raise RuntimeError(
                             "Changed page target is missing from previous manifest."
                         )
-                    _verify_transaction_backup(
-                        previous_entry,
-                        backup,
+                    _prepare_tracked_file(
+                        transaction,
                         destination,
+                        previous_entry,
+                    )
+                else:
+                    transaction.prepare_file(
+                        destination,
+                        backup_existing=False,
                     )
                 with destination.open(
                     "x",
@@ -252,21 +252,21 @@ class FilesystemWriter:
 
                 destination = _destination(output_root, asset_entry.target)
                 is_changed = asset_entry.target in changed_targets
-                backup = transaction.prepare_file(
-                    destination,
-                    backup_existing=is_changed,
-                    require_existing=is_changed,
-                )
                 if is_changed:
                     previous_entry = previous_manifest.get(asset_entry.target)
                     if previous_entry is None:
                         raise RuntimeError(
                             "Changed asset target is missing from previous manifest."
                         )
-                    _verify_transaction_backup(
-                        previous_entry,
-                        backup,
+                    _prepare_tracked_file(
+                        transaction,
                         destination,
+                        previous_entry,
+                    )
+                else:
+                    transaction.prepare_file(
+                        destination,
+                        backup_existing=False,
                     )
                 with (
                     asset_entry.asset.source.open("rb") as source_file,
